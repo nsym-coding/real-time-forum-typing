@@ -7,6 +7,8 @@ let postButton = document.getElementById("create-post-button");
 let submitPostButton = document.getElementById("submit-post-button");
 let submitCommentButton = document.getElementById("submit-comment-button");
 let postModal = document.getElementById("post-modal");
+let postModalChildren = document.querySelector(".post-modal").children;
+console.log(postModalChildren)
 let postContent = document.getElementById("post-content-text");
 let postTitle = document.getElementById("post-title-text");
 let commentContent = document.getElementById("comment-content-text");
@@ -78,9 +80,14 @@ postButton.addEventListener("click", function (e) {
   postModal.style.display = "block";
 });
 
-window.onclick = function (event) {
-  if (event.target != postModal && event.target != postButton && event.target != postModal.children) {
+document.addEventListener("click", (event) => {
+  console.log(event.target)
+  if (event.target != postModal && event.target != postButton) {
     postModal.style.display = "none";
     postButton.style.display = "block";
   }
-};
+  postModalChildren.forEach(child => {
+    if (event.target == child)
+      postModal.style.display = "block";
+  })
+});

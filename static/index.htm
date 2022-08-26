@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,35 +9,37 @@
     <script src="https://kit.fontawesome.com/27d376a945.js" crossorigin="anonymous"></script>
     <title>Hub Trial</title>
 </head>
+
 <body>
- <div class="main-container">
+    <div class="main-container">
 
 
-    <div class="login">LOGIN</div>
-    <div class="online"></div>
-    <div class="post-container" id="post-feed">
-    <div class="content" id="content"></div>
-        <div class= 'post-modal' id="post-modal">
-            <form onsubmit="return false" novalidate>
-                <textarea id="post-title-text" placeholder="Title" rows="1" cols="65" required></textarea>
-                <textarea id="post-content-text" placeholder="Post..."></textarea>
-            </form>
-            <button class="submit-post-button" id="submit-post-button">SUBMIT POST</button>
+        <div class="login">LOGIN</div>
+        <div class="online"></div>
+        <div class="post-container" id="post-feed">
+            <div class="content" id="content"></div>
+            <div class='post-modal' id="post-modal">
+                <form onsubmit="return false" novalidate>
+                    <textarea id="post-title-text" placeholder="Title" rows="1" cols="65" required></textarea>
+                    <textarea id="post-content-text" placeholder="Post..."></textarea>
+                </form>
+                <button class="submit-post-button" id="submit-post-button">SUBMIT POST</button>
 
-            <form onsubmit="return false" novalidate>
-               
-                <textarea id="comment-content-text" placeholder="Comment..."></textarea>
-            </form>
-            <button class="submit-comment-button" id="submit-comment-button">SUBMIT PCOMMENT</button>
+                <form onsubmit="return false" novalidate>
+
+                    <textarea id="comment-content-text" placeholder="Comment..."></textarea>
+                </form>
+                <button class="submit-comment-button" id="submit-comment-button">SUBMIT PCOMMENT</button>
+            </div>
         </div>
+        <i class="fa-solid fa-circle-plus fa-4x" id="create-post-button"></i>
+        <div class="user-container"></div>
+
     </div>
-      <i class="fa-solid fa-circle-plus fa-4x" id="create-post-button"></i>
-    <div class="user-container"></div>
-    
-</div> 
     <pre id="msgOut"></pre>
 
-<script src="/app.js"></script>
+    <script src="/app.js"></script>
 
 </body>
+
 </html>

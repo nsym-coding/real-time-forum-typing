@@ -122,6 +122,6 @@ func main() {
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fs)
 	http.HandleFunc("/ws", webSocketEndpoint)
-	log.Println("Listening on port :3000.....")
+	log.Println("Listening on port :8080.....")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
