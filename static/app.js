@@ -19,7 +19,9 @@ let sendingArr = [];
 const loginSubmitButton = document.getElementById("login-submit-button");
 const signUpModal = document.getElementById("signupModal");
 const signUpButton = document.getElementById("signup-submit-button");
-const signUpForm = document.getElementById("signup-form")
+const signUpForm = document.getElementById("signup-form");
+
+let regFormToGo;
 
 // client side websocket
 ws.onopen = () => {
@@ -92,7 +94,11 @@ document.addEventListener("click", (event) => {
 signUpButton.addEventListener("click", (e) => {
   var data = new FormData(signUpForm);
 
-  const formProps = Object.fromEntries(data);
+  regFormToGo = Object.fromEntries(data);
 
-  console.log(formProps);
+  console.log(regFormToGo);
+
+  regFormToGo["type"] = "register";
+
+  ws.send(JSON.stringify(regFormToGo));
 });

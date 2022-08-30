@@ -14,6 +14,7 @@ type T struct {
 	TypeChecker
 	*Posts
 	*Comments
+	*Register
 }
 
 type TypeChecker struct {
@@ -35,6 +36,17 @@ type Comments struct {
 	Tipo           string `json:"tipo"`
 }
 
+type Register struct {
+	Username  string `json:"username"`
+	Age       int    `json:"age"`
+	Email     string `json:"email"`
+	Gender    string `json:"gender"`
+	FirstName string `json:"firstname"`
+	LastName  string `json:"lastname"`
+	Password  string `json:"password"`
+	Tipo      string `json:"tipo"`
+}
+
 var clients = make(map[*websocket.Conn]bool)
 var broadcastChannelPosts = make(chan *Posts, 1)
 var broadcastChannelComments = make(chan *Comments, 1)
@@ -52,6 +64,9 @@ func (t *T) UnmarshalForumData(data []byte) error {
 	case "comment":
 		t.Comments = &Comments{}
 		return json.Unmarshal(data, t.Comments)
+	case "register":
+		t.Register = &Register{}
+		return json.Unmarshal(data, t.Register)
 	default:
 		return fmt.Errorf("unrecognized type value %q", t.Type)
 	}
@@ -76,6 +91,7 @@ func webSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	for {
 		_, infoType, _ := wsConn.ReadMessage()
+		fmt.Println("----", string(infoType))
 		var f T
 		f.UnmarshalForumData(infoType)
 
@@ -88,6 +104,9 @@ func webSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			f.Comments.Tipo = "comment"
 
 			broadcastChannelComments <- f.Comments
+		} else if f.Type == "register" {
+			fmt.Println(f)
+
 		}
 
 		log.Println("Checking what's in f ---> ", f)
