@@ -116,3 +116,8 @@
     border-radius: 10px;
     color: #101F30;
 }
+
+.modal-body{
+    flex-direction: column;
+    display: flex;
+}

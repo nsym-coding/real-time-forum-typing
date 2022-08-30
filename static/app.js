@@ -18,6 +18,9 @@ let msgArr = [];
 let objData = {};
 let commentData = {};
 let sendingArr = [];
+const loginSubmitButton = document.getElementById("login-submit-button")
+const loginRegister = document.getElementById
+
 
 // client side websocket
 ws.onopen = () => {
