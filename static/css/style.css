@@ -117,7 +117,12 @@
     color: #101F30;
 }
 
-.modal-body{
+.modal-body {
     flex-direction: column;
     display: flex;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
 }

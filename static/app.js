@@ -7,8 +7,6 @@ let postButton = document.getElementById("create-post-button");
 let submitPostButton = document.getElementById("submit-post-button");
 let submitCommentButton = document.getElementById("submit-comment-button");
 let postModal = document.getElementById("post-modal");
-let postModalChildren = document.querySelector(".post-modal").children;
-console.log("---", postModalChildren);
 let postContent = document.getElementById("post-content-text");
 let postTitle = document.getElementById("post-title-text");
 let commentContent = document.getElementById("comment-content-text");
@@ -19,7 +17,8 @@ let objData = {};
 let commentData = {};
 let sendingArr = [];
 const loginSubmitButton = document.getElementById("login-submit-button")
-const loginRegister = document.getElementById
+const signUpModal = document.getElementById("signupModal")
+const signUpButton = document.getElementById("signup-submit-button")
 
 
 // client side websocket
@@ -77,7 +76,6 @@ submitCommentButton.addEventListener("click", function (e) {
 
 postButton.addEventListener("click", function (e) {
   e.preventDefault();
-  console.log("post---", postButton);
 
   postButton.style.display = "none";
   postModal.style.display = "block";
@@ -86,8 +84,13 @@ postButton.addEventListener("click", function (e) {
 document.addEventListener("click", (event) => {
   // if  (!event.target.closest("post-modal") && event.target != postButton )
   if (event.target != postModal && event.target != postButton) {
-    console.log(event.target);
     postModal.style.display = "none";
     postButton.style.display = "block";
   }
 });
+
+signUpButton.addEventListener("click", (e) => {
+
+
+
+})
