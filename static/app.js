@@ -16,10 +16,10 @@ let msgArr = [];
 let objData = {};
 let commentData = {};
 let sendingArr = [];
-const loginSubmitButton = document.getElementById("login-submit-button")
-const signUpModal = document.getElementById("signupModal")
-const signUpButton = document.getElementById("signup-submit-button")
-
+const loginSubmitButton = document.getElementById("login-submit-button");
+const signUpModal = document.getElementById("signupModal");
+const signUpButton = document.getElementById("signup-submit-button");
+const signUpForm = document.getElementById("signup-form")
 
 // client side websocket
 ws.onopen = () => {
@@ -90,7 +90,9 @@ document.addEventListener("click", (event) => {
 });
 
 signUpButton.addEventListener("click", (e) => {
+  var data = new FormData(signUpForm);
 
+  const formProps = Object.fromEntries(data);
 
-
-})
+  console.log(formProps);
+});
