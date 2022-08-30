@@ -88,8 +88,3 @@ document.addEventListener("click", (event) => {
     postButton.style.display = "block";
   }
 });
-
-// postModalChildren.forEach(child => {
-//   if (event.target == child)
-//     postModal.style.display = "block";
-// })

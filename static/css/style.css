@@ -1,38 +1,38 @@
-.main-container{
+.main-container {
     display: flex;
     background-color: #101F30;
     width: 85%;
     height: 85%;
     border-radius: 27px;
     top: 50%;
-    left:50%;
+    left: 50%;
     position: fixed;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
 }
 
-.post-container{
+.post-container {
     width: 66%;
     height: 80%;
-   background-color: #9AAFC7;
-   border-radius: 27px;
-   top: 50%;
-    left:38%;
+    background-color: #9AAFC7;
+    border-radius: 27px;
+    top: 50%;
+    left: 38%;
     position: fixed;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
 }
 
-.user-container{
+.user-container {
     background-color: #9AAFC7;
     width: 20%;
     height: 80%;
     border-radius: 27px;
     top: 50%;
-    left:85%;
+    left: 85%;
     position: fixed;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
 }
 
-.online{
+.online {
     background-color: #10FC27;
     position: absolute;
     top: 3.5%;
@@ -42,17 +42,17 @@
     border-radius: 50%;
 }
 
-.fa-solid{
+.fa-solid {
     display: none;
     position: absolute;
     left: 62%;
     top: 79%;
 }
 
-.login{
+/* .login {
     position: relative;
     top: 2%;
-    left:87%;
+    left: 87%;
     width: 8%;
     height: 5%;
     border-radius: 27px;
@@ -60,9 +60,18 @@
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
     color: #101F30;
+} */
+
+#login-button {
+    position: absolute;
+    top: 2%;
+    left: 87%;
+    /* width: 8%;
+    height: 5%; */
+    background-color: green;
 }
 
-#post-modal{
+#post-modal {
     display: none;
     position: absolute;
     width: 75%;
