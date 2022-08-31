@@ -49,7 +49,7 @@ submitPostButton.addEventListener("click", function (e) {
 // message received from server side
 ws.onmessage = (e) => {
   let data = JSON.parse(e.data);
-  console.log(data.tipo);
+  console.log('datatype', data.tipo);
   console.log(data);
 
   if (data.tipo === "post") {
@@ -58,7 +58,12 @@ ws.onmessage = (e) => {
   }
 
   if (data.tipo === "comment") {
-    alert(`COmment received${data.commentcontent}`);
+    alert(`Comment received${data.commentcontent}`);
+  }
+
+  if (data.tipo === "registration") {
+//console.log('from js', data);
+    alert("You've been registered");
   }
   console.log("Received this message from server....", data);
 };
@@ -73,6 +78,8 @@ submitCommentButton.addEventListener("click", function (e) {
   commentData["commenttime"] = new Date().toISOString().slice(0, 10);
 
   commentContent.value = "";
+
+  console.log(commentData);
   ws.send(JSON.stringify(commentData));
 });
 
@@ -85,10 +92,10 @@ postButton.addEventListener("click", function (e) {
 
 document.addEventListener("click", (event) => {
   // if  (!event.target.closest("post-modal") && event.target != postButton )
-  if (event.target != postModal && event.target != postButton) {
-    postModal.style.display = "none";
-    postButton.style.display = "block";
-  }
+  // if (event.target != postModal && event.target != postButton) {
+  //   postModal.style.display = "none";
+  //   postButton.style.display = "block";
+  // }
 });
 
 signUpButton.addEventListener("click", (e) => {

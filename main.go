@@ -37,7 +37,7 @@ type Comments struct {
 }
 
 type Register struct {
-	Username  string `json:"username"`
+	User      string `json:"username"`
 	Age       int    `json:"age"`
 	Email     string `json:"email"`
 	Gender    string `json:"gender"`
@@ -50,6 +50,8 @@ type Register struct {
 var clients = make(map[*websocket.Conn]bool)
 var broadcastChannelPosts = make(chan *Posts, 1)
 var broadcastChannelComments = make(chan *Comments, 1)
+var broadcastChannelRegister = make(chan *Register, 1)
+
 
 // unmarshall data based on type
 func (t *T) UnmarshalForumData(data []byte) error {
@@ -92,6 +94,7 @@ func webSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	for {
 		_, infoType, _ := wsConn.ReadMessage()
 		fmt.Println("----", string(infoType))
+
 		var f T
 		f.UnmarshalForumData(infoType)
 
@@ -102,10 +105,14 @@ func webSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		} else if f.Type == "comment" {
 			f.Comments.User = "yonas"
 			f.Comments.Tipo = "comment"
-
 			broadcastChannelComments <- f.Comments
 		} else if f.Type == "register" {
-			fmt.Println(f)
+			fmt.Println("-----", f.Register)
+			f.Register.User = "tols"
+			f.Register.Tipo = "registration"
+			
+			//below solely for testing
+			broadcastChannelRegister <- f.Register
 
 		}
 
@@ -129,6 +136,12 @@ func broadcastToAllClients() {
 			if ok {
 				for client := range clients {
 					client.WriteJSON(y)
+				}
+			}
+		case z, ok := <-broadcastChannelRegister:
+			if ok {
+				for client := range clients {
+					client.WriteJSON(z)
 				}
 			}
 		}
