@@ -62,8 +62,8 @@ ws.onmessage = (e) => {
   }
 
   if (data.tipo === "registration") {
-//console.log('from js', data);
-    alert("You've been registered");
+    //console.log('from js', data);
+    // alert("You've been registered");
   }
   console.log("Received this message from server....", data);
 };
@@ -100,7 +100,10 @@ document.addEventListener("click", (event) => {
 
 signUpButton.addEventListener("click", (e) => {
   var data = new FormData(signUpForm);
-
+  // var ok = true
+  // if (ok) {
+  // signUpModal.classList.toggle("show")
+  signUpModal.setAttribute("data-bs-dismiss", "modal")
   regFormToGo = Object.fromEntries(data);
 
   console.log(regFormToGo);

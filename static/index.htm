@@ -71,7 +71,8 @@
 
 
     <!-- Register-Modal -->
-    <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+        data-focus="false">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -79,26 +80,26 @@
 
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form  id="signup-form" action="javascript:void(0)">
+                <form id="signup-form" action="javascript:void(0)">
                     <div class="modal-body">
                         <label for="username">Username</label>
-                        <input type="text" id="signup-username" name="username" required>
+                        <input type="text" id="signup-username" name="username">
 
                         <label for="age">Age</label>
-                        <input type="number" id="signup-age" name="age" required>
+                        <input type="number" id="signup-age" name="age">
 
                         <label for="firstname">First Name </label>
-                        <input type="text" id="signup-firstname" name="firstname" required>
+                        <input type="text" id="signup-firstname" name="firstname">
 
                         <label for="lastname">Last Name </label>
-                        <input type="text" id="signup-lastname" name="lastname" required>
+                        <input type="text" id="signup-lastname" name="lastname">
 
                         <label for="signupemail">Email </label>
-                        <input type="email" id="signup-email" name="email" required>
+                        <input type="email" id="signup-email" name="email">
 
                         <label for="gender">Gender</label>
                         <label for="male">M
-                            <input type="radio" id="signup-male" name="gender" value="M"checked>
+                            <input type="radio" id="signup-male" name="gender" value="M" checked>
                         </label>
 
                         <label for="female">F
@@ -116,8 +117,7 @@
 
                     </div>
                     <div class="modal-footer">
-                        <input type="submit" class="btn btn-primary" data-bs-dismiss="modal" id="signup-submit-button"
-                            value="Sign Up!">
+                        <input type="submit" class="btn btn-primary" id="signup-submit-button" value="Sign Up!">
                     </div>
                 </form>
 
