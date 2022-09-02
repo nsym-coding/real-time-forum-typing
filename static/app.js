@@ -93,21 +93,33 @@ postButton.addEventListener("click", function (e) {
 
 let modalBackdrop = document.getElementsByClassName("modal-backdrop")
 
-signUpButton.addEventListener("click", (e) => {
-  var data = new FormData(signUpForm);
+let clientFormValidated = false
 
-
-  // once validation is done we can remove the modal and backdrop
-  let ok = false
-  if (ok) {
-    signUpModal.classList.remove("show")
-    modalBackdrop[0].classList.remove("show")
-  }
+const data = new FormData(signUpForm)
+let usernameInvalid = document.getElementById("validateUsername")
+const formValidation = () => {
   regFormToGo = Object.fromEntries(data);
+  // set minimum age, currently set in html to min 16, but can still type lower numbers
 
-  console.log(regFormToGo);
+  if (regFormToGo.username.length < 5) {
+    usernameInvalid.style.display = "block"
+  }
+
+  // if (hello) {
+
+  // }
+}
+// once validation is done we can remove the modal and backdrop
+const formValidated = () => {
+  signUpModal.classList.remove("show")
+  modalBackdrop[0].classList.remove("show")
 
   regFormToGo["type"] = "register";
-
   ws.send(JSON.stringify(regFormToGo));
+}
+
+
+signUpButton.addEventListener("click", (e) => {
+  formValidation()
+  if (clientFormValidated) formValidated()
 });
