@@ -16,7 +16,7 @@ let msgArr = [];
 let objData = {};
 let commentData = {};
 let sendingArr = [];
-const loginButton = document.getElementById("login-button")
+const loginButton = document.getElementById("login-button");
 const loginSubmitButton = document.getElementById("login-submit-button");
 const signUpModal = document.getElementById("signupModal");
 const signUpButton = document.getElementById("signup-submit-button");
@@ -50,7 +50,7 @@ submitPostButton.addEventListener("click", function (e) {
 // message received from server side
 ws.onmessage = (e) => {
   let data = JSON.parse(e.data);
-  console.log('datatype', data.tipo);
+  console.log("datatype", data.tipo);
   console.log(data);
 
   if (data.tipo === "post") {
@@ -91,35 +91,59 @@ postButton.addEventListener("click", function (e) {
   postModal.style.display = "block";
 });
 
-let modalBackdrop = document.getElementsByClassName("modal-backdrop")
+let modalBackdrop = document.getElementsByClassName("modal-backdrop");
 
-let clientFormValidated = false
+let clientFormValidated = false;
 
-const data = new FormData(signUpForm)
-let usernameInvalid = document.getElementById("validateUsername")
+let usernameInvalid = document.getElementById("validateUsername");
+let passwordInvalid = document.getElementById("validatePassword");
+
 const formValidation = () => {
+  let data = new FormData(signUpForm);
   regFormToGo = Object.fromEntries(data);
   // set minimum age, currently set in html to min 16, but can still type lower numbers
 
+  let okForm = true;
+
+
+  //need to somehow isolate error messages when sharing 
+
   if (regFormToGo.username.length < 5) {
-    usernameInvalid.style.display = "block"
+    usernameInvalid.innerText = "Your username must be at least 5 characters";
+    usernameInvalid.style.display = "block";
+    okForm = false;
+  } else {
+    usernameInvalid.style.display = "none";
   }
 
-  // if (hello) {
+  if (/\s/.test(regFormToGo.username)) {
+    usernameInvalid.innerText = "No spaces allowed";
+    usernameInvalid.style.display = "block";
+    okForm = false;
+  }
 
-  // }
-}
+  if (regFormToGo.password.length < 5) {
+    passwordInvalid.style.display = "block";
+    okForm = false;
+  }
+
+  if (okForm) {
+    clientFormValidated = true;
+  }
+};
 // once validation is done we can remove the modal and backdrop
 const formValidated = () => {
-  signUpModal.classList.remove("show")
-  modalBackdrop[0].classList.remove("show")
+  signUpModal.classList.remove("show");
+  modalBackdrop[0].classList.remove("show");
 
   regFormToGo["type"] = "register";
   ws.send(JSON.stringify(regFormToGo));
-}
-
+};
 
 signUpButton.addEventListener("click", (e) => {
-  formValidation()
-  if (clientFormValidated) formValidated()
+  clientFormValidated = false;
+  formValidation();
+
+  if (clientFormValidated) formValidated();
+
 });
