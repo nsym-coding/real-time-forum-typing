@@ -21,11 +21,13 @@ func CreateDB() {
 	_, err1 := db.Exec(`create table if not exists users (
 		userID integer primary key AUTOINCREMENT, 
 		username CHAR(50), 
+		age integer,
 		email CHAR(50), 
+		gender CHAR(50),
 		firstname CHAR(50), 
 		lastname CHAR(50), 
-		hash CHAR(50),
-		age integer);`)
+		hash CHAR(50)
+		);`)
 	fmt.Println("err1", err1)
 
 	_, err2 := db.Exec(`create table if not exists posts (

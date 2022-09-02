@@ -1,12 +1,15 @@
 package socket
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+
 	"real-time-forum/users"
-"github.com/gorilla/websocket"
+
+	"github.com/gorilla/websocket"
 )
 
 type T struct {
@@ -37,7 +40,7 @@ type Comments struct {
 
 type Register struct {
 	Username  string `json:"username"`
-	Age       int    `json:"age"`
+	Age       string    `json:"age"`
 	Email     string `json:"email"`
 	Gender    string `json:"gender"`
 	FirstName string `json:"firstname"`
@@ -46,10 +49,12 @@ type Register struct {
 	Tipo      string `json:"tipo"`
 }
 
-var clients = make(map[*websocket.Conn]bool)
-var broadcastChannelPosts = make(chan *Posts, 1)
-var broadcastChannelComments = make(chan *Comments, 1)
-var broadcastChannelRegister = make(chan *Register, 1)
+var (
+	clients                  = make(map[*websocket.Conn]bool)
+	broadcastChannelPosts    = make(chan *Posts, 1)
+	broadcastChannelComments = make(chan *Comments, 1)
+	broadcastChannelRegister = make(chan *Register, 1)
+)
 
 // unmarshall data based on type
 func (t *T) UnmarshalForumData(data []byte) error {
@@ -78,9 +83,10 @@ var upgrader = websocket.Upgrader{
 }
 
 func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
+	db, _ := sql.Open("sqlite3", "real-time-forum.db")
+
 	go broadcastToAllClients()
 	wsConn, err := upgrader.Upgrade(w, r, nil)
-
 	if err != nil {
 		log.Println("error when upgrading connection...")
 	}
@@ -98,30 +104,29 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 		if f.Type == "post" {
 			f.Posts.Tipo = "post"
-			//f.Posts.User = "yonas"
+			// f.Posts.User = "yonas"
 			broadcastChannelPosts <- f.Posts
 		} else if f.Type == "comment" {
-			//f.Comments.User = "yonas"
+			// f.Comments.User = "yonas"
 			f.Comments.Tipo = "comment"
 			broadcastChannelComments <- f.Comments
 		} else if f.Type == "register" {
-			fmt.Println("-----", f.Register.FirstName)
-			users.RegisterUser(f.Username, []byte(f.Password), f.Email)
-			//f.Register.Username = "tols"
+			fmt.Println("-----", f.Register.Age)
+
+			users.RegisterUser(db, f.Username, f.Register.Age, f.Gender, f.FirstName, f.LastName, []byte(f.Password), f.Email)
+			// f.Register.Username = "tols"
 			f.Register.Tipo = "registration"
 
-			//below solely for testing
+			// below solely for testing
 			broadcastChannelRegister <- f.Register
 
 		}
 
 		log.Println("Checking what's in f ---> ", f)
 	}
-
 }
 
 func broadcastToAllClients() {
-
 	for {
 		select {
 		case x, ok := <-broadcastChannelPosts:
