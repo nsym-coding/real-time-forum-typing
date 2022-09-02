@@ -21,3 +21,28 @@ func RegisterUser(db *sql.DB, username string, age string, gender string, firstn
 	fmt.Println("rows affected:", rowsAff)
 	fmt.Println("last inserted:", lastIns)
 }
+
+func UserExists(db *sql.DB, username string) bool {
+	// check if username already exists
+	userStmt := "SELECT userID FROM users WHERE username = ?"
+	rowU := db.QueryRow(userStmt, username)
+	var uIDs string
+	error := rowU.Scan(&uIDs)
+	if error != sql.ErrNoRows {
+		fmt.Println("username already exists, err:", error)
+		return true
+	}
+	return false
+}
+
+func EmailExists(db *sql.DB, email string) bool {
+	userStmt := "SELECT userID FROM users WHERE email = ?"
+	rowU := db.QueryRow(userStmt, email)
+	var uIDs string
+	error := rowU.Scan(&uIDs)
+	if error != sql.ErrNoRows {
+		fmt.Println("username already exists, err:", error)
+		return true
+	}
+	return false
+}

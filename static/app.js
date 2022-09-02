@@ -48,7 +48,13 @@ submitPostButton.addEventListener("click", function (e) {
 });
 
 // message received from server side
-ws.onmessage = (e) => {
+ws.onmessage = (e) => { 
+
+
+  if (e.data === "user test") {
+    console.log("-------------received user message test")
+  }
+
   let data = JSON.parse(e.data);
   console.log("datatype", data.tipo);
   console.log(data);

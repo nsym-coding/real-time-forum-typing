@@ -40,7 +40,7 @@ type Comments struct {
 
 type Register struct {
 	Username  string `json:"username"`
-	Age       string    `json:"age"`
+	Age       string `json:"age"`
 	Email     string `json:"email"`
 	Gender    string `json:"gender"`
 	FirstName string `json:"firstname"`
@@ -96,11 +96,11 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	clients[wsConn] = true
 
 	for {
-		_, infoType, _ := wsConn.ReadMessage()
-		fmt.Println("----", string(infoType))
+		foo, info, _ := wsConn.ReadMessage()
+		fmt.Println("----", string(info))
 
 		var f T
-		f.UnmarshalForumData(infoType)
+		f.UnmarshalForumData(info)
 
 		if f.Type == "post" {
 			f.Posts.Tipo = "post"
@@ -113,7 +113,18 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		} else if f.Type == "register" {
 			fmt.Println("-----", f.Register.Age)
 
-			users.RegisterUser(db, f.Username, f.Register.Age, f.Gender, f.FirstName, f.LastName, []byte(f.Password), f.Email)
+			if users.UserExists(db, f.Username) {
+				wsConn.WriteMessage(foo, []byte("user test"))
+			}
+
+			if users.EmailExists(db, f.Email) {
+				wsConn.WriteMessage(foo, []byte("email test"))
+			}
+
+			if !users.UserExists(db, f.Username) && !users.EmailExists(db, f.Email) {
+				users.RegisterUser(db, f.Username, f.Register.Age, f.Gender, f.FirstName, f.LastName, []byte(f.Password), f.Email)
+			}
+
 			// f.Register.Username = "tols"
 			f.Register.Tipo = "registration"
 
