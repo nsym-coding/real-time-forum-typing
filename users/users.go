@@ -41,7 +41,7 @@ func EmailExists(db *sql.DB, email string) bool {
 	var uIDs string
 	error := rowU.Scan(&uIDs)
 	if error != sql.ErrNoRows {
-		fmt.Println("username already exists, err:", error)
+		fmt.Println("email already exists, err:", error)
 		return true
 	}
 	return false

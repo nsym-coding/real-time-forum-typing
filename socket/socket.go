@@ -49,6 +49,10 @@ type Register struct {
 	Tipo      string `json:"tipo"`
 }
 
+type formValidation struct {
+	ValidationMessage string
+}
+
 var (
 	clients                  = make(map[*websocket.Conn]bool)
 	broadcastChannelPosts    = make(chan *Posts, 1)
@@ -96,7 +100,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	clients[wsConn] = true
 
 	for {
-		foo, info, _ := wsConn.ReadMessage()
+		_, info, _ := wsConn.ReadMessage()
 		fmt.Println("----", string(info))
 
 		var f T
@@ -114,11 +118,13 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("-----", f.Register.Age)
 
 			if users.UserExists(db, f.Username) {
-				wsConn.WriteMessage(foo, []byte("user test"))
+				var u = formValidation{"Username exists"}
+				wsConn.WriteJSON(u)
 			}
 
 			if users.EmailExists(db, f.Email) {
-				wsConn.WriteMessage(foo, []byte("email test"))
+				var u = formValidation{"Email exists"}
+				wsConn.WriteJSON(u)
 			}
 
 			if !users.UserExists(db, f.Username) && !users.EmailExists(db, f.Email) {

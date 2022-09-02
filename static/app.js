@@ -48,12 +48,12 @@ submitPostButton.addEventListener("click", function (e) {
 });
 
 // message received from server side
-ws.onmessage = (e) => { 
+ws.onmessage = (e) => {
 
 
-  if (e.data === "user test") {
-    console.log("-------------received user message test")
-  }
+  // if (e.data === "user test") {
+  //   console.log("-------------received user message test")
+  // }
 
   let data = JSON.parse(e.data);
   console.log("datatype", data.tipo);
@@ -71,6 +71,10 @@ ws.onmessage = (e) => {
   if (data.tipo === "registration") {
     //console.log('from js', data);
     // alert("You've been registered");
+  }
+
+  if (data.ValidationMessage === "Username exists") {
+    console.log("username exists");
   }
   console.log("Received this message from server....", data);
 };
