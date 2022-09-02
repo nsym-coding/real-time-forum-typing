@@ -16,6 +16,7 @@ let msgArr = [];
 let objData = {};
 let commentData = {};
 let sendingArr = [];
+const loginButton = document.getElementById("login-button")
 const loginSubmitButton = document.getElementById("login-submit-button");
 const signUpModal = document.getElementById("signupModal");
 const signUpButton = document.getElementById("signup-submit-button");
@@ -62,8 +63,8 @@ ws.onmessage = (e) => {
   }
 
   if (data.tipo === "registration") {
-//console.log('from js', data);
-    alert("You've been registered");
+    //console.log('from js', data);
+    // alert("You've been registered");
   }
   console.log("Received this message from server....", data);
 };
@@ -90,17 +91,18 @@ postButton.addEventListener("click", function (e) {
   postModal.style.display = "block";
 });
 
-document.addEventListener("click", (event) => {
-  // if  (!event.target.closest("post-modal") && event.target != postButton )
-  // if (event.target != postModal && event.target != postButton) {
-  //   postModal.style.display = "none";
-  //   postButton.style.display = "block";
-  // }
-});
+let modalBackdrop = document.getElementsByClassName("modal-backdrop")
 
 signUpButton.addEventListener("click", (e) => {
   var data = new FormData(signUpForm);
 
+
+  // once validation is done we can remove the modal and backdrop
+  let ok = false
+  if (ok) {
+    signUpModal.classList.remove("show")
+    modalBackdrop[0].classList.remove("show")
+  }
   regFormToGo = Object.fromEntries(data);
 
   console.log(regFormToGo);
