@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"real-time-forum/db"
+	"real-time-forum/users"
 
 	"github.com/gorilla/websocket"
 )
@@ -37,7 +38,7 @@ type Comments struct {
 }
 
 type Register struct {
-	User      string `json:"username"`
+	Username  string `json:"username"`
 	Age       int    `json:"age"`
 	Email     string `json:"email"`
 	Gender    string `json:"gender"`
@@ -51,7 +52,6 @@ var clients = make(map[*websocket.Conn]bool)
 var broadcastChannelPosts = make(chan *Posts, 1)
 var broadcastChannelComments = make(chan *Comments, 1)
 var broadcastChannelRegister = make(chan *Register, 1)
-
 
 // unmarshall data based on type
 func (t *T) UnmarshalForumData(data []byte) error {
@@ -100,17 +100,18 @@ func webSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 		if f.Type == "post" {
 			f.Posts.Tipo = "post"
-			f.Posts.User = "yonas"
+			//f.Posts.User = "yonas"
 			broadcastChannelPosts <- f.Posts
 		} else if f.Type == "comment" {
-			f.Comments.User = "yonas"
+			//f.Comments.User = "yonas"
 			f.Comments.Tipo = "comment"
 			broadcastChannelComments <- f.Comments
 		} else if f.Type == "register" {
-			fmt.Println("-----", f.Register)
-			f.Register.User = "tols"
+			fmt.Println("-----", f.Register.FirstName)
+			users.RegisterUser(f.Username, []byte(f.Password), f.Email)
+			//f.Register.Username = "tols"
 			f.Register.Tipo = "registration"
-			
+
 			//below solely for testing
 			broadcastChannelRegister <- f.Register
 
