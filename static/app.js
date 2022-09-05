@@ -21,85 +21,10 @@ const loginSubmitButton = document.getElementById("login-submit-button");
 const signUpModal = document.getElementById("signupModal");
 const signUpButton = document.getElementById("signup-submit-button");
 const signUpForm = document.getElementById("signup-form");
+let duplicateUsername = false;
+let duplicateEmail = false;
 
 let regFormToGo;
-
-// client side websocket
-ws.onopen = () => {
-  console.log("Connection to server established...");
-};
-
-submitPostButton.addEventListener("click", function (e) {
-  e.preventDefault();
-  console.log("submit---", postButton);
-  postButton.style.display = "block";
-  postModal.style.display = "none";
-
-  objData["title"] = postTitle.value;
-  objData["postcontent"] = postContent.value;
-  objData["type"] = "post";
-  objData["posttime"] = new Date().toISOString().slice(0, 10);
-
-  postTitle.value = "";
-  postContent.value = "";
-
-  // message sent to server
-  ws.send(JSON.stringify(objData));
-});
-
-// message received from server side
-ws.onmessage = (e) => {
-
-
-  // if (e.data === "user test") {
-  //   console.log("-------------received user message test")
-  // }
-
-  let data = JSON.parse(e.data);
-  console.log("datatype", data.tipo);
-  console.log(data);
-
-  if (data.tipo === "post") {
-    msgArr.push(data.title + "\n" + data.postcontent + "\n" + data.user + " " + data.posttime);
-    content.textContent += "\n" + msgArr[msgArr.length - 1];
-  }
-
-  if (data.tipo === "comment") {
-    alert(`Comment received${data.commentcontent}`);
-  }
-
-  if (data.tipo === "registration") {
-    //console.log('from js', data);
-    // alert("You've been registered");
-  }
-
-  if (data.ValidationMessage === "Username exists") {
-    console.log("username exists");
-  }
-  console.log("Received this message from server....", data);
-};
-
-submitCommentButton.addEventListener("click", function (e) {
-  e.preventDefault();
-  postButton.style.display = "block";
-  postModal.style.display = "none";
-
-  commentData["commentcontent"] = commentContent.value;
-  commentData["type"] = "comment";
-  commentData["commenttime"] = new Date().toISOString().slice(0, 10);
-
-  commentContent.value = "";
-
-  console.log(commentData);
-  ws.send(JSON.stringify(commentData));
-});
-
-postButton.addEventListener("click", function (e) {
-  e.preventDefault();
-
-  postButton.style.display = "none";
-  postModal.style.display = "block";
-});
 
 let modalBackdrop = document.getElementsByClassName("modal-backdrop");
 
@@ -108,52 +33,140 @@ let clientFormValidated = false;
 let usernameInvalid = document.getElementById("validateUsername");
 let passwordInvalid = document.getElementById("validatePassword");
 
+// client side websocket
+ws.onopen = () => {
+    console.log("Connection to server established...");
+};
+
+submitPostButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    console.log("submit---", postButton);
+    postButton.style.display = "block";
+    postModal.style.display = "none";
+
+    objData["title"] = postTitle.value;
+    objData["postcontent"] = postContent.value;
+    objData["type"] = "post";
+    objData["posttime"] = new Date().toISOString().slice(0, 10);
+
+    postTitle.value = "";
+    postContent.value = "";
+
+    // message sent to server
+    ws.send(JSON.stringify(objData));
+});
+
+// message received from server side
+ws.onmessage = (e) => {
+    let data = JSON.parse(e.data);
+    console.log("datatype", data.tipo);
+    console.log(data);
+
+    if (data.tipo === "post") {
+        msgArr.push(
+            data.title +
+                "\n" +
+                data.postcontent +
+                "\n" +
+                data.user +
+                " " +
+                data.posttime
+        );
+        content.textContent += "\n" + msgArr[msgArr.length - 1];
+    }
+
+    if (data.tipo === "comment") {
+        alert(`Comment received${data.commentcontent}`);
+    }
+
+    // if (data.tipo === "registration") {
+    // }
+
+    if (data.ValidationMessage === "Username exists") {
+        duplicateUsername = true;
+
+        console.log("username exists");
+    }
+    console.log("Received this message from server....", data);
+};
+
+submitCommentButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    postButton.style.display = "block";
+    postModal.style.display = "none";
+
+    commentData["commentcontent"] = commentContent.value;
+    commentData["type"] = "comment";
+    commentData["commenttime"] = new Date().toISOString().slice(0, 10);
+
+    commentContent.value = "";
+
+    console.log(commentData);
+    ws.send(JSON.stringify(commentData));
+});
+
+postButton.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    postButton.style.display = "none";
+    postModal.style.display = "block";
+});
+
 const formValidation = () => {
-  let data = new FormData(signUpForm);
-  regFormToGo = Object.fromEntries(data);
-  // set minimum age, currently set in html to min 16, but can still type lower numbers
+    let data = new FormData(signUpForm);
+    regFormToGo = Object.fromEntries(data);
+    // set minimum age, currently set in html to min 16, but can still type lower numbers
 
-  let okForm = true;
+    let okForm = true;
 
+    //need to somehow isolate error messages when sharing
 
-  //need to somehow isolate error messages when sharing 
+    if (regFormToGo.username.length < 5) {
+        usernameInvalid.innerText =
+            "Your username must be at least 5 characters";
+        usernameInvalid.style.display = "block";
+        okForm = false;
+    } else {
+        usernameInvalid.style.display = "none";
+    }
 
-  if (regFormToGo.username.length < 5) {
-    usernameInvalid.innerText = "Your username must be at least 5 characters";
-    usernameInvalid.style.display = "block";
-    okForm = false;
-  } else {
-    usernameInvalid.style.display = "none";
-  }
+    if (/\s/.test(regFormToGo.username)) {
+        usernameInvalid.innerText = "No spaces allowed";
+        usernameInvalid.style.display = "block";
+        okForm = false;
+    }
 
-  if (/\s/.test(regFormToGo.username)) {
-    usernameInvalid.innerText = "No spaces allowed";
-    usernameInvalid.style.display = "block";
-    okForm = false;
-  }
+    if (regFormToGo.password.length < 5) {
+        passwordInvalid.style.display = "block";
+        okForm = false;
+    }
 
-  if (regFormToGo.password.length < 5) {
-    passwordInvalid.style.display = "block";
-    okForm = false;
-  }
-
-  if (okForm) {
-    clientFormValidated = true;
-  }
+    if (okForm) {
+        clientFormValidated = true;
+    }
 };
 // once validation is done we can remove the modal and backdrop
 const formValidated = () => {
-  signUpModal.classList.remove("show");
-  modalBackdrop[0].classList.remove("show");
+    signUpModal.classList.remove("show");
+    modalBackdrop[0].classList.remove("show");
 
-  regFormToGo["type"] = "register";
-  ws.send(JSON.stringify(regFormToGo));
+    regFormToGo["type"] = "register";
+    ws.send(JSON.stringify(regFormToGo));
 };
 
 signUpButton.addEventListener("click", (e) => {
-  clientFormValidated = false;
-  formValidation();
+    clientFormValidated = false;
 
-  if (clientFormValidated) formValidated();
+    if (!duplicateUsername) {
+        formValidation();
+    }
 
+    if (duplicateUsername) {
+      usernameInvalid.innerText =
+          "This username already exists. Please choose another";
+      usernameInvalid.style.display = "block";
+      okForm = false;
+  }
+    
+    if (clientFormValidated) formValidated();
 });
