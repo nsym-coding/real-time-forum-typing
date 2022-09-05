@@ -24,14 +24,17 @@ const signUpForm = document.getElementById("signup-form");
 let duplicateUsername = false;
 let duplicateEmail = false;
 
-let regFormToGo;
+let regFormToGo = {};
 
 let modalBackdrop = document.getElementsByClassName("modal-backdrop");
 
 let clientFormValidated = false;
 
 let usernameInvalid = document.getElementById("validateUsername");
+let emailInvalid = document.getElementById("validateEmail");
 let passwordInvalid = document.getElementById("validatePassword");
+let firstName = document.getElementById("signup-firstname");
+let lastName = document.getElementById("signup-lastname");
 
 // client side websocket
 ws.onopen = () => {
@@ -79,13 +82,8 @@ ws.onmessage = (e) => {
         alert(`Comment received${data.commentcontent}`);
     }
 
-    // if (data.tipo === "registration") {
-    // }
-
-    if (data.ValidationMessage === "Username exists") {
-        duplicateUsername = true;
-
-        console.log("username exists");
+    if (data.tipo === "formValidation") {
+        if (formValidation(data)) formValidated();
     }
     console.log("Received this message from server....", data);
 };
@@ -112,61 +110,63 @@ postButton.addEventListener("click", function (e) {
     postModal.style.display = "block";
 });
 
-const formValidation = () => {
-    let data = new FormData(signUpForm);
-    regFormToGo = Object.fromEntries(data);
-    // set minimum age, currently set in html to min 16, but can still type lower numbers
-
+const formValidation = (input) => {
     let okForm = true;
 
-    //need to somehow isolate error messages when sharing
-
-    if (regFormToGo.username.length < 5) {
+    usernameInvalid.innerText = "";
+    console.log("data.usernameLength");
+    if (input.usernameLength) {
         usernameInvalid.innerText =
-            "Your username must be at least 5 characters";
+            "Your username must be at least 5 characters\n";
+
         usernameInvalid.style.display = "block";
         okForm = false;
-    } else {
-        usernameInvalid.style.display = "none";
+        console.log("usernameLength");
     }
-
-    if (/\s/.test(regFormToGo.username)) {
-        usernameInvalid.innerText = "No spaces allowed";
+    if (input.usernameDuplicate) {
+        usernameInvalid.innerText =
+            "This username already exists. Please choose another";
         usernameInvalid.style.display = "block";
         okForm = false;
     }
 
-    if (regFormToGo.password.length < 5) {
+    if (input.usernameSpace) {
+        usernameInvalid.innerText += "No spaces allowed in username";
+        usernameInvalid.style.display = "block";
+        okForm = false;
+    }
+
+    if (input.emailDuplicate) {
+        emailInvalid.innerText = "This email already exists. Please log in";
+        emailInvalid.style.display = "block";
+        okForm = false;
+    }
+
+    if (input.passwordLength) {
+        passwordInvalid.innerText =
+            "Your password must be longer than 5 characters";
         passwordInvalid.style.display = "block";
         okForm = false;
     }
-
-    if (okForm) {
-        clientFormValidated = true;
-    }
+    return okForm;
 };
 // once validation is done we can remove the modal and backdrop
 const formValidated = () => {
+    signUpForm.reset();
     signUpModal.classList.remove("show");
     modalBackdrop[0].classList.remove("show");
-
-    regFormToGo["type"] = "register";
-    ws.send(JSON.stringify(regFormToGo));
 };
 
 signUpButton.addEventListener("click", (e) => {
-    clientFormValidated = false;
+    let data = new FormData(signUpForm);
+    regFormToGo = Object.fromEntries(data);
 
-    if (!duplicateUsername) {
-        formValidation();
-    }
+    //clientFormValidated = false;
 
-    if (duplicateUsername) {
-      usernameInvalid.innerText =
-          "This username already exists. Please choose another";
-      usernameInvalid.style.display = "block";
-      okForm = false;
-  }
-    
-    if (clientFormValidated) formValidated();
+    regFormToGo["type"] = "register";
+    ws.send(JSON.stringify(regFormToGo));
+
+    //formValidation();
+
+    //if (clientFormValidated) formValidated();
 });

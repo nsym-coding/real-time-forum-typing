@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"real-time-forum/users"
 
@@ -50,7 +51,12 @@ type Register struct {
 }
 
 type formValidation struct {
-	ValidationMessage string
+	UsernameLength    bool   `json:"usernameLength"`
+	UsernameSpace     bool   `json:"usernameSpace"`
+	UsernameDuplicate bool   `json:"usernameDuplicate"`
+	EmailDuplicate    bool   `json:"emailDuplicate"`
+	PasswordLength    bool   `json:"passwordLength"`
+	Tipo              string `json:"tipo"`
 }
 
 var (
@@ -117,18 +123,39 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		} else if f.Type == "register" {
 			fmt.Println("-----", f.Register.Age)
 
+			var u formValidation
+			u.Tipo = "formValidation"
+			canRegister := true
+			if len(f.Username) < 5 {
+				u.UsernameLength = true
+				canRegister = false
+			}
+			if strings.Contains(f.Username, " ") {
+				u.UsernameSpace = true
+				canRegister = false
+			}
 			if users.UserExists(db, f.Username) {
-				var u = formValidation{"Username exists"}
-				wsConn.WriteJSON(u)
+				u.UsernameDuplicate = true
+				canRegister = false
+
 			}
 
 			if users.EmailExists(db, f.Email) {
-				var u = formValidation{"Email exists"}
-				wsConn.WriteJSON(u)
+				u.EmailDuplicate = true
+				canRegister = false
+
 			}
 
-			if !users.UserExists(db, f.Username) && !users.EmailExists(db, f.Email) {
+			if len(f.Password) < 5 {
+				u.PasswordLength = true
+				canRegister = false
+
+			}
+			wsConn.WriteJSON(u)
+
+			if canRegister {
 				users.RegisterUser(db, f.Username, f.Register.Age, f.Gender, f.FirstName, f.LastName, []byte(f.Password), f.Email)
+				// wsConn.WriteJSON(u)
 			}
 
 			// f.Register.Username = "tols"
