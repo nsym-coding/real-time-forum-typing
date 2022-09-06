@@ -76,6 +76,7 @@ type loginValidation struct {
 
 var (
 	clients                  = make(map[*websocket.Conn]bool)
+	loggedInUsers            = make(map[string]*websocket.Conn)
 	broadcastChannelPosts    = make(chan *Posts, 1)
 	broadcastChannelComments = make(chan *Comments, 1)
 	broadcastChannelRegister = make(chan *Register, 1)
@@ -172,7 +173,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			wsConn.WriteJSON(u)
 
 			if canRegister {
-				//hash password
+				// hash password
 				var hash []byte
 				hash, err = bcrypt.GenerateFromPassword([]byte(f.Password), bcrypt.DefaultCost)
 				if err != nil {
@@ -202,13 +203,15 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 					wsConn.WriteJSON(loginData)
 				} else {
 					loginData.SuccessfulLogin = true
+					loggedInUsers[f.Login.LoginUsername] = wsConn
+					fmt.Println(loggedInUsers)
 					wsConn.WriteJSON(loginData)
 					fmt.Println("SUCCESSFUL LOGIN")
 				}
 			}
 
-			//Check username exists
-			//Check the password matches
+			// Check username exists
+			// Check the password matches
 		}
 
 		log.Println("Checking what's in f ---> ", f)
