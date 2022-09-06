@@ -11,6 +11,7 @@ import (
 	"real-time-forum/users"
 
 	"github.com/gorilla/websocket"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type T struct {
@@ -69,6 +70,7 @@ type formValidation struct {
 type loginValidation struct {
 	InvalidUsername bool   `json:"invalidUsername"`
 	InvalidPassword bool   `json:"invalidPassword"`
+	SuccessfulLogin bool   `json:"successfulLogin"`
 	Tipo            string `json:"tipo"`
 }
 
@@ -170,7 +172,13 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			wsConn.WriteJSON(u)
 
 			if canRegister {
-				users.RegisterUser(db, f.Username, f.Register.Age, f.Gender, f.FirstName, f.LastName, []byte(f.Password), f.Email)
+				//hash password
+				var hash []byte
+				hash, err = bcrypt.GenerateFromPassword([]byte(f.Password), bcrypt.DefaultCost)
+				if err != nil {
+					fmt.Println("bcrypt err:", err)
+				}
+				users.RegisterUser(db, f.Username, f.Register.Age, f.Gender, f.FirstName, f.LastName, hash, f.Email)
 				// wsConn.WriteJSON(u)
 			}
 
@@ -183,6 +191,24 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		} else if f.Type == "login" {
 			var loginData loginValidation
 			loginData.Tipo = "loginValidation"
+
+			if !users.UserExists(db, f.Login.LoginUsername) {
+				fmt.Println("Checking f.login.loginusername --> ", f.Login.LoginUsername)
+				loginData.InvalidUsername = true
+				wsConn.WriteJSON(loginData)
+			} else if users.UserExists(db, f.Login.LoginUsername) {
+				if !users.CorrectPassword(db, f.Login.LoginUsername, f.Login.LoginPassword) {
+					loginData.InvalidPassword = true
+					wsConn.WriteJSON(loginData)
+				} else {
+					loginData.SuccessfulLogin = true
+					wsConn.WriteJSON(loginData)
+					fmt.Println("SUCCESSFUL LOGIN")
+				}
+			}
+
+			//Check username exists
+			//Check the password matches
 		}
 
 		log.Println("Checking what's in f ---> ", f)

@@ -3,6 +3,8 @@ package users
 import (
 	"database/sql"
 	"fmt"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // this func registers a users username, email, firstname, lastname, password(unhashed) and age
@@ -45,4 +47,19 @@ func EmailExists(db *sql.DB, email string) bool {
 		return true
 	}
 	return false
+}
+
+func CorrectPassword(db *sql.DB, username, password string) bool {
+	//get user from db
+	userStmt := "SELECT hash from users WHERE username = ?"
+	rowU := db.QueryRow(userStmt, username)
+	var hash string
+	err := rowU.Scan(&hash)
+	if err != nil {
+		fmt.Println("Error in finding hash, ", err)
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+
+	return err == nil
 }
