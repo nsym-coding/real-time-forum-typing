@@ -3,9 +3,13 @@ package users
 import (
 	"database/sql"
 	"fmt"
+	"net/http"
 
+	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
 )
+
+var LoggedInUsers = make(map[string]string)
 
 // this func registers a users username, email, firstname, lastname, password(unhashed) and age
 func RegisterUser(db *sql.DB, username string, age string, gender string, firstname string, lastname string, hash []byte, email string) {
@@ -62,4 +66,30 @@ func CorrectPassword(db *sql.DB, username, password string) bool {
 	err = bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 
 	return err == nil
+}
+
+func CreateCookie(writer http.ResponseWriter, username string) {
+
+	//NO ACTIVE SESSION/FIRST TIME
+	id := uuid.Must(uuid.NewV4())
+	c := &http.Cookie{
+		Name:  username,
+		Value: id.String(),
+	}
+	http.SetCookie(w, c)
+	users.DbSessions[username] = c.Value
+	// tpl.ExecuteTemplate(w, "loginauth.html", userID)
+	http.Redirect(w, r, "/home", http.StatusSeeOther)
+	/////////remove///////////////////
+	fmt.Println("sessionbool", users.SessionExists(username))
+	for _, cookie := range r.Cookies() {
+		fmt.Println()
+		fmt.Println("Name : ", cookie.Name)
+		fmt.Println("Value/UUID : ", cookie.Value)
+	}
+	fmt.Println("First time log-in successful")
+	fmt.Println()
+	/////////////////////////////////////
+	return
+
 }

@@ -55,13 +55,18 @@
                     <div class="modal-body">
                         <label for="username">Username</label>
                         <input type="text" id="login-username" name="loginUsername">
+                        <div id="validateLoginUsername" class="invalid-feedback" style="display: none">
+                        </div>
                         <label for="password">Password</label>
-                        <input type="text" id="login-password" name="loginPassword">
+                        <input type="password" id="login-password" name="loginPassword">
+                        <div id="validateLoginPassword" class="invalid-feedback" style="display: none">
+                        </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="login-signup"
                             data-bs-toggle="modal" data-bs-target="#signupModal">Sign Up</button>
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                        <button type="button" class="btn btn-primary" 
                             id="login-submit-button">Login</button>
                     </div>
                 </form>

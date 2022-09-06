@@ -21,19 +21,21 @@ const loginSubmitButton = document.getElementById("login-submit-button");
 const signUpModal = document.getElementById("signupModal");
 const signUpButton = document.getElementById("signup-submit-button");
 const signUpForm = document.getElementById("signup-form");
-const loginForm = document.getElementById("login-form")
+const loginForm = document.getElementById("login-form");
 let duplicateUsername = false;
 let duplicateEmail = false;
 
 let regFormToGo = {};
-
-let modalBackdrop = document.getElementsByClassName("modal-backdrop");
 
 let clientFormValidated = false;
 
 let usernameInvalid = document.getElementById("validateUsername");
 let emailInvalid = document.getElementById("validateEmail");
 let passwordInvalid = document.getElementById("validatePassword");
+
+let loginNameInvalid = document.getElementById("validateLoginUsername");
+let loginPasswordInvalid = document.getElementById("validateLoginPassword");
+let loginModal = document.getElementById("loginModal");
 
 // client side websocket
 ws.onopen = () => {
@@ -64,16 +66,20 @@ ws.onmessage = (e) => {
   console.log("datatype", data.tipo);
   console.log(data);
 
+  if (data.tipo === "loginValidation") {
+    loginPasswordInvalid.innerText = "";
+    if (data.successfulLogin) {
+      formValidated(loginForm, loginModal);
+
+      //login
+    } else {
+      loginPasswordInvalid.innerText = "Username or password is incorrect";
+      loginPasswordInvalid.style.display = "block";
+    }
+  }
+
   if (data.tipo === "post") {
-    msgArr.push(
-      data.title +
-      "\n" +
-      data.postcontent +
-      "\n" +
-      data.user +
-      " " +
-      data.posttime
-    );
+    msgArr.push(data.title + "\n" + data.postcontent + "\n" + data.user + " " + data.posttime);
     content.textContent += "\n" + msgArr[msgArr.length - 1];
   }
 
@@ -82,7 +88,7 @@ ws.onmessage = (e) => {
   }
 
   if (data.tipo === "formValidation") {
-    if (formValidation(data)) formValidated();
+    if (formValidation(data)) formValidated(signUpForm, signUpModal);
   }
   console.log("Received this message from server....", data);
 };
@@ -115,16 +121,14 @@ const formValidation = (input) => {
   usernameInvalid.innerText = "";
   console.log("data.usernameLength");
   if (input.usernameLength) {
-    usernameInvalid.innerText =
-      "Your username must be at least 5 characters\n";
+    usernameInvalid.innerText = "Your username must be at least 5 characters\n";
 
     usernameInvalid.style.display = "block";
     okForm = false;
     console.log("usernameLength");
   }
   if (input.usernameDuplicate) {
-    usernameInvalid.innerText =
-      "This username already exists. Please choose another";
+    usernameInvalid.innerText = "This username already exists. Please choose another";
     usernameInvalid.style.display = "block";
     okForm = false;
   }
@@ -142,17 +146,19 @@ const formValidation = (input) => {
   }
 
   if (input.passwordLength) {
-    passwordInvalid.innerText =
-      "Your password must be longer than 5 characters";
+    passwordInvalid.innerText = "Your password must be longer than 5 characters";
     passwordInvalid.style.display = "block";
     okForm = false;
   }
   return okForm;
 };
 // once validation is done we can remove the modal and backdrop
-const formValidated = () => {
-  signUpForm.reset();
-  signUpModal.classList.remove("show");
+const formValidated = (form, modal) => {
+  let modalBackdrop = document.getElementsByClassName("modal-backdrop");
+
+  //signup/login
+  form.reset();
+  modal.classList.remove("show");
   modalBackdrop[0].classList.remove("show");
 };
 
@@ -163,10 +169,10 @@ signUpButton.addEventListener("click", (e) => {
   ws.send(JSON.stringify(regFormToGo));
 });
 
-let loginFormToGo = {}
+let loginFormToGo = {};
 loginSubmitButton.addEventListener("click", () => {
   let loginData = new FormData(loginForm);
   loginFormToGo = Object.fromEntries(loginData);
-  loginFormToGo["type"] = "login"
-  ws.send(JSON.stringify(loginFormToGo))
-}) 
+  loginFormToGo["type"] = "login";
+  ws.send(JSON.stringify(loginFormToGo));
+});
