@@ -21,6 +21,7 @@ const loginSubmitButton = document.getElementById("login-submit-button");
 const signUpModal = document.getElementById("signupModal");
 const signUpButton = document.getElementById("signup-submit-button");
 const signUpForm = document.getElementById("signup-form");
+const loginForm = document.getElementById("login-form")
 let duplicateUsername = false;
 let duplicateEmail = false;
 
@@ -33,140 +34,139 @@ let clientFormValidated = false;
 let usernameInvalid = document.getElementById("validateUsername");
 let emailInvalid = document.getElementById("validateEmail");
 let passwordInvalid = document.getElementById("validatePassword");
-let firstName = document.getElementById("signup-firstname");
-let lastName = document.getElementById("signup-lastname");
 
 // client side websocket
 ws.onopen = () => {
-    console.log("Connection to server established...");
+  console.log("Connection to server established...");
 };
 
 submitPostButton.addEventListener("click", function (e) {
-    e.preventDefault();
-    console.log("submit---", postButton);
-    postButton.style.display = "block";
-    postModal.style.display = "none";
+  e.preventDefault();
+  console.log("submit---", postButton);
+  postButton.style.display = "block";
+  postModal.style.display = "none";
 
-    objData["title"] = postTitle.value;
-    objData["postcontent"] = postContent.value;
-    objData["type"] = "post";
-    objData["posttime"] = new Date().toISOString().slice(0, 10);
+  objData["title"] = postTitle.value;
+  objData["postcontent"] = postContent.value;
+  objData["type"] = "post";
+  objData["posttime"] = new Date().toISOString().slice(0, 10);
 
-    postTitle.value = "";
-    postContent.value = "";
+  postTitle.value = "";
+  postContent.value = "";
 
-    // message sent to server
-    ws.send(JSON.stringify(objData));
+  // message sent to server
+  ws.send(JSON.stringify(objData));
 });
 
 // message received from server side
 ws.onmessage = (e) => {
-    let data = JSON.parse(e.data);
-    console.log("datatype", data.tipo);
-    console.log(data);
+  let data = JSON.parse(e.data);
+  console.log("datatype", data.tipo);
+  console.log(data);
 
-    if (data.tipo === "post") {
-        msgArr.push(
-            data.title +
-                "\n" +
-                data.postcontent +
-                "\n" +
-                data.user +
-                " " +
-                data.posttime
-        );
-        content.textContent += "\n" + msgArr[msgArr.length - 1];
-    }
+  if (data.tipo === "post") {
+    msgArr.push(
+      data.title +
+      "\n" +
+      data.postcontent +
+      "\n" +
+      data.user +
+      " " +
+      data.posttime
+    );
+    content.textContent += "\n" + msgArr[msgArr.length - 1];
+  }
 
-    if (data.tipo === "comment") {
-        alert(`Comment received${data.commentcontent}`);
-    }
+  if (data.tipo === "comment") {
+    alert(`Comment received${data.commentcontent}`);
+  }
 
-    if (data.tipo === "formValidation") {
-        if (formValidation(data)) formValidated();
-    }
-    console.log("Received this message from server....", data);
+  if (data.tipo === "formValidation") {
+    if (formValidation(data)) formValidated();
+  }
+  console.log("Received this message from server....", data);
 };
 
 submitCommentButton.addEventListener("click", function (e) {
-    e.preventDefault();
-    postButton.style.display = "block";
-    postModal.style.display = "none";
+  e.preventDefault();
+  postButton.style.display = "block";
+  postModal.style.display = "none";
 
-    commentData["commentcontent"] = commentContent.value;
-    commentData["type"] = "comment";
-    commentData["commenttime"] = new Date().toISOString().slice(0, 10);
+  commentData["commentcontent"] = commentContent.value;
+  commentData["type"] = "comment";
+  commentData["commenttime"] = new Date().toISOString().slice(0, 10);
 
-    commentContent.value = "";
+  commentContent.value = "";
 
-    console.log(commentData);
-    ws.send(JSON.stringify(commentData));
+  console.log(commentData);
+  ws.send(JSON.stringify(commentData));
 });
 
 postButton.addEventListener("click", function (e) {
-    e.preventDefault();
+  e.preventDefault();
 
-    postButton.style.display = "none";
-    postModal.style.display = "block";
+  postButton.style.display = "none";
+  postModal.style.display = "block";
 });
 
 const formValidation = (input) => {
-    let okForm = true;
+  let okForm = true;
 
-    usernameInvalid.innerText = "";
-    console.log("data.usernameLength");
-    if (input.usernameLength) {
-        usernameInvalid.innerText =
-            "Your username must be at least 5 characters\n";
+  usernameInvalid.innerText = "";
+  console.log("data.usernameLength");
+  if (input.usernameLength) {
+    usernameInvalid.innerText =
+      "Your username must be at least 5 characters\n";
 
-        usernameInvalid.style.display = "block";
-        okForm = false;
-        console.log("usernameLength");
-    }
-    if (input.usernameDuplicate) {
-        usernameInvalid.innerText =
-            "This username already exists. Please choose another";
-        usernameInvalid.style.display = "block";
-        okForm = false;
-    }
+    usernameInvalid.style.display = "block";
+    okForm = false;
+    console.log("usernameLength");
+  }
+  if (input.usernameDuplicate) {
+    usernameInvalid.innerText =
+      "This username already exists. Please choose another";
+    usernameInvalid.style.display = "block";
+    okForm = false;
+  }
 
-    if (input.usernameSpace) {
-        usernameInvalid.innerText += "No spaces allowed in username";
-        usernameInvalid.style.display = "block";
-        okForm = false;
-    }
+  if (input.usernameSpace) {
+    usernameInvalid.innerText += "No spaces allowed in username";
+    usernameInvalid.style.display = "block";
+    okForm = false;
+  }
 
-    if (input.emailDuplicate) {
-        emailInvalid.innerText = "This email already exists. Please log in";
-        emailInvalid.style.display = "block";
-        okForm = false;
-    }
+  if (input.emailDuplicate) {
+    emailInvalid.innerText = "This email already exists. Please log in";
+    emailInvalid.style.display = "block";
+    okForm = false;
+  }
 
-    if (input.passwordLength) {
-        passwordInvalid.innerText =
-            "Your password must be longer than 5 characters";
-        passwordInvalid.style.display = "block";
-        okForm = false;
-    }
-    return okForm;
+  if (input.passwordLength) {
+    passwordInvalid.innerText =
+      "Your password must be longer than 5 characters";
+    passwordInvalid.style.display = "block";
+    okForm = false;
+  }
+  return okForm;
 };
 // once validation is done we can remove the modal and backdrop
 const formValidated = () => {
-    signUpForm.reset();
-    signUpModal.classList.remove("show");
-    modalBackdrop[0].classList.remove("show");
+  signUpForm.reset();
+  signUpModal.classList.remove("show");
+  modalBackdrop[0].classList.remove("show");
 };
 
 signUpButton.addEventListener("click", (e) => {
-    let data = new FormData(signUpForm);
-    regFormToGo = Object.fromEntries(data);
-
-    //clientFormValidated = false;
-
-    regFormToGo["type"] = "register";
-    ws.send(JSON.stringify(regFormToGo));
-
-    //formValidation();
-
-    //if (clientFormValidated) formValidated();
+  let data = new FormData(signUpForm);
+  regFormToGo = Object.fromEntries(data);
+  regFormToGo["type"] = "register";
+  ws.send(JSON.stringify(regFormToGo));
 });
+
+let loginFormToGo = {}
+loginSubmitButton.addEventListener("click", () => {
+  let loginData = new FormData(loginForm);
+  loginFormToGo = Object.fromEntries(loginData);
+  loginFormToGo["type"] = "login"
+  ws.send(JSON.stringify(loginFormToGo))
+}) 

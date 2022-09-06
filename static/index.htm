@@ -51,20 +51,20 @@
 
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <label>Username
-                        <input type="text" id="login-username">
-                    </label>
-                    <label>Password
-                        <input type="text" id="login-password">
-                    </label>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="login-signup"
-                        data-bs-toggle="modal" data-bs-target="#signupModal">Sign Up</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
-                        id="login-submit-button">Login</button>
-                </div>
+                <form id="login-form" action="javascript:void(0)">
+                    <div class="modal-body">
+                        <label for="username">Username</label>
+                        <input type="text" id="login-username" name="username">
+                        <label for="password">Password</label>
+                        <input type="text" id="login-password" name="password">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="login-signup"
+                            data-bs-toggle="modal" data-bs-target="#signupModal">Sign Up</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                            id="login-submit-button">Login</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -98,7 +98,7 @@
                         <label for="signupemail">Email </label>
                         <input type="email" id="signup-email" name="email" required>
                         <div id="validateEmail" class="invalid-feedback" style="display: none">
-                            </div>
+                        </div>
                         <label for="gender">Gender</label>
                         <label for="male">M
                             <input type="radio" id="signup-male" name="gender" value="M" checked>

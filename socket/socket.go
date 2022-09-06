@@ -18,6 +18,7 @@ type T struct {
 	*Posts
 	*Comments
 	*Register
+	*Login
 }
 
 type TypeChecker struct {
@@ -50,6 +51,12 @@ type Register struct {
 	Tipo      string `json:"tipo"`
 }
 
+type Login struct {
+	LoginUsername string `json:"loginUsername"`
+	LoginPassword string `json:"loginPassword"`
+	Tipo          string `json:"tipo"`
+}
+
 type formValidation struct {
 	UsernameLength    bool   `json:"usernameLength"`
 	UsernameSpace     bool   `json:"usernameSpace"`
@@ -57,6 +64,12 @@ type formValidation struct {
 	EmailDuplicate    bool   `json:"emailDuplicate"`
 	PasswordLength    bool   `json:"passwordLength"`
 	Tipo              string `json:"tipo"`
+}
+
+type loginValidation struct {
+	InvalidUsername bool   `json:"invalidUsername"`
+	InvalidPassword bool   `json:"invalidPassword"`
+	Tipo            string `json:"tipo"`
 }
 
 var (
@@ -82,6 +95,9 @@ func (t *T) UnmarshalForumData(data []byte) error {
 	case "register":
 		t.Register = &Register{}
 		return json.Unmarshal(data, t.Register)
+	case "login":
+		t.Login = &Login{}
+		return json.Unmarshal(data, t.Login)
 	default:
 		return fmt.Errorf("unrecognized type value %q", t.Type)
 	}
@@ -164,6 +180,9 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			// below solely for testing
 			broadcastChannelRegister <- f.Register
 
+		} else if f.Type == "login" {
+			var loginData loginValidation
+			loginData.Tipo = "loginValidation"
 		}
 
 		log.Println("Checking what's in f ---> ", f)
