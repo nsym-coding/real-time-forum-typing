@@ -62,14 +62,25 @@
     color: #101F30;
 } */
 
+
 #login-button {
     position: absolute;
     top: 2%;
     left: 87%;
     /* width: 8%;
     height: 5%; */
-    background-color: green;
 }
+
+
+#logout-button {
+    display: none;
+    position: absolute;
+    top: 2%;
+    left: 87%;
+    /* width: 8%;
+    height: 5%; */
+}
+
 
 #post-modal {
     display: none;

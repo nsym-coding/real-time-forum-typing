@@ -16,12 +16,13 @@
     <div class="main-container">
 
         <!-- login Button trigger modal -->
-        <button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#loginModal"
+        <button type="button" class="btn btn-success " data-bs-toggle="modal" data-bs-target="#loginModal"
             id="login-button">
             Login
         </button>
+        <button type="button" class="btn btn-danger" id="logout-button">Logout</button>
 
-        <div class="online"></div>
+        <div class="online" ></div>
         <div class="post-container" id="post-feed">
             <!-- <div class="content" id="content"></div> -->
             <div class='post-modal' id="post-modal">
@@ -50,7 +51,10 @@
                     <h5 class="modal-title" id="loginModalTitle">Login</h5>
 
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    
                 </div>
+                
+
                 <form id="login-form" action="javascript:void(0)">
                     <div class="modal-body">
                         <label for="username">Username</label>
@@ -64,7 +68,7 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="login-signup"
+                        <button type="button" class="btn btn-secondary" id="login-signup"
                             data-bs-toggle="modal" data-bs-target="#signupModal">Sign Up</button>
                         <button type="button" class="btn btn-primary" 
                             id="login-submit-button">Login</button>

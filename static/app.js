@@ -37,6 +37,10 @@ let loginNameInvalid = document.getElementById("validateLoginUsername");
 let loginPasswordInvalid = document.getElementById("validateLoginPassword");
 let loginModal = document.getElementById("loginModal");
 
+
+let userLoggedIn = false
+let logOutButton = document.getElementById("logout-button")
+
 // client side websocket
 ws.onopen = () => {
   console.log("Connection to server established...");
@@ -69,7 +73,12 @@ ws.onmessage = (e) => {
   if (data.tipo === "loginValidation") {
     loginPasswordInvalid.innerText = "";
     if (data.successfulLogin) {
-      formValidated(loginForm, loginModal);
+      //successful login
+      logOutButton.style.display = "block"
+      loginButton.style.display = "none"
+     
+
+    formValidated(loginForm, loginModal);
 
       //login
     } else {
@@ -176,3 +185,5 @@ loginSubmitButton.addEventListener("click", () => {
   loginFormToGo["type"] = "login";
   ws.send(JSON.stringify(loginFormToGo));
 });
+
+
