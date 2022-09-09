@@ -23,21 +23,24 @@ align-items: center;
 }
 
 #postfeed {
+  left: 2%;
   position: relative;
   top: 20%;
   float: left;
-  width: 68%;
-  height: 80%;
+  width: 66%;
+  height: 79%;
   background: rgb(253, 253, 253);
   border-radius: 5%;
 }
 
 #onlineusers {
+  bottom: 25%;
+  left: 70%;
   position: relative;
   top: 20%;
-  float: left;
+
   width: 28%;
-  height: 80%;
+  height: 79%;
   background: rgb(253, 253, 253);
   border-radius: 5%;
 }
