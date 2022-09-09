@@ -19,15 +19,42 @@ align-items: center;
     height: 80vh;
     width: 80vw;
     background: rgb(236, 236, 238);
-    border-radius: 2%;
+    border-radius: 5%;
+}
+
+#postfeed {
+  position: relative;
+  top: 20%;
+  float: left;
+  width: 68%;
+  height: 80%;
+  background: rgb(253, 253, 253);
+  border-radius: 5%;
+}
+
+#onlineusers {
+  position: relative;
+  top: 20%;
+  float: left;
+  width: 28%;
+  height: 80%;
+  background: rgb(253, 253, 253);
+  border-radius: 5%;
 }
 
 
 
 .header {
+  padding-top: 5%;
+  border-radius: 2%;
+  position: absolute;
+  width: 80vw;
+  z-index: 1;
     overflow: hidden;
-    background-color: #f1f1f1;
-    padding: 20px 10px;
+    background-color: rgb(255, 255, 255);
+   
+    border-bottom: 5px solid rgb(248, 248, 248);
+   
   }
   
   .header a {
@@ -38,7 +65,8 @@ align-items: center;
     text-decoration: none;
     font-size: 18px; 
     line-height: 25px;
-    border-radius: 4px;
+    border-radius: 50%;
+    
   }
   
   
