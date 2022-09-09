@@ -22,13 +22,15 @@ align-items: center;
     border-radius: 5%;
 }
 
+
+
 #postfeed {
   left: 2%;
   position: relative;
   top: 20%;
   float: left;
   width: 66%;
-  height: 79%;
+  height: 75%;
   background: rgb(253, 253, 253);
   border-radius: 5%;
 }
@@ -37,27 +39,41 @@ align-items: center;
   bottom: 25%;
   left: 70%;
   position: relative;
-  top: 20%;
-
+  top: 30%;
   width: 28%;
-  height: 79%;
+  height: 65%;
   background: rgb(253, 253, 253);
-  border-radius: 5%;
+  border-radius: 30px;
+}
+#new-post-btn {
+  position: absolute;
+  top:-15%;
+  width: 100%;
+  background: rgb(61,91,240);
+  height: 3vh;
+  font-family: 'Work Sans', sans-serif;
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+color:white;
+text-align: center;
+border-radius: 10px;
+padding-top: 3%;
 }
 
-
-
 .header {
-  padding-top: 5%;
-  border-radius: 2%;
-  position: absolute;
-  width: 80vw;
-  z-index: 1;
+    top: 10%;
+    height: 5vh;
+    padding-top: 5%;
+    border-radius: 2%;
+    position: absolute;
+    width: 80vw;
+    z-index: 1;
     overflow: hidden;
-    background-color: rgb(255, 255, 255);
-   
-    border-bottom: 5px solid rgb(248, 248, 248);
-   
+    background: rgb(253, 253, 253);
+    border-top-left-radius: 40px;
+    border-top-right-radius: 40px;
+    overflow: hidden;
   }
   
   .header a {
@@ -66,10 +82,12 @@ align-items: center;
     text-align: center;
     padding: 12px;
     text-decoration: none;
-    font-size: 18px; 
     line-height: 25px;
     border-radius: 50%;
-    
+    font-family: 'Work Sans', sans-serif;
+font-style: normal;
+font-weight: 500;
+font-size: 18px;
   }
   
   
