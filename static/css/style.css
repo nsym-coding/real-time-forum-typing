@@ -5,10 +5,14 @@ html, body {
     overflow: hidden
   }
 
+  *{
+    font-family: Gill Sans, sans-serif;
+  }
+
 
 #maincontainer{
-height: 100vh;
-width: 100vw;
+height: 100%;
+width: 100%;
 background: rgb(61,91,240);
 display: flex;
 justify-content: center;
@@ -16,13 +20,18 @@ align-items: center;
 }
 
 #forumbody{
-    height: 80vh;
-    width: 80vw;
+    height: 80%;
+    width: 80%;
     background: rgb(236, 236, 238);
     border-radius: 5%;
 }
 
-
+.far{
+  position: absolute;
+  top: 60%;
+  left: 2.5%;
+  color: rgb(61,91,240);
+}
 
 #postfeed {
   left: 2%;
@@ -33,6 +42,13 @@ align-items: center;
   height: 75%;
   background: rgb(253, 253, 253);
   border-radius: 5%;
+}
+
+#logo-text {
+  float: right;
+  font-size: 67.5%;
+  padding-top: 8px;
+  padding-left: 4px;
 }
 
 #onlineusers {
@@ -50,7 +66,7 @@ align-items: center;
   top:-15%;
   width: 100%;
   background: rgb(61,91,240);
-  height: 3vh;
+  height: 6%;
   font-family: Gill Sans, sans-serif;
   font-style: normal;
   font-weight: 400;
@@ -63,11 +79,11 @@ align-items: center;
 
 .header {
     top: 10%;
-    height: 5vh;
+    height: 5%;
     padding-top: 5%;
     border-radius: 2%;
     position: absolute;
-    width: 80vw;
+    width: 80%;
     z-index: 1;
     overflow: hidden;
     background: rgb(253, 253, 253);
@@ -77,7 +93,7 @@ align-items: center;
   }
   
   .header a {
-    float: left;
+    float: right;
     color: black;
     text-align: center;
     padding: 12px;
