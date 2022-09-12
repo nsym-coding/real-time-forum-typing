@@ -28,9 +28,23 @@ align-items: center;
 
 .far{
   position: absolute;
-  top: 60%;
-  left: 2.5%;
+  top: 40%;
+  left: 40%;
   color: rgb(61,91,240);
+}
+.fa-arrow-right-from-bracket{
+  position: absolute;
+  color: rgb(61,91,240);
+  left:95%;
+  top:78%;
+  cursor: pointer;
+} 
+
+#active-username{
+  position: absolute;
+  left:85%;
+  top:70%;
+  font-size: 160%;
 }
 
 #postfeed {
@@ -75,6 +89,7 @@ align-items: center;
   text-align: center;
   border-radius: 10px;
   padding-top: 3%;
+  cursor: pointer;
 }
 
 .header {
@@ -86,7 +101,8 @@ align-items: center;
     width: 80%;
     z-index: 1;
     overflow: hidden;
-    background: rgb(253, 253, 253);
+    background: rgb(236, 236, 238);
+    /* background: rgb(253, 253, 253); */
     border-top-left-radius: 40px;
     border-top-right-radius: 40px;
     overflow: hidden;
