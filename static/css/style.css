@@ -51,14 +51,14 @@ align-items: center;
   width: 100%;
   background: rgb(61,91,240);
   height: 3vh;
-  font-family: 'Work Sans', sans-serif;
-font-style: normal;
-font-weight: 400;
-font-size: 14px;
-color:white;
-text-align: center;
-border-radius: 10px;
-padding-top: 3%;
+  font-family: Gill Sans, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  color:white;
+  text-align: center;
+  border-radius: 10px;
+  padding-top: 3%;
 }
 
 .header {
@@ -84,10 +84,10 @@ padding-top: 3%;
     text-decoration: none;
     line-height: 25px;
     border-radius: 50%;
-    font-family: 'Work Sans', sans-serif;
-font-style: normal;
-font-weight: 500;
-font-size: 18px;
+    font-family: Gill Sans, sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
   }
   
   
