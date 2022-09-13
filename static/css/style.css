@@ -5,6 +5,10 @@ html, body {
     overflow: hidden
   }
 
+  :root{
+    --ourBlue: rgb(61,91,240);
+  }
+
   *{
     font-family: Gill Sans, sans-serif;
   }
@@ -13,7 +17,7 @@ html, body {
 #maincontainer{
 height: 100vh;
 width: 100vw;
-background: rgb(61,91,240);
+background: var(--ourBlue);
 display: flex;
 justify-content: center;
 align-items: center;
@@ -31,18 +35,26 @@ align-items: center;
   position: absolute;
   top: 7.5vh;
   left: 22vw;
-  color: rgb(61,91,240);
+  color: var(--ourBlue);
 }
+
+#user-div{
+  display: flex;
+  justify-content: space-between;
+  width: 9vw;
+  padding-right: 2vw;
+}
+
 .fa-arrow-right-from-bracket{
-  position: absolute;
-  color: rgb(61,91,240);
+  
+  color: var(--ourBlue);
   left:78vw;
   top:9.5vh;
   cursor: pointer;
 } 
 
 #active-username{
-  position: absolute;
+  
   left:70vw;
   top:9.5vh;
   font-size:medium;
@@ -71,18 +83,18 @@ align-items: center;
   bottom: 25vh;
   left:56.5vw;
   position: relative;
-  top: 30%;
-  width: 28%;
-  height: 65%;
+  top: 24.5vh;
+  width: 22.5vw;
+  height: 52vh;
   background: rgb(253, 253, 253);
   border-radius: 30px;
 }
 #new-post-btn {
   position: absolute;
-  top:-15%;
-  width: 100%;
-  background: rgb(61,91,240);
-  height: 6%;
+  top:-8vh;
+  width: 22vw;
+  background:var(--ourBlue);
+  height: 3vh;
   font-family: Gill Sans, sans-serif;
   font-style: normal;
   font-weight: 400;
@@ -90,15 +102,15 @@ align-items: center;
   color:white;
   text-align: center;
   border-radius: 10px;
-  padding-top: 3%;
+  padding-top: 1.5vh;
   cursor: pointer;
 }
 
 .post-class{
   background: rgb(253, 253, 253);
-  border-radius: 5%;
- margin-bottom: 1.5%;
- padding: 2%;
+  border-radius: 5vh;
+ margin-bottom: 1.5vh;
+ padding: 1vh;
  text-align: center;
  
 }
@@ -106,7 +118,7 @@ align-items: center;
 .post-title-class{
   font-weight: 900;
   cursor: pointer;
-  color: rgb(61,91,240);
+  color: var(--ourBlue);
 }
 
 .post-content-class{
@@ -119,44 +131,24 @@ align-items: center;
 
 
 .header {
-    top: 10%;
-    height: 5%;
-    padding-top: 5%;
-    border-radius: 2%;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+    top: 10vh;
+    height: 5vh;
+    padding-top: 7vh;
+    border-radius: 2vh;
     position: absolute;
-    width: 80%;
+    width: 80vw;
     z-index: 1;
     overflow: hidden;
     background: rgb(236, 236, 238);
-    /* background: rgb(253, 253, 253); */
-    border-top-left-radius: 40px;
-    border-top-right-radius: 40px;
+    border-top-left-radius: 40vh;
+    border-top-right-radius: 40vh;
     overflow: hidden;
+
   }
   
-  .header a {
-    float: right;
-    color: black;
-    text-align: center;
-    padding: 12px;
-    text-decoration: none;
-    line-height: 25px;
-    border-radius: 50%;
-    font-family: Gill Sans, sans-serif;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 18px;
-  }
+
   
   
-@media screen and (max-width: 500px) {
-    .header a {
-      float: none;
-      display: block;
-      text-align: left;
-    }
-    
-    .header-right {
-      float: none;
-    }
-  }
