@@ -10,7 +10,7 @@ html, body {
   }
 
   *{
-    font-family: Gill Sans, sans-serif;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   }
 
 
@@ -81,10 +81,10 @@ align-items: center;
 
 #onlineusers {
   bottom: 25vh;
-  left:56.5vw;
-  position: relative;
-  top: 24.5vh;
-  width: 22.5vw;
+  left: 69.5vw;
+  position: absolute;
+  top: 34.5vh;
+  width: 16.5vw;
   height: 52vh;
   background: rgb(253, 253, 253);
   border-radius: 30px;
@@ -92,7 +92,7 @@ align-items: center;
 #new-post-btn {
   position: absolute;
   top:-8vh;
-  width: 22vw;
+  width: 16vw;
   background:var(--ourBlue);
   height: 3vh;
   font-family: Gill Sans, sans-serif;
@@ -129,10 +129,14 @@ align-items: center;
   font-size:x-small;
 }
 
+.registered-user{
+
+}
+
 
 .header {
   display: flex;
-  justify-content: right;
+  justify-content: flex-end;
   align-items: center;
     top: 10vh;
     height: 5vh;

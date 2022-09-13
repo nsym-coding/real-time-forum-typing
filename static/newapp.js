@@ -1,5 +1,7 @@
 let posts = document.getElementById("postfeed")
+let onlineUsers = document.getElementById("onlineusers")
 
+let users = ["tb38r", "abmutungi", "eternal17", "million"]
 
 
 
@@ -25,4 +27,13 @@ postDivs.appendChild(postContent)
 postDivs.appendChild(postFooter)
 
 posts.appendChild(postDivs)
+}
+
+for (let i = 0; i<4; i++){
+    let user = document.createElement("div")
+    user.id = i
+    user.className = "registered-user"
+    user.innerText = `${users[i]}\n\n`
+   
+    onlineUsers.appendChild(user)
 }
