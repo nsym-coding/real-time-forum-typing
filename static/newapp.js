@@ -46,7 +46,7 @@ for (let i = 0; i < 4; i++) {
     img.src = "/css/img/newcastle.png"
     img.style.width = "2vw"
     imageDiv.appendChild(onlineIcon)
-    userDetails.id = i
+    userDetails.id = `${users[i]}`
     userDetails.className = "registered-user"
     username.innerText = `${users[i]}`
     imageDiv.append(img)
@@ -55,6 +55,10 @@ for (let i = 0; i < 4; i++) {
     onlineUsers.appendChild(userDetails)
 }
 
-// const filename = fileURLToPath(import.meta.url);
-// const dirname = dirname(__filename);
-// console.log(dirname);
+let postTitlesClick = document.getElementsByClassName("post-title-class")
+Array.from(postTitlesClick).forEach(function(postTitle) {
+    postTitle.addEventListener('click', function(e){
+        alert(postTitle.innerText)
+    });
+  });
+
