@@ -134,6 +134,17 @@ body {
   display: flex;
   justify-content: space-between;
   padding: 2vh;
+  align-items: center;
+}
+
+.online-icon-class{
+  border-radius: 50%;
+height: 1vh;
+width: 0.5vw;
+background-color: rgb(238, 49, 43);
+position: absolute;
+display: inline-block;
+border: 10px black;
 }
 
 /* #user-details {

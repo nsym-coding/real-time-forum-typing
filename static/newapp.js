@@ -38,8 +38,14 @@ for (let i = 0; i < 4; i++) {
     let username = document.createElement("div")
     let imageDiv = document.createElement("div")
     let img = document.createElement("img")
+    let onlineIcon = document.createElement("div")
+   
+    onlineIcon.className = "online-icon-class"
+    
+
     img.src = "/css/img/newcastle.png"
     img.style.width = "2vw"
+    imageDiv.appendChild(onlineIcon)
     userDetails.id = i
     userDetails.className = "registered-user"
     username.innerText = `${users[i]}`
