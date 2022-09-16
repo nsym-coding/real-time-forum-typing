@@ -135,6 +135,7 @@ body {
   justify-content: space-between;
   padding: 2vh;
   align-items: center;
+  cursor: pointer;
 }
 
 .online-icon-class{
@@ -148,12 +149,6 @@ position: absolute;
 
 }
 
-
-
-/* #user-details {
-  display: flex;
-  justify-content: space-between;
-} */
 
 .header {
   display: flex;
@@ -179,3 +174,4 @@ position: absolute;
   top: 26vh;
   left: 69.5vw;
 }
+
