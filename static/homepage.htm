@@ -2,33 +2,33 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/style.css">
-     <script src="https://kit.fontawesome.com/0aef5c9550.js" crossorigin="anonymous"></script>
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://kit.fontawesome.com/0aef5c9550.js" crossorigin="anonymous"></script>
+  <title>Document</title>
 </head>
 
 <body>
 
-    <div id="maincontainer">
-        <div id="forumbody">
-            <div class="header">
-                <i class='far fa-futbol fa-2x'>
-                    <div id="logo-text"><span style="color:black">team</span>forum</div>
-                </i>
-                <div id="user-div">
-                    <div id="active-username">abmutungi</div>
-                    <i class='fa-solid fa-arrow-right-from-bracket fa-1.5x'></i>
-                </div>
-            </div>
-            <div id="postfeed"></div>
-            <div id="new-post-btn">+ Create a post </div>
-            <div id="onlineusers">
-            </div>
+  <div id="maincontainer">
+    <div id="forumbody">
+      <div class="header">
+        <i class='far fa-futbol fa-2x'>
+          <div id="logo-text"><span style="color:black">team</span>forum</div>
+        </i>
+        <div id="user-div">
+          <div id="active-username">abmutungi</div>
+          <i class='fa-solid fa-arrow-right-from-bracket fa-1.5x'></i>
+        </div>
+      </div>
+      <div id="postfeed"></div>
+      <div id="new-post-btn">+ Create a post </div>
+      <div id="onlineusers">
+      </div>
 
-            
+
 
 
 
@@ -39,20 +39,25 @@
     </div>
 
     <!-- Trigger/Open The Modal -->
-<button id="myBtn">Open Modal</button>
+    <button id="myBtn">Open Modal</button>
 
-<!-- The Modal -->
-<div id="myModal" class="modal">
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
 
-  <!-- Modal content -->
-  <div class="chat-box">
-    <span class="close">&times;</span>
-   <div id="chat-box-header"><div id="chat-recipient"></div></div>
-   <div id="chat-box-body"></div>
-   <div id="chat-box-footer"></div>
-  </div>
+      <!-- Modal content -->
+      <div class="chat-box">
+        <span class="close">&times;</span>
+        <div id="chat-box-header">
+          <div id="chat-recipient"></div>
+        </div>
+        <div id="chat-box-body"></div>
+        <div id="chat-box-footer">
+          <textarea type="text" id="chat-input" placeholder="type here..."></textarea>
+          <i class="fa-regular fa-paper-plane"></i>
+        </div>
+      </div>
 
-</div>
+    </div>
     <script src="/newapp.js"></script>
 
 </body>

@@ -138,13 +138,13 @@ body {
   cursor: pointer;
 }
 
-.online-icon-class{
+.online-icon-class {
   transform: translate(-50%, -50%);
   border-radius: 50vh;
-height: 1vh;
-width: 0.5vw;
-background-color: rgb(238, 49, 43);
-position: absolute;
+  height: 1vh;
+  width: 0.5vw;
+  background-color: rgb(238, 49, 43);
+  position: absolute;
 
 
 }
@@ -178,17 +178,26 @@ position: absolute;
 
 /* The Modal (background) */
 .modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 10vh; /* Location of the box */
+  display: none;
+  /* Hidden by default */
+  position: fixed;
+  /* Stay in place */
+  z-index: 1;
+  /* Sit on top */
+  padding-top: 10vh;
+  /* Location of the box */
   left: 0;
   top: 0;
-  width: 100vw; /* Full width */
-  height: 100vh; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  width: 100vw;
+  /* Full width */
+  height: 100vh;
+  /* Full height */
+  overflow: auto;
+  /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0);
+  /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black w/ opacity */
 }
 
 /* Modal Content */
@@ -213,19 +222,42 @@ position: absolute;
   width: 32vw;
 }
 
-#chat-box-body{
-
+#chat-box-body {
+  border: 2px solid red;
+  height: 45vh;
 }
 
-#chat-box-footer{
+#chat-box-footer {
+  height: 8vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
+
+#chat-box-footer i {
+  font-size: 3vh;
+  left: 31vw;
+  position: absolute;
+}
+
+#chat-input {
+  border-radius: 3vh;
+  width: 27vw;
+  height: 5vh;
+  font-size: 2vh;
+  padding-left: 2vh;
+  padding-right: 2vh;
+  margin-right: 2vw;
+  resize: none;
+}
+
+#chat-input::-webkit-scrollbar {
+  display: none;
 }
 
 #chat-recipient {
-
-  
-
-font-size: x-large;
+  font-size: x-large;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -245,4 +277,3 @@ font-size: x-large;
   text-decoration: none;
   cursor: pointer;
 }
-
