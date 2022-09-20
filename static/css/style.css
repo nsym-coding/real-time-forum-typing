@@ -224,6 +224,7 @@ body {
 
 #chat-box-body {
   height: 45vh;
+  overflow: scroll;
 }
 
 #chat-box-footer {
