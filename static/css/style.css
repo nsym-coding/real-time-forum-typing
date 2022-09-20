@@ -60,7 +60,7 @@ body {
   font-size: medium;
 }
 
-#postfeed {
+#post-feed {
   left: 1vw;
   position: relative;
   top: 16.25vh;
@@ -217,13 +217,12 @@ body {
 
 #chat-box-header {
 
-  border-bottom: 2px solid var(--ourBlue);
+  /* border-bottom: 2px solid var(--ourBlue); */
   height: 6vh;
   width: 32vw;
 }
 
 #chat-box-body {
-  border: 2px solid red;
   height: 45vh;
 }
 
@@ -237,8 +236,9 @@ body {
 
 #chat-box-footer i {
   font-size: 3vh;
-  left: 31vw;
+  left: 31.5vw;
   position: absolute;
+  cursor: pointer;
 }
 
 #chat-input {
@@ -253,6 +253,10 @@ body {
 }
 
 #chat-input::-webkit-scrollbar {
+  display: none;
+}
+
+#post-feed::-webkit-scrollbar {
   display: none;
 }
 
@@ -276,4 +280,38 @@ body {
   color: #000;
   text-decoration: none;
   cursor: pointer;
+}
+
+#chat-message-sender {
+  position: relative;
+  border-radius: 5vh;
+  background: var(--ourBlue);
+  color: white;
+  padding: 2vh;
+  margin-left: auto;
+  max-width: 13vw;
+  overflow-wrap: break-word;
+  margin-bottom: 1vh;
+
+}
+#chat-message-recipient {
+  position: relative;
+  border-radius: 5vh;
+  max-width: 13vw;
+  overflow-wrap: break-word;
+  background: rgb(253, 253, 253);
+  color: black;
+  padding: 2vh;
+  margin-right: auto;
+  margin-bottom: 1vh;
+}
+
+#chat-container{
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+}
+
+#chat-container::-webkit-scrollbar {
+  display: none;
 }

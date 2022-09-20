@@ -23,7 +23,7 @@
           <i class='fa-solid fa-arrow-right-from-bracket fa-1.5x'></i>
         </div>
       </div>
-      <div id="postfeed"></div>
+      <div id="post-feed"></div>
       <div id="new-post-btn">+ Create a post </div>
       <div id="onlineusers">
       </div>
@@ -37,10 +37,6 @@
 
 
     </div>
-
-    <!-- Trigger/Open The Modal -->
-    <button id="myBtn">Open Modal</button>
-
     <!-- The Modal -->
     <div id="myModal" class="modal">
 
@@ -50,10 +46,13 @@
         <div id="chat-box-header">
           <div id="chat-recipient"></div>
         </div>
-        <div id="chat-box-body"></div>
+        <div id="chat-box-body">
+          <div id="chat-container">
+         </div>
+        </div>
         <div id="chat-box-footer">
           <textarea type="text" id="chat-input" placeholder="type here..."></textarea>
-          <i class="fa-regular fa-paper-plane"></i>
+          <i id="chat-arrow" class="fa-regular fa-paper-plane"></i>
         </div>
       </div>
 
