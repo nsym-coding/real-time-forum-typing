@@ -31,12 +31,14 @@ for (let i = 0; i < 10; i++) {
 }
 
 let userDetails;
+let imageDiv
+let img;
 
 for (let i = 0; i < 4; i++) {
   userDetails = document.createElement("div");
   let username = document.createElement("div");
-  let imageDiv = document.createElement("div");
-  let img = document.createElement("img");
+   imageDiv = document.createElement("div");
+   img = document.createElement("img");
   let onlineIcon = document.createElement("div");
 
   onlineIcon.className = "online-icon-class";
@@ -69,7 +71,7 @@ Array.from(postTitlesClick).forEach(function (postTitle) {
 var modal = document.querySelector(".modal");
 
 var userRg = document.querySelectorAll(".registered-user")
-
+let chatRecipient = document.getElementById("chat-recipient")
 
 // Get the button that opens the modal
 var btn = document.getElementById("myBtn");
@@ -80,7 +82,9 @@ var span = document.getElementsByClassName("close")[0];
 // When the user clicks the button, open the modal 
 
 for (let i = 0; i<userRg.length; i++){
-  userRg[i].onclick = function() {
+  userRg[i].onclick = function(e) {
+chatRecipient.innerText = userRg[i].id
+
     console.log("Users clicked");
     modal.style.display = "block";
   }

@@ -206,8 +206,11 @@ position: absolute;
   top: 12vh;
 }
 
-#chat-box-header{
+#chat-box-header {
 
+  border-bottom: 2px solid var(--ourBlue);
+  height: 6vh;
+  width: 32vw;
 }
 
 #chat-box-body{
@@ -216,6 +219,16 @@ position: absolute;
 
 #chat-box-footer{
 
+}
+
+#chat-recipient {
+
+  
+
+font-size: x-large;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* The Close Button */
