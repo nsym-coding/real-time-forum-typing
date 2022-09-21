@@ -4,7 +4,7 @@ body {
   height: 100%;
   overflow: hidden;
   scroll-behavior: smooth;
-  
+
 }
 
 :root {
@@ -208,7 +208,7 @@ body {
   top: 12vh;
 }
 
-.create-post-box{
+.create-post-box {
   left: 17.2vw;
   margin: auto;
   padding: 20px;
@@ -222,21 +222,21 @@ body {
   top: 12vh;
 }
 
-#post-box-header{
+#post-box-header {
   height: 6vh;
   width: 32vw;
 }
 
-#post-title{
+#post-title {
   border-radius: 3vh;
   height: 3vh;
   margin-bottom: 2vh;
 }
 
-#post-box-body{
+#post-box-body {
 
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 
@@ -252,7 +252,7 @@ body {
   overflow: scroll;
 }
 
-#chat-box-body::-webkit-scrollbar{
+#chat-box-body::-webkit-scrollbar {
   display: none;
 }
 
@@ -297,7 +297,7 @@ body {
   align-items: center;
 }
 
-#post-header-title{
+#post-header-title {
   font-size: medium;
   display: flex;
   justify-content: center;
@@ -331,6 +331,7 @@ body {
   margin-bottom: 1vh;
 
 }
+
 #chat-message-recipient {
   position: relative;
   border-radius: 5vh;
@@ -343,7 +344,7 @@ body {
   margin-bottom: 1vh;
 }
 
-#chat-container{
+#chat-container {
   display: flex;
   flex-direction: column;
   overflow: scroll;
@@ -359,20 +360,20 @@ body {
   resize: none;
   outline: none;
   font-size: large;
-  }
+}
 
-  #category-selection{
-    height: 6vh;
-    width: 31vw;
-    color: black;
-    position: relative;
-    margin-bottom: 3vh;
-    display: flex;
-    justify-content: space-around;
-    
-  }
+#category-selection {
+  height: 6vh;
+  width: 31vw;
+  color: black;
+  position: relative;
+  margin-bottom: 3vh;
+  display: flex;
+  justify-content: space-around;
 
-  .buttons{
+}
+
+.buttons {
   background: var(--ourBlue);
   font-family: Gill Sans, sans-serif;
   font-style: normal;
@@ -384,14 +385,14 @@ body {
   cursor: pointer;
   padding-top: 1.5vh;
 
-  }
+}
 
-#submit-post-button{
+#submit-post-button {
   width: 31.5vw;
   padding-bottom: 1vh;
   border: none;
 }
 
-img{
-  width : 4vw;
+img {
+  width: 3vw;
 }
