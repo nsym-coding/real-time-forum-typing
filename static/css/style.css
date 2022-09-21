@@ -2,7 +2,9 @@ html,
 body {
   margin: 0;
   height: 100%;
-  overflow: hidden
+  overflow: hidden;
+  scroll-behavior: smooth;
+  
 }
 
 :root {
@@ -225,6 +227,10 @@ body {
 #chat-box-body {
   height: 45vh;
   overflow: scroll;
+}
+
+#chat-box-body::-webkit-scrollbar{
+  display: none;
 }
 
 #chat-box-footer {

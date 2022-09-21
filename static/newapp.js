@@ -113,6 +113,8 @@ window.onclick = function (event) {
 let sendArrow = document.getElementById("chat-arrow");
 let chatTextArea = document.getElementById("chat-input");
 let chatContainer = document.getElementById("chat-container");
+let chatBody = document.getElementById("chat-box-body");
+
 let sender = true;
 
 sendArrow.addEventListener("click", function () {
@@ -130,4 +132,6 @@ sendArrow.addEventListener("click", function () {
     }
 
     chatContainer.appendChild(newChatBubble);
+
+    chatBody.scrollTo(0, chatBody.scrollHeight);
 });
