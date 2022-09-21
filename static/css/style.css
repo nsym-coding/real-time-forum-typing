@@ -298,7 +298,7 @@ body {
 }
 
 #post-header-title{
-  font-size: x-large;
+  font-size: medium;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -366,7 +366,10 @@ body {
     width: 31vw;
     color: black;
     position: relative;
-    border: 1px solid grey;
+    margin-bottom: 3vh;
+    display: flex;
+    justify-content: space-around;
+    
   }
 
   .buttons{
@@ -378,8 +381,17 @@ body {
   color: white;
   text-align: center;
   border-radius: 10px;
-  padding-top: 1.5vh;
   cursor: pointer;
+  padding-top: 1.5vh;
 
   }
 
+#submit-post-button{
+  width: 31.5vw;
+  padding-bottom: 1vh;
+  border: none;
+}
+
+img{
+  width : 4vw;
+}

@@ -148,3 +148,5 @@ sendArrow.addEventListener("click", function () {
 
     chatBody.scrollTo(0, chatBody.scrollHeight);
 });
+
+["/css/img/newcastle.png", "/css/img/Chelsea.png", ]
