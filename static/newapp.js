@@ -1,8 +1,8 @@
-// import { fileURLToPath } from "url"
-// import { dirname } from "path"
 
 let posts = document.getElementById("post-feed");
 let onlineUsers = document.getElementById("onlineusers");
+
+let postButton = document.getElementById("new-post-btn")
 
 let users = ["tb38r", "abmutungi", "eternal17", "million"];
 
@@ -53,8 +53,7 @@ for (let i = 0; i < 4; i++) {
 
     //   userDetails.setAttribute("type", "button");
 
-    userDetails.setAttribute("data-bs-target", "#chatModal");
-    userDetails.setAttribute("data-bs-toggle", "modal");
+
 
     userDetails.className = "registered-user";
     username.innerText = `${users[i]}`;
@@ -71,7 +70,13 @@ Array.from(postTitlesClick).forEach(function (postTitle) {
     });
 });
 
-var modal = document.querySelector(".modal");
+var modal = document.getElementsByClassName("modal")
+var chatModal = document.getElementById("my-chat-modal");
+var createPostModal = document.getElementById("create-post-modal");
+
+postButton.addEventListener("click", function(){
+    createPostModal.style.display = "block"
+})
 
 var userRg = document.querySelectorAll(".registered-user");
 let chatRecipient = document.getElementById("chat-recipient");
@@ -80,16 +85,16 @@ let chatRecipient = document.getElementById("chat-recipient");
 var btn = document.getElementById("myBtn");
 
 // Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
+var span = document.getElementsByClassName("close");
 
 // When the user clicks the button, open the modal
 
 for (let i = 0; i < userRg.length; i++) {
-    userRg[i].onclick = function (e) {
+    userRg[i].onclick = function () {
         chatRecipient.innerText = userRg[i].id;
 
         console.log("Users clicked");
-        modal.style.display = "block";
+        chatModal.style.display = "block";
     };
 }
 
@@ -99,16 +104,24 @@ for (let i = 0; i < userRg.length; i++) {
 // }
 
 // When the user clicks on <span> (x), close the modal
-span.onclick = function () {
-    modal.style.display = "none";
-};
+for (let i = 0; i< span.length; i++){
+
+    span[i].onclick = function () {
+        modal[i].style.display = "none";
+    };
+}
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function (event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
+for (let i = 0; i<modal.length; i++){
+    console.log("modal -> ",modal[i]);
+console.log("evt -> ",event.target);
+        if (event.target == modal[i]){
+            modal[i].style.display = "none";
+        }
     }
 };
+
 
 let sendArrow = document.getElementById("chat-arrow");
 let chatTextArea = document.getElementById("chat-input");

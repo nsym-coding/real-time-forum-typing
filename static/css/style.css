@@ -217,6 +217,20 @@ body {
   top: 12vh;
 }
 
+.create-post-box{
+  left: 17.2vw;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  float: left;
+  width: 32vw;
+  height: 60vh;
+  background: rgb(236, 236, 238);
+  border-radius: 5vh;
+  position: relative;
+  top: 12vh;
+}
+
 #chat-box-header {
 
   /* border-bottom: 2px solid var(--ourBlue); */
