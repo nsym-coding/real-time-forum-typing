@@ -23,9 +23,8 @@ for (let i = 0; i < 10; i++) {
     postTitle.innerText = `This is post number ${i}\n`;
     postContent.innerText =
         " This is a post bla blablalala\n___________________________________________________";
-    postFooter.innerText = `Created by abmutungi,   Date: ${new Date().toDateString()}, Comments: ${
-        i + 13
-    }`;
+    postFooter.innerText = `Created by abmutungi,   Date: ${new Date().toDateString()}, Comments: ${i + 13
+        }`;
     postDivs.appendChild(postTitle);
     postDivs.appendChild(postContent);
     postDivs.appendChild(postFooter);
@@ -66,26 +65,29 @@ for (let i = 0; i < 4; i++) {
 let postTitlesClick = document.getElementsByClassName("post-title-class");
 Array.from(postTitlesClick).forEach(function (postTitle) {
     postTitle.addEventListener("click", function (e) {
-        alert(postTitle.innerText);
+        displayPostModal.style.display = "block"
     });
 });
 
-var modal = document.getElementsByClassName("modal")
-var chatModal = document.getElementById("my-chat-modal");
-var createPostModal = document.getElementById("create-post-modal");
+let modal = document.getElementsByClassName("modal")
+let chatModal = document.getElementById("my-chat-modal");
+let createPostModal = document.getElementById("create-post-modal");
+let displayPostModal = document.getElementById("display-post-modal");
 
-postButton.addEventListener("click", function(){
+
+postButton.addEventListener("click", function () {
     createPostModal.style.display = "block"
 })
 
-var userRg = document.querySelectorAll(".registered-user");
+
+let userRg = document.querySelectorAll(".registered-user");
 let chatRecipient = document.getElementById("chat-recipient");
 
 // Get the button that opens the modal
-var btn = document.getElementById("myBtn");
+let btn = document.getElementById("myBtn");
 
 // Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close");
+let span = document.getElementsByClassName("close");
 
 // When the user clicks the button, open the modal
 
@@ -104,7 +106,7 @@ for (let i = 0; i < userRg.length; i++) {
 // }
 
 // When the user clicks on <span> (x), close the modal
-for (let i = 0; i< span.length; i++){
+for (let i = 0; i < span.length; i++) {
 
     span[i].onclick = function () {
         modal[i].style.display = "none";
@@ -113,10 +115,10 @@ for (let i = 0; i< span.length; i++){
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function (event) {
-for (let i = 0; i<modal.length; i++){
-    console.log("modal -> ",modal[i]);
-console.log("evt -> ",event.target);
-        if (event.target == modal[i]){
+    for (let i = 0; i < modal.length; i++) {
+        console.log("modal -> ", modal[i]);
+        console.log("evt -> ", event.target);
+        if (event.target == modal[i]) {
             modal[i].style.display = "none";
         }
     }
@@ -149,4 +151,4 @@ sendArrow.addEventListener("click", function () {
     chatBody.scrollTo(0, chatBody.scrollHeight);
 });
 
-["/css/img/newcastle.png", "/css/img/Chelsea.png", ]
+["/css/img/newcastle.png", "/css/img/Chelsea.png",]
