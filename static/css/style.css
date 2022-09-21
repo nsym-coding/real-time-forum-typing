@@ -1,139 +1,398 @@
-.main-container {
-    display: flex;
-    background-color: #101F30;
-    width: 85%;
-    height: 85%;
-    border-radius: 27px;
-    top: 50%;
-    left: 50%;
-    position: fixed;
-    transform: translate(-50%, -50%);
-}
-
-.post-container {
-    width: 66%;
-    height: 80%;
-    background-color: #9AAFC7;
-    border-radius: 27px;
-    top: 50%;
-    left: 38%;
-    position: fixed;
-    transform: translate(-50%, -50%);
-}
-
-.user-container {
-    background-color: #9AAFC7;
-    width: 20%;
-    height: 80%;
-    border-radius: 27px;
-    top: 50%;
-    left: 85%;
-    position: fixed;
-    transform: translate(-50%, -50%);
-}
-
-.online {
-    background-color: #10FC27;
-    position: absolute;
-    top: 3.5%;
-    left: 5%;
-    width: 1.5%;
-    height: 3%;
-    border-radius: 50%;
-}
-
-.fa-solid {
-    display: none;
-    position: absolute;
-    left: 62%;
-    top: 79%;
-}
-
-/* .login {
-    position: relative;
-    top: 2%;
-    left: 87%;
-    width: 8%;
-    height: 5%;
-    border-radius: 27px;
-    background-color: #7A7CFF;
-    text-align: center;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #101F30;
-} */
-
-
-#login-button {
-    position: absolute;
-    top: 2%;
-    left: 87%;
-    /* width: 8%;
-    height: 5%; */
-}
-
-
-#logout-button {
-    display: none;
-    position: absolute;
-    top: 2%;
-    left: 87%;
-    /* width: 8%;
-    height: 5%; */
-}
-
-
-#post-modal {
-    display: none;
-    position: absolute;
-    width: 75%;
-    height: 70%;
-    background-color: #101F30;
-    z-index: 1;
-    justify-content: center;
-    left: 13%;
-    top: 14%;
-    border-radius: 27px;
-}
-
-#post-content-text {
-    top: 18%;
-    background-color: #9AAFC7;
-    position: absolute;
-    left: 15%;
-    border-radius: 27px;
-    width: 70%;
-    height: 60%;
-    resize: none;
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  scroll-behavior: smooth;
 
 }
 
-#post-title-text {
-    background-color: #9AAFC7;
-    width: 70%;
-    border-radius: 27px;
-    top: 7%;
-    position: absolute;
-    left: 15%;
-    resize: none;
+:root {
+  --ourBlue: rgb(61, 91, 240);
+}
+
+* {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+
+#maincontainer {
+  height: 100vh;
+  width: 100vw;
+  background: var(--ourBlue);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#forumbody {
+  height: 80vh;
+  width: 80vw;
+  background: rgb(236, 236, 238);
+  border-radius: 5vh;
+}
+
+.far {
+
+  position: absolute;
+  top: 7.5vh;
+  left: 22vw;
+  color: var(--ourBlue);
+}
+
+#user-div {
+  display: flex;
+  justify-content: space-between;
+  width: 9vw;
+  padding-right: 4.5vw;
+}
+
+.fa-arrow-right-from-bracket {
+
+  color: var(--ourBlue);
+  left: 78vw;
+  top: 9.5vh;
+  cursor: pointer;
+}
+
+#active-username {
+
+  left: 70vw;
+  top: 9.5vh;
+  font-size: medium;
+}
+
+#post-feed {
+  left: 1vw;
+  position: relative;
+  top: 16.25vh;
+  float: left;
+  width: 54vw;
+  height: 60vh;
+  background: rgb(236, 236, 238);
+  border-radius: 5vh;
+  overflow: scroll;
+}
+
+#logo-text {
+  float: right;
+  font-size: 2.5vh;
+  padding-top: 8px;
+  padding-left: 4px;
+}
+
+#onlineusers {
+  bottom: 25vh;
+  left: 69.5vw;
+  position: absolute;
+  top: 34.5vh;
+  width: 16.5vw;
+  height: 52vh;
+  background: rgb(253, 253, 253);
+  border-radius: 30px;
+}
+
+#new-post-btn {
+  position: absolute;
+  top: -8vh;
+  width: 16vw;
+  height: 3vh;
+
+}
+
+.post-class {
+  background: rgb(253, 253, 253);
+  border-radius: 5vh;
+  margin-bottom: 1.5vh;
+  padding: 1vh;
+  text-align: center;
+
+}
+
+.post-title-class {
+  font-weight: 900;
+  cursor: pointer;
+  color: var(--ourBlue);
+}
+
+.post-content-class {
+  font-size: small;
+}
+
+.post-footer-class {
+  font-size: x-small;
+}
+
+.registered-user {
+  display: flex;
+  justify-content: space-between;
+  padding: 2vh;
+  align-items: center;
+  cursor: pointer;
+}
+
+.online-icon-class {
+  transform: translate(-50%, -50%);
+  border-radius: 50vh;
+  height: 1vh;
+  width: 0.5vw;
+  background-color: rgb(238, 49, 43);
+  position: absolute;
+
+
+}
+
+
+.header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  top: 10vh;
+  height: 5vh;
+  padding-top: 7vh;
+  border-radius: 2vh;
+  position: absolute;
+  width: 80vw;
+  z-index: 1;
+  overflow: hidden;
+  background: rgb(236, 236, 238);
+  border-top-left-radius: 40vh;
+  border-top-right-radius: 40vh;
+  overflow: hidden;
+
+}
+
+#new-post-btn {
+  position: absolute;
+  top: 26vh;
+  left: 69.5vw;
+}
+
+
+/* The Modal (background) */
+.modal {
+  display: none;
+  /* Hidden by default */
+  position: fixed;
+  /* Stay in place */
+  z-index: 1;
+  /* Sit on top */
+  padding-top: 10vh;
+  /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100vw;
+  /* Full width */
+  height: 100vh;
+  /* Full height */
+  overflow: auto;
+  /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0);
+  /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black w/ opacity */
+}
+
+/* Modal Content */
+.chat-box {
+  left: 17.2vw;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  float: left;
+  width: 32vw;
+  height: 60vh;
+  background: rgb(236, 236, 238);
+  border-radius: 5vh;
+  position: relative;
+  top: 12vh;
+}
+
+.create-post-box {
+  left: 17.2vw;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  float: left;
+  width: 32vw;
+  height: 60vh;
+  background: rgb(236, 236, 238);
+  border-radius: 5vh;
+  position: relative;
+  top: 12vh;
+}
+
+#post-box-header {
+  height: 6vh;
+  width: 32vw;
+}
+
+#post-title {
+  border-radius: 3vh;
+  height: 3vh;
+  margin-bottom: 2vh;
+}
+
+#post-box-body {
+
+  display: flex;
+  flex-direction: column;
+}
+
+
+#chat-box-header {
+
+  /* border-bottom: 2px solid var(--ourBlue); */
+  height: 6vh;
+  width: 32vw;
+}
+
+#chat-box-body {
+  height: 45vh;
+  overflow: scroll;
+}
+
+#chat-box-body::-webkit-scrollbar {
+  display: none;
+}
+
+#chat-box-footer {
+  height: 8vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+#chat-box-footer i {
+  font-size: 3vh;
+  left: 31.5vw;
+  position: absolute;
+  cursor: pointer;
+}
+
+.text-input {
+  border-radius: 3vh;
+  width: 27vw;
+  height: 5vh;
+  font-size: 2vh;
+  padding-left: 2vh;
+  padding-right: 2vh;
+  margin-right: 2vw;
+  resize: none;
+}
+
+#chat-input::-webkit-scrollbar {
+  display: none;
+}
+
+#post-feed::-webkit-scrollbar {
+  display: none;
+}
+
+#chat-recipient {
+  font-size: x-large;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#post-header-title {
+  font-size: medium;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#chat-message-sender {
+  position: relative;
+  border-radius: 5vh;
+  background: var(--ourBlue);
+  color: white;
+  padding: 2vh;
+  margin-left: auto;
+  max-width: 13vw;
+  overflow-wrap: break-word;
+  margin-bottom: 1vh;
+
+}
+
+#chat-message-recipient {
+  position: relative;
+  border-radius: 5vh;
+  max-width: 13vw;
+  overflow-wrap: break-word;
+  background: rgb(253, 253, 253);
+  color: black;
+  padding: 2vh;
+  margin-right: auto;
+  margin-bottom: 1vh;
+}
+
+#chat-container {
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+}
+
+#chat-container::-webkit-scrollbar {
+  display: none;
+}
+
+.post-content-text-box {
+  border: none;
+  background-color: transparent;
+  resize: none;
+  outline: none;
+  font-size: large;
+}
+
+#category-selection {
+  height: 6vh;
+  width: 31vw;
+  color: black;
+  position: relative;
+  margin-bottom: 3vh;
+  display: flex;
+  justify-content: space-around;
+
+}
+
+.buttons {
+  background: var(--ourBlue);
+  font-family: Gill Sans, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  color: white;
+  text-align: center;
+  border-radius: 10px;
+  cursor: pointer;
+  padding-top: 1.5vh;
+
 }
 
 #submit-post-button {
-    background-color: #9AAFC7;
-
-    position: relative;
-    top: 85%;
-    left: 14%;
-    width: 73%;
-    border-radius: 10px;
-    color: #101F30;
+  width: 31.5vw;
+  padding-bottom: 1vh;
+  border: none;
 }
 
-.modal-body {
-    flex-direction: column;
-    display: flex;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
+img {
+  width: 3vw;
 }

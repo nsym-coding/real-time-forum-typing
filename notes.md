@@ -1,0 +1,3 @@
+- sort out header border radius (possibly use overflow)
+- change colour of post feed and online users to the same as forumbody background
+- make space between divs equidistant

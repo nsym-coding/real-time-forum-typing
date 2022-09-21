@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://kit.fontawesome.com/0aef5c9550.js" crossorigin="anonymous"></script>
+  <title>Document</title>
+</head>
+
+<body>
+
+  <div id="maincontainer">
+    <div id="forumbody">
+      <div class="header">
+        <i class='far fa-futbol fa-2x'>
+          <div id="logo-text"><span style="color:black">team</span>forum</div>
+        </i>
+        <div id="user-div">
+          <div id="active-username">abmutungi</div>
+          <i class='fa-solid fa-arrow-right-from-bracket fa-1.5x'></i>
+        </div>
+      </div>
+      <div id="post-feed"></div>
+      <div class ='buttons' id="new-post-btn">+ Post </div>
+      <div id="onlineusers">
+      </div>
+
+
+
+
+
+
+
+
+
+    </div>
+    <!-- The Modal -->
+    <div id="my-chat-modal" class="modal">
+
+      <!-- Chat Modal content -->
+      <div class="chat-box">
+        <span class="close">&times;</span>
+        <div id="chat-box-header">
+          <div id="chat-recipient"></div>
+        </div>
+        <div id="chat-box-body">
+          <div id="chat-container">
+         </div>
+        </div>
+        <div id="chat-box-footer">
+          <textarea type="text" id="chat-input" placeholder="type here..." class="text-input"></textarea>
+          <i id="chat-arrow" class="fa-regular fa-paper-plane"></i>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- The Post Modal -->
+    <div id="create-post-modal" class="modal">
+
+      <!-- Post Modal content -->
+      <div class="create-post-box">
+        <span class="close">&times;</span>
+        <div id="post-box-header"><div id="post-header-title">Create Post</div> </div>
+        <div id="post-box-body">
+          <input name="post-title" id="post-title" cols="30" rows="10" placeholder="type post title here..." maxlength="65" class="text-input"></input>
+          <textarea name="post-content" id="post-content" cols="30" rows="10" placeholder="What is your agenda...." class="post-content-text-box"></textarea>
+          <div id="category-selection">
+            <img src="/css/img/newcastle.png" alt="">
+            <img src="/css/img/chelsea.png" alt="">
+            <img src="/css/img/man-u.png" alt="">
+            <img src="/css/img/man-city.png" alt="">
+            <img src="/css/img/liverpool.png" alt="">
+            <img src="/css/img/spurs.png" alt="">
+          </div>
+        
+        </div>
+
+        <div id="post-box-footer"><button id="submit-post-button"class="buttons">Post</button></div>
+      </div>
+
+    </div>
+    <script src="/newapp.js"></script>
+
+</body>
+
+</html>

@@ -53,9 +53,17 @@ func CreateDB() {
 
 	_, err4 := db.Exec(`create table if not exists messages(
 		messageID integer PRIMARY KEY AUTOINCREMENT, 
+		chatID integer REFERENCES chats(chatID), 
 		message CHAR(250),
 	    sender text REFERENCES users(username), 
 		recepient text REFERENCES users(username),
 		creationDate integer);`)
 	fmt.Println("err4", err4)
+
+	_, err5 := db.Exec(`create table if not exists chats(
+		chatID integer PRIMARY KEY AUTOINCREMENT, 
+	    user1 text REFERENCES users(username), 
+		user2 text REFERENCES users(username),
+		creationDate integer);`)
+	fmt.Println("err5", err5)
 }
