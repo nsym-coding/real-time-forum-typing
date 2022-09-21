@@ -51,7 +51,7 @@
          </div>
         </div>
         <div id="chat-box-footer">
-          <textarea type="text" id="chat-input" placeholder="type here..."></textarea>
+          <textarea type="text" id="chat-input" placeholder="type here..." class="text-input"></textarea>
           <i id="chat-arrow" class="fa-regular fa-paper-plane"></i>
         </div>
       </div>
@@ -64,16 +64,13 @@
       <!-- Post Modal content -->
       <div class="create-post-box">
         <span class="close">&times;</span>
-        <div id="post-box-header">
-          <textarea name="post-title" id="post-title" cols="30" rows="10" placeholder="type post title here..."></textarea>
-        </div>
+        <div id="post-box-header"><div id="post-header-title">Create Post</div> </div>
         <div id="post-box-body">
-          <textarea name="post-content" id="post-content" cols="30" rows="10" placeholder="type post here...."></textarea>
-        </div>
-        <div id="post-box-footer">
-         
+          <input name="post-title" id="post-title" cols="30" rows="10" placeholder="type post title here..." maxlength="65" class="text-input"></input>
+          <textarea name="post-content" id="post-content" cols="30" rows="10" placeholder="What is your agenda...." class="post-content-text-box"></textarea>
           <i id="chat-arrow" class="fa-regular fa-paper-plane"></i>
         </div>
+  
       </div>
 
     </div>

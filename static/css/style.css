@@ -231,6 +231,24 @@ body {
   top: 12vh;
 }
 
+#post-box-header{
+  height: 6vh;
+  width: 32vw;
+}
+
+#post-title{
+  border-radius: 3vh;
+  height: 3vh;
+  margin-bottom: 2vh;
+}
+
+#post-box-body{
+
+    display: flex;
+    flex-direction: column;
+}
+
+
 #chat-box-header {
 
   /* border-bottom: 2px solid var(--ourBlue); */
@@ -262,7 +280,7 @@ body {
   cursor: pointer;
 }
 
-#chat-input {
+.text-input {
   border-radius: 3vh;
   width: 27vw;
   height: 5vh;
@@ -282,6 +300,13 @@ body {
 }
 
 #chat-recipient {
+  font-size: x-large;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#post-header-title{
   font-size: x-large;
   display: flex;
   justify-content: center;
@@ -336,3 +361,11 @@ body {
 #chat-container::-webkit-scrollbar {
   display: none;
 }
+
+.post-content-text-box {
+  border: none;
+  background-color: transparent;
+  resize: none;
+  outline: none;
+  font-size: large;
+  }
