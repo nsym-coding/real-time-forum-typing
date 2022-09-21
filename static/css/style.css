@@ -96,17 +96,8 @@ body {
   position: absolute;
   top: -8vh;
   width: 16vw;
-  background: var(--ourBlue);
   height: 3vh;
-  font-family: Gill Sans, sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  color: white;
-  text-align: center;
-  border-radius: 10px;
-  padding-top: 1.5vh;
-  cursor: pointer;
+
 }
 
 .post-class {
@@ -369,3 +360,26 @@ body {
   outline: none;
   font-size: large;
   }
+
+  #category-selection{
+    height: 6vh;
+    width: 31vw;
+    color: black;
+    position: relative;
+    border: 1px solid grey;
+  }
+
+  .buttons{
+  background: var(--ourBlue);
+  font-family: Gill Sans, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  color: white;
+  text-align: center;
+  border-radius: 10px;
+  padding-top: 1.5vh;
+  cursor: pointer;
+
+  }
+
