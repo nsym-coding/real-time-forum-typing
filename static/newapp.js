@@ -143,17 +143,16 @@ let commentTextArea = document.getElementById("comment-input");
 commentArrow.addEventListener("click", function () {
   let i = 0;
   let comment = document.createElement("div");
+  let commentDetails = document.createElement("div");
+  commentDetails.innerText = `Created by: McTom Date: ${
+    new Date().toISOString().split("T")[0]
+  } ${new Date().toISOString().split("T")[1].substring(0, 5)}`;
   comment.style.marginBottom = "1vh";
   comment.id = `comment-${i}`;
-
-  comment.innerText = `${
-    commentTextArea.value
-  }\n Created by: McTom Date: ${new Date()
-    .toISOString()
-    .split("T")[1]
-    .substring(0, 5)}\n`;
+  commentDetails.id = `comment-detail-${i}`;
+  comment.innerText = `${commentTextArea.value}`;
   commentTextArea.value = "";
-
+  comment.appendChild(commentDetails);
   commentContainer.appendChild(comment);
   displayPostBody.scrollTo(0, displayPostBody.scrollHeight);
 });
