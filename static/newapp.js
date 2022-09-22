@@ -20,7 +20,8 @@ for (let i = 0; i < 10; i++) {
   postDivs.className = "post-class ";
   postDivs.id = i;
   postTitle.innerText = `This is post number ${i}\n`;
-  postContent.innerText = " This is a post bla blablalala\n___________________________________________________";
+  postContent.innerText =
+    " This is a post bla blablalala\n___________________________________________________";
   postFooter.innerText = `Created by abmutungi,   Date: ${new Date().toDateString()}, Comments: ${i + 13}`;
   postDivs.appendChild(postTitle);
   postDivs.appendChild(postContent);
@@ -93,11 +94,6 @@ for (let i = 0; i < userRg.length; i++) {
   };
 }
 
-// userRg.onclick = function() {
-//   console.log("Users clicked");
-//   modal.style.display = "block";
-// }
-
 // When the user clicks on <span> (x), close the modal
 for (let i = 0; i < span.length; i++) {
   span[i].onclick = function () {
@@ -120,7 +116,7 @@ let sendArrow = document.getElementById("chat-arrow");
 let chatTextArea = document.getElementById("chat-input");
 let chatContainer = document.getElementById("chat-container");
 let chatBody = document.getElementById("chat-box-body");
-
+let displayPostBody = document.getElementById("display-post-body");
 let sender = true;
 
 sendArrow.addEventListener("click", function () {
@@ -201,3 +197,23 @@ for (let i = 0; i < crestcolors.length; i++) {
 
   });
 }
+let commentContainer = document.getElementById("comment-container");
+let commentArrow = document.getElementById("comment-arrow");
+let commentTextArea = document.getElementById("comment-input");
+
+commentArrow.addEventListener("click", function () {
+  let i = 0;
+  let comment = document.createElement("div");
+  let commentDetails = document.createElement("div");
+  commentDetails.innerText = `Created by: McTom Date: ${
+    new Date().toISOString().split("T")[0]
+  } ${new Date().toISOString().split("T")[1].substring(0, 5)}`;
+  comment.style.marginBottom = "1vh";
+  comment.id = `comment-${i}`;
+  commentDetails.id = `comment-detail-${i}`;
+  comment.innerText = `${commentTextArea.value}`;
+  commentTextArea.value = "";
+  comment.appendChild(commentDetails);
+  commentContainer.appendChild(comment);
+  displayPostBody.scrollTo(0, displayPostBody.scrollHeight);
+});

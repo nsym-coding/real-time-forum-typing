@@ -4,7 +4,6 @@ body {
   height: 100%;
   overflow: hidden;
   scroll-behavior: smooth;
-
 }
 
 :root {
@@ -12,9 +11,9 @@ body {
 }
 
 * {
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
-
 
 #maincontainer {
   height: 100vh;
@@ -33,7 +32,6 @@ body {
 }
 
 .far {
-
   position: absolute;
   top: 7.5vh;
   left: 22vw;
@@ -48,7 +46,6 @@ body {
 }
 
 .fa-arrow-right-from-bracket {
-
   color: var(--ourBlue);
   left: 78vw;
   top: 9.5vh;
@@ -56,7 +53,6 @@ body {
 }
 
 #active-username {
-
   left: 70vw;
   top: 9.5vh;
   font-size: medium;
@@ -97,7 +93,6 @@ body {
   top: -8vh;
   width: 16vw;
   height: 3vh;
-
 }
 
 .post-class {
@@ -106,7 +101,6 @@ body {
   margin-bottom: 1.5vh;
   padding: 1vh;
   text-align: center;
-
 }
 
 .post-title-class {
@@ -138,10 +132,7 @@ body {
   width: 0.5vw;
   background-color: rgb(238, 49, 43);
   position: absolute;
-
-
 }
-
 
 .header {
   display: flex;
@@ -159,7 +150,6 @@ body {
   border-top-left-radius: 40vh;
   border-top-right-radius: 40vh;
   overflow: hidden;
-
 }
 
 #new-post-btn {
@@ -167,7 +157,6 @@ body {
   top: 26vh;
   left: 69.5vw;
 }
-
 
 /* The Modal (background) */
 .modal {
@@ -248,14 +237,11 @@ body {
 }
 
 #post-box-body {
-
   display: flex;
   flex-direction: column;
 }
 
-
 #chat-box-header {
-
   /* border-bottom: 2px solid var(--ourBlue); */
   height: 6vh;
   width: 32vw;
@@ -276,7 +262,6 @@ body {
   justify-content: center;
   align-items: center;
 }
-
 
 #chat-box-footer i {
   font-size: 3vh;
@@ -343,7 +328,6 @@ body {
   max-width: 13vw;
   overflow-wrap: break-word;
   margin-bottom: 1vh;
-
 }
 
 #chat-message-recipient {
@@ -362,6 +346,17 @@ body {
   display: flex;
   flex-direction: column;
   overflow: scroll;
+}
+
+#comment-container {
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+  word-break: break-all;
+}
+
+#comment-container::-webkit-scrollbar {
+  display: none;
 }
 
 #chat-container::-webkit-scrollbar {
@@ -384,7 +379,6 @@ body {
   margin-bottom: 3vh;
   display: flex;
   justify-content: space-around;
-
 }
 
 .buttons {
@@ -398,7 +392,6 @@ body {
   border-radius: 10px;
   cursor: pointer;
   padding-top: 1.5vh;
-
 }
 
 #submit-post-button {
@@ -420,12 +413,32 @@ img {
 }
 
 #display-post-header {
-  border: 5px red solid;
+  /* border: 0.5px red solid; */
+}
+
+#display-post-footer {
+  display: flex;
+  justify-content: space-between;
+}
+
+#display-post-footer i {
+  font-size: 4vh;
+  left: 32.5vw;
+  position: absolute;
+  top: 53.5vh;
+  cursor: pointer;
+  color: var(--ourBlue);
 }
 
 #display-post-body {
-  border: 5px red solid;
+  /* border: 5px red solid; */
+
+  overflow: scroll;
   height: 23vh;
+}
+
+#display-post-body::-webkit-scrollbar {
+  display: none;
 }
 
 .post-details {
