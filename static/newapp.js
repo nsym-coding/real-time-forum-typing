@@ -142,6 +142,8 @@ sendArrow.addEventListener("click", function () {
   chatBody.scrollTo(0, chatBody.scrollHeight);
 });
 
+
+
 const teamCrests = [
   "/css/img/newcastle.png",
   "/css/img/chelsea.png",
@@ -155,12 +157,11 @@ const categorySelection = document.getElementById("category-selection");
 
 
 
-
 for (let i = 0; i < teamCrests.length; i++) {
   let img = document.createElement("img");
   img.style.backgroundColor = 'white'
   img.alt = "none"
-  img.id = teamCrests[i].slice(teamCrests[1].lastIndexOf("/") + 1, teamCrests[i].length - 4);
+  img.id = teamCrests[i].slice(teamCrests[i].lastIndexOf("/") + 1, teamCrests[i].length - 4);
   img.classList = "crest-colors";
   img.src = teamCrests[i];
   categorySelection.append(img);
@@ -169,7 +170,13 @@ for (let i = 0; i < teamCrests.length; i++) {
 let crestcolors = document.getElementsByClassName("crest-colors");
 
 const colorSwitch = {
-    newcastle : "black",
+    newcastle : `linear-gradient(
+      to right,
+      #040108,
+      #040108 50%,
+      #f0f0f0 50%,
+      #f0f0f0
+    )`,
     spurs : "lightgrey", 
     "man-u" : "red",
     chelsea: "blue",
@@ -182,11 +189,11 @@ for (let i = 0; i < crestcolors.length; i++) {
   crestcolors[i].addEventListener("mouseup", (e) => {
   
     if( e.target.alt == 'none'){
-        e.target.style.backgroundColor = colorSwitch[e.target.id]
+        e.target.style.background = colorSwitch[e.target.id]
         e.target.alt = colorSwitch[e.target.id]
 
     }else{
-        e.target.style.backgroundColor = "white"
+        e.target.style.background = "white"
         e.target.alt = "none"
 
     }
