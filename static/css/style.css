@@ -202,7 +202,7 @@ body {
   float: left;
   width: 32vw;
   height: 60vh;
-  background: rgb(236, 236, 238);
+  background: white;
   border-radius: 5vh;
   position: relative;
   top: 12vh;
@@ -216,7 +216,21 @@ body {
   float: left;
   width: 32vw;
   height: 60vh;
-  background: rgb(236, 236, 238);
+  background: white;
+  border-radius: 5vh;
+  position: relative;
+  top: 12vh;
+}
+
+.display-post {
+  left: 14.2vw;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  float: left;
+  width: 46vw;
+  height: 62vh;
+  background: white;
   border-radius: 5vh;
   position: relative;
   top: 12vh;
@@ -395,4 +409,32 @@ body {
 
 img {
   width: 3vw;
+  cursor: pointer;
+}
+
+.display-post-title {
+  font-size: x-large;
+  font-weight: bold;
+  margin-top: 4vh;
+  border-bottom: 0.6vh var(--ourBlue) solid;
+}
+
+#display-post-header {
+  border: 5px red solid;
+}
+
+#display-post-body {
+  border: 5px red solid;
+  height: 23vh;
+}
+
+.post-details {
+  display: flex;
+
+  justify-content: flex-end;
+  margin-bottom: 1vh;
+}
+
+.post-date {
+  margin-left: 1vh;
 }

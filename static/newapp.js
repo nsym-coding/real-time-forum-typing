@@ -1,36 +1,32 @@
-
 let posts = document.getElementById("post-feed");
 let onlineUsers = document.getElementById("onlineusers");
 
-let postButton = document.getElementById("new-post-btn")
+let postButton = document.getElementById("new-post-btn");
 
 let users = ["tb38r", "abmutungi", "eternal17", "million"];
 
 for (let i = 0; i < 10; i++) {
-    let postDivs = document.createElement("div");
-    let postTitle = document.createElement("div");
-    postTitle.id = i;
-    postTitle.className = "post-title-class";
-    let postContent = document.createElement("div");
-    postContent.id = i;
-    postContent.className = "post-content-class";
+  let postDivs = document.createElement("div");
+  let postTitle = document.createElement("div");
+  postTitle.id = i;
+  postTitle.className = "post-title-class";
+  let postContent = document.createElement("div");
+  postContent.id = i;
+  postContent.className = "post-content-class";
 
-    let postFooter = document.createElement("div");
-    postFooter.id = i;
-    postFooter.className = "post-footer-class";
-    postDivs.className = "post-class ";
-    postDivs.id = i;
-    postTitle.innerText = `This is post number ${i}\n`;
-    postContent.innerText =
-        " This is a post bla blablalala\n___________________________________________________";
-    postFooter.innerText = `Created by abmutungi,   Date: ${new Date().toDateString()}, Comments: ${
-        i + 13
-    }`;
-    postDivs.appendChild(postTitle);
-    postDivs.appendChild(postContent);
-    postDivs.appendChild(postFooter);
+  let postFooter = document.createElement("div");
+  postFooter.id = i;
+  postFooter.className = "post-footer-class";
+  postDivs.className = "post-class ";
+  postDivs.id = i;
+  postTitle.innerText = `This is post number ${i}\n`;
+  postContent.innerText = " This is a post bla blablalala\n___________________________________________________";
+  postFooter.innerText = `Created by abmutungi,   Date: ${new Date().toDateString()}, Comments: ${i + 13}`;
+  postDivs.appendChild(postTitle);
+  postDivs.appendChild(postContent);
+  postDivs.appendChild(postFooter);
 
-    posts.appendChild(postDivs);
+  posts.appendChild(postDivs);
 }
 
 let userDetails;
@@ -38,64 +34,63 @@ let imageDiv;
 let img;
 
 for (let i = 0; i < 4; i++) {
-    userDetails = document.createElement("div");
-    let username = document.createElement("div");
-    imageDiv = document.createElement("div");
-    img = document.createElement("img");
-    let onlineIcon = document.createElement("div");
+  userDetails = document.createElement("div");
+  let username = document.createElement("div");
+  imageDiv = document.createElement("div");
+  img = document.createElement("img");
+  let onlineIcon = document.createElement("div");
 
-    onlineIcon.className = "online-icon-class";
+  onlineIcon.className = "online-icon-class";
 
-    img.src = "/css/img/newcastle.png";
-    img.style.width = "2vw";
-    imageDiv.appendChild(onlineIcon);
-    userDetails.id = `${users[i]}`;
+  img.src = "/css/img/newcastle.png";
+  img.style.width = "2vw";
+  imageDiv.appendChild(onlineIcon);
+  userDetails.id = `${users[i]}`;
 
-    //   userDetails.setAttribute("type", "button");
+  //   userDetails.setAttribute("type", "button");
 
-
-
-    userDetails.className = "registered-user";
-    username.innerText = `${users[i]}`;
-    imageDiv.append(img);
-    userDetails.appendChild(username);
-    userDetails.appendChild(imageDiv);
-    onlineUsers.appendChild(userDetails);
+  userDetails.className = "registered-user";
+  username.innerText = `${users[i]}`;
+  imageDiv.append(img);
+  userDetails.appendChild(username);
+  userDetails.appendChild(imageDiv);
+  onlineUsers.appendChild(userDetails);
 }
 
 let postTitlesClick = document.getElementsByClassName("post-title-class");
 Array.from(postTitlesClick).forEach(function (postTitle) {
-    postTitle.addEventListener("click", function (e) {
-        alert(postTitle.innerText);
-    });
+  postTitle.addEventListener("click", function (e) {
+    displayPostModal.style.display = "block";
+  });
 });
 
-var modal = document.getElementsByClassName("modal")
-var chatModal = document.getElementById("my-chat-modal");
-var createPostModal = document.getElementById("create-post-modal");
+let modal = document.getElementsByClassName("modal");
+let chatModal = document.getElementById("my-chat-modal");
+let createPostModal = document.getElementById("create-post-modal");
+let displayPostModal = document.getElementById("display-post-modal");
 
-postButton.addEventListener("click", function(){
-    createPostModal.style.display = "block"
-})
+postButton.addEventListener("click", function () {
+  createPostModal.style.display = "block";
+});
 
-var userRg = document.querySelectorAll(".registered-user");
+let userRg = document.querySelectorAll(".registered-user");
 let chatRecipient = document.getElementById("chat-recipient");
 
 // Get the button that opens the modal
-var btn = document.getElementById("myBtn");
+let btn = document.getElementById("myBtn");
 
 // Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close");
+let span = document.getElementsByClassName("close");
 
 // When the user clicks the button, open the modal
 
 for (let i = 0; i < userRg.length; i++) {
-    userRg[i].onclick = function () {
-        chatRecipient.innerText = userRg[i].id;
+  userRg[i].onclick = function () {
+    chatRecipient.innerText = userRg[i].id;
 
-        console.log("Users clicked");
-        chatModal.style.display = "block";
-    };
+    console.log("Users clicked");
+    chatModal.style.display = "block";
+  };
 }
 
 // userRg.onclick = function() {
@@ -104,24 +99,22 @@ for (let i = 0; i < userRg.length; i++) {
 // }
 
 // When the user clicks on <span> (x), close the modal
-for (let i = 0; i< span.length; i++){
-
-    span[i].onclick = function () {
-        modal[i].style.display = "none";
-    };
+for (let i = 0; i < span.length; i++) {
+  span[i].onclick = function () {
+    modal[i].style.display = "none";
+  };
 }
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function (event) {
-for (let i = 0; i<modal.length; i++){
-    console.log("modal -> ",modal[i]);
-console.log("evt -> ",event.target);
-        if (event.target == modal[i]){
-            modal[i].style.display = "none";
-        }
+  for (let i = 0; i < modal.length; i++) {
+    // console.log("modal -> ", modal[i]);
+    // console.log("evt -> ", event.target);
+    if (event.target == modal[i]) {
+      modal[i].style.display = "none";
     }
+  }
 };
-
 
 let sendArrow = document.getElementById("chat-arrow");
 let chatTextArea = document.getElementById("chat-input");
@@ -131,22 +124,73 @@ let chatBody = document.getElementById("chat-box-body");
 let sender = true;
 
 sendArrow.addEventListener("click", function () {
-    console.log("arrow clicked");
-    let newChatBubble = document.createElement("div");
+  console.log("arrow clicked");
+  let newChatBubble = document.createElement("div");
 
-    newChatBubble.innerText = chatTextArea.value;
-    chatTextArea.value = "";
-    if (sender) {
-        newChatBubble.id = "chat-message-sender";
-        sender = false;
-    } else {
-        newChatBubble.id = "chat-message-recipient";
-        sender = true;
-    }
+  newChatBubble.innerText = chatTextArea.value;
+  chatTextArea.value = "";
+  if (sender) {
+    newChatBubble.id = "chat-message-sender";
+    sender = false;
+  } else {
+    newChatBubble.id = "chat-message-recipient";
+    sender = true;
+  }
 
-    chatContainer.appendChild(newChatBubble);
+  chatContainer.appendChild(newChatBubble);
 
-    chatBody.scrollTo(0, chatBody.scrollHeight);
+  chatBody.scrollTo(0, chatBody.scrollHeight);
 });
 
-["/css/img/newcastle.png", "/css/img/Chelsea.png", ]
+const teamCrests = [
+  "/css/img/newcastle.png",
+  "/css/img/chelsea.png",
+  "/css/img/man-u.png",
+  "/css/img/man-city.png",
+  "/css/img/liverpool.png",
+  "/css/img/spurs.png",
+];
+
+const categorySelection = document.getElementById("category-selection");
+
+
+
+
+for (let i = 0; i < teamCrests.length; i++) {
+  let img = document.createElement("img");
+  img.style.backgroundColor = 'white'
+  img.alt = "none"
+  img.id = teamCrests[i].slice(teamCrests[1].lastIndexOf("/") + 1, teamCrests[i].length - 4);
+  img.classList = "crest-colors";
+  img.src = teamCrests[i];
+  categorySelection.append(img);
+}
+
+let crestcolors = document.getElementsByClassName("crest-colors");
+
+const colorSwitch = {
+    newcastle : "black",
+    spurs : "lightgrey", 
+    "man-u" : "red",
+    chelsea: "blue",
+    liverpool : "red",
+    "man-city": "skyblue"
+
+}; 
+
+for (let i = 0; i < crestcolors.length; i++) {
+  crestcolors[i].addEventListener("mouseup", (e) => {
+  
+    if( e.target.alt == 'none'){
+        e.target.style.backgroundColor = colorSwitch[e.target.id]
+        e.target.alt = colorSwitch[e.target.id]
+
+    }else{
+        e.target.style.backgroundColor = "white"
+        e.target.alt = "none"
+
+    }
+  
+
+  });
+}

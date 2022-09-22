@@ -24,7 +24,7 @@
         </div>
       </div>
       <div id="post-feed"></div>
-      <div class ='buttons' id="new-post-btn">+ Post </div>
+      <div class='buttons' id="new-post-btn">+ Post </div>
       <div id="onlineusers">
       </div>
 
@@ -48,7 +48,7 @@
         </div>
         <div id="chat-box-body">
           <div id="chat-container">
-         </div>
+          </div>
         </div>
         <div id="chat-box-footer">
           <textarea type="text" id="chat-input" placeholder="type here..." class="text-input"></textarea>
@@ -58,31 +58,64 @@
 
     </div>
 
-    <!-- The Post Modal -->
+    <!-- The create post modal -->
     <div id="create-post-modal" class="modal">
 
-      <!-- Post Modal content -->
+      <!-- post modal content -->
       <div class="create-post-box">
         <span class="close">&times;</span>
-        <div id="post-box-header"><div id="post-header-title">Create Post</div> </div>
+        <div id="post-box-header">
+          <div id="post-header-title">Create Post</div>
+        </div>
         <div id="post-box-body">
-          <input name="post-title" id="post-title" cols="30" rows="10" placeholder="type post title here..." maxlength="65" class="text-input"></input>
-          <textarea name="post-content" id="post-content" cols="30" rows="10" placeholder="What is your agenda...." class="post-content-text-box"></textarea>
+          <input name="post-title" id="post-title" cols="30" rows="10" placeholder="type post title here..."
+            maxlength="65" class="text-input"></input>
+          <textarea name="post-content" id="post-content" cols="30" rows="10" placeholder="What is your agenda...."
+            class="post-content-text-box"></textarea>
           <div id="category-selection">
-            <img src="/css/img/newcastle.png" alt="">
-            <img src="/css/img/chelsea.png" alt="">
-            <img src="/css/img/man-u.png" alt="">
-            <img src="/css/img/man-city.png" alt="">
-            <img src="/css/img/liverpool.png" alt="">
-            <img src="/css/img/spurs.png" alt="">
+         
           </div>
-        
+
         </div>
 
-        <div id="post-box-footer"><button id="submit-post-button"class="buttons">Post</button></div>
+        <div id="post-box-footer"><button id="submit-post-button" class="buttons">Post</button></div>
       </div>
 
     </div>
+
+
+    <!-- The display post modal -->
+    <div id="display-post-modal" class="modal">
+
+      <!-- display post content -->
+      <div class="display-post">
+        <span class="close">&times;</span>
+        <div id="display-post-header">
+          <div class="display-post-title">
+            Testing a title in here to see!
+          </div>
+          <div class="display-post-content">
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta nulla est eum, repudiandae nihil
+              repellendus quae ducimus aliquid porro consectetur omnis nobis, libero eligendi et nemo adipisci quia
+              laboriosam necessitatibus?</p>
+          </div>
+          <div class="post-details">
+            <div class="post-username">Posted by Bruno8</div>
+            <div class="post-date">10/10/2022</div>
+          </div>
+
+        </div>
+        <div id="display-post-body">
+          <div id="chat-container">
+          </div>
+        </div>
+        <div id="display-post-footer">
+          <textarea type="text" id="chat-input" placeholder="type here..." class="text-input"></textarea>
+        </div>
+      </div>
+
+    </div>
+
     <script src="/newapp.js"></script>
 
 </body>
