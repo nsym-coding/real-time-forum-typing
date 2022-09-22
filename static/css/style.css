@@ -409,6 +409,7 @@ body {
 
 img {
   width: 3vw;
+  cursor: pointer;
 }
 
 .display-post-title {
