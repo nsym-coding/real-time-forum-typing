@@ -273,21 +273,23 @@ loginButton.addEventListener("click", (e) => {
         ws.onmessage = (e) => {
           let data = JSON.parse(e.data)
           if (data.tipo === "post") {
+
+
             let postDivs = document.createElement("div");
             let postTitle = document.createElement("div");
-            postTitle.id = 1;
             postTitle.className = "post-title-class";
             let postContent = document.createElement("div");
-            postContent.id = 1;
+
             postContent.className = "post-content-class";
 
             let postFooter = document.createElement("div");
-            postFooter.id = 1;
             postFooter.className = "post-footer-class";
             postDivs.className = "post-class ";
+            // this will eventually hold the id given by go from the database (data.id)
             postDivs.id = 1;
             postTitle.innerText = data.title;
             postContent.innerText = data.postcontent
+            postContent.style.borderBottom = "0.2vh solid black"
             postFooter.innerText = `Created by ${data.user},   Date: ${data.posttime}, Comments: ${1 + 13}`;
             postDivs.appendChild(postTitle);
             postDivs.appendChild(postContent);
