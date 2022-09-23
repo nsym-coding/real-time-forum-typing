@@ -217,3 +217,45 @@ commentArrow.addEventListener("click", function () {
   commentContainer.appendChild(comment);
   displayPostBody.scrollTo(0, displayPostBody.scrollHeight);
 });
+
+
+let signupSwitch = document.getElementById('sign-up-button')
+let loginBox = document.querySelector('.login-box')
+let registerBox = document.querySelector('.register-box')
+let loginReturn = document.querySelector('#login-return')
+let loginButton = document.getElementById('login-button')
+let forumBody = document.getElementById('forumbody')
+let loginModal = document.querySelector('.login-modal')
+let loginForm = document.getElementById('login-form')
+
+
+
+
+signupSwitch.addEventListener("click", (e) =>{
+  loginBox.style.display = "none"
+  registerBox.style.display = "block"
+
+})
+
+loginReturn.addEventListener("click", (e) =>{
+  loginBox.style.display = "block"
+  registerBox.style.display = "none"
+
+})
+
+
+loginButton.addEventListener("click", (e)=>{
+
+  
+
+  let loginData = new FormData(loginForm);
+  loginFormToGo = Object.fromEntries(loginData);
+  console.log(loginFormToGo);
+
+loginModal.style.display = 'none'
+ forumBody.style.display = "block"
+
+
+
+
+})

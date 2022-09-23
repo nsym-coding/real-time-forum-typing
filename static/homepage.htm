@@ -23,17 +23,20 @@
                 <div class="logo-text"><span style="color:black">team</span>forum</div>
               </i>
       </div>
-      <!-- Chat Modal content -->
+      <!-- Log-In Modal content -->
       <div class="login-box">
-  
+        <form action="javascript:void(0)" id="login-form">
+
+
         <div id="login-box-body">
-          <input type="text" placeholder="Email/Username" class="login-input"></input>
-          <input type="password" placeholder="Password" class="login-input"></input>
-          <button class="buttons">Log In</button>
+          <input type="text" name="email/username" placeholder="Email/Username" class="login-input"></input>
+          <input type="password" name="password"placeholder="Password" class="login-input"></input>
+          <button id="login-button" class="buttons">Log In</button>
           <a id="sign-up-button">Click here to sign up!</a>
 
          
         </div>
+        </form>
       </div>
 
       <!-- Register Modal content -->
@@ -45,7 +48,7 @@
       <!-- <label for="username">Username</label> -->
       <input type="text" name="username" id="signup-username" placeholder="Username" class="login-input" required></input>
       <!-- <label for="age">Age</label> -->
-      <input type="number" name="age" id="signup-age"placeholder="Age" class="login-input" required></input>
+      <input type="number" name="age" id="signup-age"placeholder="Age" class="login-input" min="16" max ="100"required ></input>
       <!-- <label for="firstname">First Name</label> -->
       <input type="text" name="firstname" id="signup-firstname"placeholder="First Name" class="login-input" required></input>
       <!-- <label for="lastname">Last Name</label> -->
@@ -57,14 +60,16 @@
       <!-- <label for="password">Password</label> -->
       <input type="password" name="password" id="signup-password" placeholder="Password" class="login-input" required></input>  
       <div class="gender">
-        <label for="male">Male<input type="radio" value="M" checked></input>
+        <label for="male">Male<input type="radio" value="M" name= "gender" checked></input>
         </label>
-        <label for="female">Female<input type="radio" value="F"></input>
+        <label for="female">Female<input type="radio" value="F"name= "gender"></input>
         </label>
-        <label for="other">Other<input type="radio" value="Other"></input>
+        <label for="other">Other<input type="radio" value="Other" name= "gender"></input>
         </label>
       </div>
       <button id="register-btn"class="buttons">Sign up!</button>
+      <a id="login-return">Return to Log-in!</a>
+
     </div>
   </form>
 
@@ -79,8 +84,6 @@
 
 </div>
     </div>
-</div>
-
     <div id="forumbody">
       <div class="header">
         <i class='far fa-futbol fa-3x'>
@@ -89,7 +92,7 @@
 
         <div id="user-div">
           <div id="active-username">abmutungi</div>
-          <i class='fa-solid fa-arrow-right-from-bracket fa-1.5x' style="display: none;"></i>
+          <i class='fa-solid fa-arrow-right-from-bracket fa-1.5x' ></i>
         </div>
       </div>
     
@@ -100,13 +103,10 @@
 
 
 
-
-
-
-
-
-
     </div>
+</div>
+
+
     
     <!-- The Modal -->
     <div id="my-chat-modal" class="modal">

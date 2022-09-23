@@ -154,12 +154,11 @@ body {
   justify-content: flex-end;
   align-items: center;
   top: 10vh;
-  height: 5vh;
+  height: 7vh;
   padding-top: 7vh;
   border-radius: 2vh;
   position: absolute;
   width: 80vw;
-  z-index: 1;
   overflow: hidden;
   background: rgb(236, 236, 238);
   border-top-left-radius: 40vh;
@@ -256,10 +255,20 @@ body {
   left: 19vw;
   width: 19vw;
   position: relative;
-  display: none;
+  display: block;
 }
 
 #sign-up-button {
+  margin-top: 1vh;
+  cursor: pointer;
+  font-size: small;
+  color: var(--ourBlue);
+  width: 20vw;
+  left: 4vw;
+  position: relative;
+}
+
+#login-return {
   margin-top: 1vh;
   cursor: pointer;
   font-size: small;
@@ -518,7 +527,7 @@ img {
   left: 20.5vw;
   width: 14vw;
   position: relative;
-  display: block;
+  display: none;
 }
 .gender{
   display: flex;
