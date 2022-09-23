@@ -23,10 +23,7 @@
       </div>
       <!-- Chat Modal content -->
       <div class="login-box">
-      
-        <div id="login-box-header">
-          
-        </div>
+  
         <div id="login-box-body">
           <input type="text" placeholder="Email/Username" class="login-input"></input>
           <input type="password" placeholder="Password" class="login-input"></input>
@@ -35,10 +32,41 @@
 
          
         </div>
-        <div id="login-box-footer">
-         
-        </div>
       </div>
+
+      <!-- Register Modal content -->
+  <div class="register-box">
+  
+
+    <form action="javascript:void(0)" id="signup-form">
+    <div id="register-box-body">
+      <!-- <label for="username">Username</label> -->
+      <input type="text" name="username" id="signup-username" placeholder="Username" class="login-input" required></input>
+      <!-- <label for="age">Age</label> -->
+      <input type="number" name="age" id="signup-age"placeholder="Age" class="login-input" required></input>
+      <!-- <label for="firstname">First Name</label> -->
+      <input type="text" name="firstname" id="signup-firstname"placeholder="First Name" class="login-input" required></input>
+      <!-- <label for="lastname">Last Name</label> -->
+      <input type="text" name="lastname" id="signup-lastname" placeholder="Last Name" class="login-input" required></input>
+      <!-- <label for="email">Email</label> -->
+      <input type="text" name="email" id="signup-email"placeholder="Email" class="login-input" required></input>
+      <!-- <label for="gender">Gender</label> -->
+     
+      <!-- <label for="password">Password</label> -->
+      <input type="password" name="password" id="signup-password" placeholder="Password" class="login-input" required></input>  
+      <div class="gender">
+        <label for="male">Male<input type="radio" value="M" checked></input>
+        </label>
+        <label for="female">Female<input type="radio" value="F"></input>
+        </label>
+        <label for="other">Other<input type="radio" value="Other"></input>
+        </label>
+      </div>
+      <button id="register-btn"class="buttons">Sign up!</button>
+    </div>
+  </form>
+
+  </div>
 <div id="homepage-images">
   <img src="./css/img/spurs.png" alt="" class="home-image">
   <img src="./css/img/man-city.png" alt="" class="home-image">
@@ -49,6 +77,7 @@
 
 </div>
     </div>
+</div>
 
     <div id="forumbody">
       <div class="header">

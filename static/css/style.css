@@ -27,14 +27,14 @@ body {
 .home-logo {
   position: relative;
 
-  top: 20vh;
+  top: 3vh;
 }
 
 .login-modal {
   position: absolute;
   width: 66vw;
   border-radius: 2vh;
-  /* height: 72vh; */
+  height: 72vh;
   background-color: rgb(236, 236, 238);
 }
 
@@ -252,10 +252,11 @@ body {
 }
 
 .login-box {
-  top: 34vh;
+  top: 30vh;
   left: 19vw;
   width: 19vw;
   position: relative;
+  display: none;
 }
 
 #sign-up-button {
@@ -272,8 +273,8 @@ body {
   display: flex;
   flex-direction: column;
   left: 50vw;
-  top: -10vh;
-  position: relative;
+  top: 2vh;
+  position: absolute;
   z-index: 2;
 }
 
@@ -292,6 +293,8 @@ body {
   border-radius: 3vh;
   margin-bottom: 2vh;
   line-height: 4.5vh;
+  padding-left: 1vw;
+  border-style: solid;
 }
 
 #post-box-body {
@@ -507,4 +510,23 @@ img {
 
 .post-date {
   margin-left: 1vh;
+}
+
+.register-box {
+  top: 20vh;
+  left: 20.5vw;
+  width: 14vw;
+  position: relative;
+  display: block;
+}
+.gender{
+  display: flex;
+  margin-bottom: 2vh;
+}
+#register-box-body input{
+  line-height: 2.5vh;
+}
+
+#register-btn{
+  width: -webkit-fill-available;
 }
