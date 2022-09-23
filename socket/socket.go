@@ -119,7 +119,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("error when upgrading connection...")
 	}
-
+	fmt.Println("CONNECTION TO CLIENT")
 	defer wsConn.Close()
 
 	clients[wsConn] = true
@@ -133,6 +133,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 		if f.Type == "post" {
 			f.Posts.Tipo = "post"
+			fmt.Println("this is the post content       ", f.PostContent)
 			// f.Posts.User = "yonas"
 			broadcastChannelPosts <- f.Posts
 		} else if f.Type == "comment" {
@@ -242,4 +243,27 @@ func broadcastToAllClients() {
 			}
 		}
 	}
+}
+
+type LoginA struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+func GetLoginData(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.Method)
+	var l LoginA
+	err := json.NewDecoder(r.Body).Decode(&l)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// login form data (l), needs to be validated and then we need to send a message back to client
+	fmt.Println(l)
+
+	// data gets marshalled and sent to client
+	toSend, _ := json.Marshal("login valid")
+	w.Write(toSend)
+	http.HandleFunc("/ws", WebSocketEndpoint)
 }

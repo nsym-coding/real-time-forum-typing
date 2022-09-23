@@ -9,80 +9,85 @@
   <link rel="icon" href="./css/img/man-u.png" />
 
   <script src="https://kit.fontawesome.com/0aef5c9550.js" crossorigin="anonymous"></script>
-  <title>TEAM  FORUM</title>
+  <title>TEAM FORUM</title>
 </head>
 
 <body>
 
   <div id="maincontainer">
-  <!-- The Login Modal -->
-    <div  class="login-modal">
+    <!-- The Login Modal -->
+    <div class="login-modal">
       <div class="home-logo">
 
         <i class='far fa-futbol fa-3x'>
-                <div class="logo-text"><span style="color:black">team</span>forum</div>
-              </i>
+          <div class="logo-text"><span style="color:black">team</span>forum</div>
+        </i>
       </div>
       <!-- Log-In Modal content -->
       <div class="login-box">
         <form action="javascript:void(0)" id="login-form">
 
 
-        <div id="login-box-body">
-          <input type="text" name="email/username" placeholder="Email/Username" class="login-input"></input>
-          <input type="password" name="password"placeholder="Password" class="login-input"></input>
-          <button id="login-button" class="buttons">Log In</button>
-          <a id="sign-up-button">Click here to sign up!</a>
+          <div id="login-box-body">
+            <input type="text" name="username" placeholder="Email/Username" class="login-input"></input>
+            <input type="password" name="password" placeholder="Password" class="login-input"></input>
+            <button id="login-button" class="buttons">Log In</button>
+            <a id="sign-up-button">Click here to sign up!</a>
 
-         
-        </div>
+
+          </div>
         </form>
       </div>
 
       <!-- Register Modal content -->
-  <div class="register-box">
-  
+      <div class="register-box">
 
-    <form action="javascript:void(0)" id="signup-form">
-    <div id="register-box-body">
-      <!-- <label for="username">Username</label> -->
-      <input type="text" name="username" id="signup-username" placeholder="Username" class="login-input" required></input>
-      <!-- <label for="age">Age</label> -->
-      <input type="number" name="age" id="signup-age"placeholder="Age" class="login-input" min="16" max ="100"required ></input>
-      <!-- <label for="firstname">First Name</label> -->
-      <input type="text" name="firstname" id="signup-firstname"placeholder="First Name" class="login-input" required></input>
-      <!-- <label for="lastname">Last Name</label> -->
-      <input type="text" name="lastname" id="signup-lastname" placeholder="Last Name" class="login-input" required></input>
-      <!-- <label for="email">Email</label> -->
-      <input type="text" name="email" id="signup-email"placeholder="Email" class="login-input" required></input>
-      <!-- <label for="gender">Gender</label> -->
-     
-      <!-- <label for="password">Password</label> -->
-      <input type="password" name="password" id="signup-password" placeholder="Password" class="login-input" required></input>  
-      <div class="gender">
-        <label for="male">Male<input type="radio" value="M" name= "gender" checked></input>
-        </label>
-        <label for="female">Female<input type="radio" value="F"name= "gender"></input>
-        </label>
-        <label for="other">Other<input type="radio" value="Other" name= "gender"></input>
-        </label>
+
+        <form action="javascript:void(0)" id="signup-form">
+          <div id="register-box-body">
+            <!-- <label for="username">Username</label> -->
+            <input type="text" name="username" id="signup-username" placeholder="Username" class="login-input"
+              required></input>
+            <!-- <label for="age">Age</label> -->
+            <input type="number" name="age" id="signup-age" placeholder="Age" class="login-input" min="16" max="100"
+              required></input>
+            <!-- <label for="firstname">First Name</label> -->
+            <input type="text" name="firstname" id="signup-firstname" placeholder="First Name" class="login-input"
+              required></input>
+            <!-- <label for="lastname">Last Name</label> -->
+            <input type="text" name="lastname" id="signup-lastname" placeholder="Last Name" class="login-input"
+              required></input>
+            <!-- <label for="email">Email</label> -->
+            <input type="text" name="email" id="signup-email" placeholder="Email" class="login-input" required></input>
+            <!-- <label for="gender">Gender</label> -->
+
+            <!-- <label for="password">Password</label> -->
+            <input type="password" name="password" id="signup-password" placeholder="Password" class="login-input"
+              required></input>
+            <div class="gender">
+              <label for="male">Male<input type="radio" value="M" name="gender" checked></input>
+              </label>
+              <label for="female">Female<input type="radio" value="F" name="gender"></input>
+              </label>
+              <label for="other">Other<input type="radio" value="Other" name="gender"></input>
+              </label>
+            </div>
+            <button id="register-btn" class="buttons">Sign up!</button>
+            <a id="login-return">Return to Log-in!</a>
+
+          </div>
+        </form>
+
       </div>
-      <button id="register-btn"class="buttons">Sign up!</button>
-      <a id="login-return">Return to Log-in!</a>
+      <div id="homepage-images">
+        <img src="./css/img/spurs.png" alt="" class="home-image">
+        <img src="./css/img/man-city.png" alt="" class="home-image">
+        <img src="./css/img/liverpool.png" alt="" class="home-image">
+        <img src="./css/img/chelsea.png" alt="" class="home-image">
+        <img src="./css/img/newcastle.png" alt="" class="home-image">
+        <img src="./css/img/man-u.png" alt="" class="home-image">
 
-    </div>
-  </form>
-
-  </div>
-<div id="homepage-images">
-  <img src="./css/img/spurs.png" alt="" class="home-image">
-  <img src="./css/img/man-city.png" alt="" class="home-image">
-  <img src="./css/img/liverpool.png" alt="" class="home-image">
-  <img src="./css/img/chelsea.png" alt="" class="home-image">
-  <img src="./css/img/newcastle.png" alt="" class="home-image">
-  <img src="./css/img/man-u.png" alt="" class="home-image">
-
-</div>
+      </div>
     </div>
     <div id="forumbody">
       <div class="header">
@@ -92,103 +97,100 @@
 
         <div id="user-div">
           <div id="active-username">abmutungi</div>
-          <i class='fa-solid fa-arrow-right-from-bracket fa-1.5x' ></i>
+          <i class='fa-solid fa-arrow-right-from-bracket fa-1.5x'></i>
         </div>
       </div>
-    
+
       <div id="post-feed"></div>
       <div class='buttons' id="new-post-btn">+ Post </div>
       <div id="onlineusers">
       </div>
-
-
-
     </div>
-</div>
+  </div>
 
 
-    
-    <!-- The Modal -->
-    <div id="my-chat-modal" class="modal">
 
-      <!-- Chat Modal content -->
-      <div class="chat-box">
-        <span class="close">&times;</span>
-        <div id="chat-box-header">
-          <div id="chat-recipient"></div>
-        </div>
-        <div id="chat-box-body">
-          <div id="chat-container">
-          </div>
-        </div>
-        <div id="chat-box-footer">
-          <textarea type="text" id="chat-input" placeholder="type here..." class="text-input"></textarea>
-          <i id="chat-arrow" class="fa-regular fa-paper-plane"></i>
+  <!-- The Modal -->
+  <div id="my-chat-modal" class="modal">
+
+    <!-- Chat Modal content -->
+    <div class="chat-box">
+      <span class="close">&times;</span>
+      <div id="chat-box-header">
+        <div id="chat-recipient"></div>
+      </div>
+      <div id="chat-box-body">
+        <div id="chat-container">
         </div>
       </div>
-
+      <div id="chat-box-footer">
+        <textarea type="text" id="chat-input" placeholder="type here..." class="text-input"></textarea>
+        <i id="chat-arrow" class="fa-regular fa-paper-plane"></i>
+      </div>
     </div>
 
-    <!-- The create post modal -->
-    <div id="create-post-modal" class="modal">
+  </div>
 
-      <!-- post modal content -->
-      <div class="create-post-box">
-        <span class="close">&times;</span>
-        <div id="post-box-header">
-          <div id="post-header-title">Create Post</div>
+  <!-- The create post modal -->
+  <div id="create-post-modal" class="modal">
+
+    <!-- post modal content -->
+    <div class="create-post-box">
+      <span class="close">&times;</span>
+      <div id="post-box-header">
+        <div id="post-header-title">Create Post</div>
+      </div>
+      <div id="post-box-body">
+        <input name="post-title" id="post-title" cols="30" rows="10" placeholder="type post title here..."
+          maxlength="65" class="text-input"></input>
+        <textarea name="post-content" id="post-content" cols="30" rows="10" placeholder="What is your agenda...."
+          class="post-content-text-box"></textarea>
+        <div id="category-selection">
+
         </div>
-        <div id="post-box-body">
-          <input name="post-title" id="post-title" cols="30" rows="10" placeholder="type post title here..."
-            maxlength="65" class="text-input"></input>
-          <textarea name="post-content" id="post-content" cols="30" rows="10" placeholder="What is your agenda...."
-            class="post-content-text-box"></textarea>
-          <div id="category-selection">
-         
-          </div>
 
-        </div>
-
-        <div id="post-box-footer"><button id="submit-post-button" class="buttons">Post</button></div>
       </div>
 
+      <div id="post-box-footer"><button id="submit-post-button" class="buttons">Post</button></div>
     </div>
 
+  </div>
 
-    <!-- The display post modal -->
-    <div id="display-post-modal" class="modal">
 
-      <!-- display post content -->
-      <div class="display-post">
-        <span class="close">&times;</span>
-        <div id="display-post-header">
-          <div class="display-post-title">
-            Testing a title in here to see!
-          </div>
-          <div class="display-post-content">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta nulla est eum, repudiandae nihil
-              repellendus quae ducimus aliquid porro consectetur omnis nobis, libero eligendi et nemo adipisci quia
-              laboriosam necessitatibus?</p>
-          </div>
-          <div class="post-details">
-            <div class="post-username">Posted by Bruno8</div>
-            <div class="post-date">10/10/2022</div>
-          </div>
+  <!-- The display post modal -->
+  <div id="display-post-modal" class="modal">
 
+    <!-- display post content -->
+    <div class="display-post">
+      <span class="close">&times;</span>
+      <div id="display-post-header">
+        <div class="display-post-title">
+          Testing a title in here to see!
         </div>
-        <div id="display-post-body">
-          <div id="comment-container">
-          </div>
+        <div class="display-post-content">
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta nulla est eum, repudiandae nihil
+            repellendus quae ducimus aliquid porro consectetur omnis nobis, libero eligendi et nemo adipisci quia
+            laboriosam necessitatibus?</p>
         </div>
-        <div id="display-post-footer">
-          <textarea type="text" id="comment-input" placeholder="type comment here..." class="text-input"></textarea>
-           <i id="comment-arrow" class="fa-regular fa-paper-plane"></i>
+        <div class="post-details">
+          <div class="post-username">Posted by Bruno8</div>
+          <div class="post-date">10/10/2022</div>
+        </div>
+
+      </div>
+      <div id="display-post-body">
+        <div id="comment-container">
         </div>
       </div>
-
+      <div id="display-post-footer">
+        <textarea type="text" id="comment-input" placeholder="type comment here..." class="text-input"></textarea>
+        <i id="comment-arrow" class="fa-regular fa-paper-plane"></i>
+      </div>
     </div>
 
-    <script src="/newapp.js"></script>
+  </div>
+
+  <script src="/newapp.js"></script>
 
 </body>
 

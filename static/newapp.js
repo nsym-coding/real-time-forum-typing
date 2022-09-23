@@ -5,30 +5,30 @@ let postButton = document.getElementById("new-post-btn");
 
 let users = ["tb38r", "abmutungi", "eternal17", "million"];
 
-for (let i = 0; i < 10; i++) {
-  let postDivs = document.createElement("div");
-  let postTitle = document.createElement("div");
-  postTitle.id = i;
-  postTitle.className = "post-title-class";
-  let postContent = document.createElement("div");
-  postContent.id = i;
-  postContent.className = "post-content-class";
+// for (let i = 0; i < 10; i++) {
+//   let postDivs = document.createElement("div");
+//   let postTitle = document.createElement("div");
+//   postTitle.id = i;
+//   postTitle.className = "post-title-class";
+//   let postContent = document.createElement("div");
+//   postContent.id = i;
+//   postContent.className = "post-content-class";
 
-  let postFooter = document.createElement("div");
-  postFooter.id = i;
-  postFooter.className = "post-footer-class";
-  postDivs.className = "post-class ";
-  postDivs.id = i;
-  postTitle.innerText = `This is post number ${i}\n`;
-  postContent.innerText =
-    " This is a post bla blablalala\n___________________________________________________";
-  postFooter.innerText = `Created by abmutungi,   Date: ${new Date().toDateString()}, Comments: ${i + 13}`;
-  postDivs.appendChild(postTitle);
-  postDivs.appendChild(postContent);
-  postDivs.appendChild(postFooter);
+//   let postFooter = document.createElement("div");
+//   postFooter.id = i;
+//   postFooter.className = "post-footer-class";
+//   postDivs.className = "post-class ";
+//   postDivs.id = i;
+//   postTitle.innerText = `This is post number ${i}\n`;
+//   postContent.innerText =
+//     " This is a post bla blablalala\n___________________________________________________";
+//   postFooter.innerText = `Created by abmutungi,   Date: ${new Date().toDateString()}, Comments: ${i + 13}`;
+//   postDivs.appendChild(postTitle);
+//   postDivs.appendChild(postContent);
+//   postDivs.appendChild(postFooter);
 
-  posts.appendChild(postDivs);
-}
+//   posts.appendChild(postDivs);
+// }
 
 let userDetails;
 let imageDiv;
@@ -166,34 +166,34 @@ for (let i = 0; i < teamCrests.length; i++) {
 let crestcolors = document.getElementsByClassName("crest-colors");
 
 const colorSwitch = {
-    newcastle : `linear-gradient(
+  newcastle: `linear-gradient(
       to right,
       #040108,
       #040108 50%,
       #f0f0f0 50%,
       #f0f0f0
     )`,
-    spurs : "lightgrey", 
-    "man-u" : "red",
-    chelsea: "blue",
-    liverpool : "red",
-    "man-city": "skyblue"
+  spurs: "lightgrey",
+  "man-u": "red",
+  chelsea: "blue",
+  liverpool: "red",
+  "man-city": "skyblue"
 
-}; 
+};
 
 for (let i = 0; i < crestcolors.length; i++) {
   crestcolors[i].addEventListener("mouseup", (e) => {
-  
-    if( e.target.alt == 'none'){
-        e.target.style.background = colorSwitch[e.target.id]
-        e.target.alt = colorSwitch[e.target.id]
 
-    }else{
-        e.target.style.background = "white"
-        e.target.alt = "none"
+    if (e.target.alt == 'none') {
+      e.target.style.background = colorSwitch[e.target.id]
+      e.target.alt = colorSwitch[e.target.id]
+
+    } else {
+      e.target.style.background = "white"
+      e.target.alt = "none"
 
     }
-  
+
 
   });
 }
@@ -205,9 +205,8 @@ commentArrow.addEventListener("click", function () {
   let i = 0;
   let comment = document.createElement("div");
   let commentDetails = document.createElement("div");
-  commentDetails.innerText = `Created by: McTom Date: ${
-    new Date().toISOString().split("T")[0]
-  } ${new Date().toISOString().split("T")[1].substring(0, 5)}`;
+  commentDetails.innerText = `Created by: McTom Date: ${new Date().toISOString().split("T")[0]
+    } ${new Date().toISOString().split("T")[1].substring(0, 5)}`;
   comment.style.marginBottom = "1vh";
   comment.id = `comment-${i}`;
   commentDetails.id = `comment-detail-${i}`;
@@ -231,31 +230,97 @@ let loginForm = document.getElementById('login-form')
 
 
 
-signupSwitch.addEventListener("click", (e) =>{
+signupSwitch.addEventListener("click", (e) => {
   loginBox.style.display = "none"
   registerBox.style.display = "block"
 
 })
 
-loginReturn.addEventListener("click", (e) =>{
+loginReturn.addEventListener("click", (e) => {
   loginBox.style.display = "block"
   registerBox.style.display = "none"
 
 })
 
 
-loginButton.addEventListener("click", (e)=>{
+let ws
 
-  
+loginButton.addEventListener("click", (e) => {
 
   let loginData = new FormData(loginForm);
-  loginFormToGo = Object.fromEntries(loginData);
+  let loginFormToGo = Object.fromEntries(loginData);
   console.log(loginFormToGo);
 
-loginModal.style.display = 'none'
- forumBody.style.display = "block"
 
 
+  // fetch, send login data to backend server
 
+  fetch("http://localhost:8080/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(loginFormToGo),
+  }).then((resp) => resp.json())
+    .then(function (data) {
+      if (data === "login valid") {
+        loginModal.style.display = 'none'
+        forumBody.style.display = "block"
+        ws = new WebSocket("ws://localhost:8080/ws");
+        ws.onopen = () => {
+          console.log("connection established");
+        }
+        ws.onmessage = (e) => {
+          let data = JSON.parse(e.data)
+          if (data.tipo === "post") {
+            let postDivs = document.createElement("div");
+            let postTitle = document.createElement("div");
+            postTitle.id = 1;
+            postTitle.className = "post-title-class";
+            let postContent = document.createElement("div");
+            postContent.id = 1;
+            postContent.className = "post-content-class";
 
+            let postFooter = document.createElement("div");
+            postFooter.id = 1;
+            postFooter.className = "post-footer-class";
+            postDivs.className = "post-class ";
+            postDivs.id = 1;
+            postTitle.innerText = data.title;
+            postContent.innerText = data.postcontent
+            postFooter.innerText = `Created by ${data.user},   Date: ${data.posttime}, Comments: ${1 + 13}`;
+            postDivs.appendChild(postTitle);
+            postDivs.appendChild(postContent);
+            postDivs.appendChild(postFooter);
+
+            posts.appendChild(postDivs);
+          }
+        }
+      }
+    })
 })
+
+let submitPostButton = document.querySelector("#submit-post-button")
+let postTitle = document.querySelector("#post-title")
+let postContent = document.querySelector("#post-content")
+
+
+// dummy post info being sent to server
+let objData = {}
+submitPostButton.addEventListener("click", function (e) {
+  e.preventDefault();
+
+  objData["title"] = postTitle.value;
+  objData["postcontent"] = postContent.value;
+  objData["type"] = "post";
+  objData["posttime"] = new Date().toISOString().slice(0, 10);
+  objData["user"] = "Bruno8"
+
+  createPostModal.style.display = "none";
+  postTitle.value = "";
+  postContent.value = "";
+
+  // message sent to server
+  ws.send(JSON.stringify(objData));
+});
+
