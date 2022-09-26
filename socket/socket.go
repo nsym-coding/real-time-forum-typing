@@ -92,7 +92,7 @@ func (t *T) UnmarshalForumData(data []byte) error {
 	case "comment":
 		t.Comments = &Comments{}
 		return json.Unmarshal(data, t.Comments)
-	case "register":
+	case "signup":
 		t.Register = &Register{}
 		return json.Unmarshal(data, t.Register)
 	case "login":
@@ -240,14 +240,14 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 		u.Tipo = "formValidation"
 		canRegister := true
 
-		if users.UserExists(db, t.Username) {
+		if users.UserExists(db, t.Register.Username) {
 
 			u.UsernameDuplicate = true
 			canRegister = false
 
 		}
 
-		if users.EmailExists(db, t.Email) {
+		if users.EmailExists(db, t.Register.Email) {
 			u.EmailDuplicate = true
 			canRegister = false
 
@@ -264,9 +264,12 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 
 		
 		// data gets marshalled and sent to client
-		toSend, _ := json.Marshal("registeration valid")
+		toSend, _ := json.Marshal("registration valid")
 		w.Write(toSend)
 	//	http.HandleFunc("/ws", WebSocketEndpoint)
+		} else {
+		toSend, _ := json.Marshal("registration invalid")
+		w.Write(toSend)
 		}
 
 	}
