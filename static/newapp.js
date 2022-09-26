@@ -35,34 +35,34 @@ let imageDiv;
 let img;
 
 for (let i = 0; i < 4; i++) {
-    userDetails = document.createElement("div");
-    let username = document.createElement("div");
-    imageDiv = document.createElement("div");
-    img = document.createElement("img");
-    let onlineIcon = document.createElement("div");
+  userDetails = document.createElement("div");
+  let username = document.createElement("div");
+  imageDiv = document.createElement("div");
+  img = document.createElement("img");
+  let onlineIcon = document.createElement("div");
 
-    onlineIcon.className = "online-icon-class";
+  onlineIcon.className = "online-icon-class";
 
-    img.src = "/css/img/newcastle.png";
-    img.style.width = "2vw";
-    imageDiv.appendChild(onlineIcon);
-    userDetails.id = `${users[i]}`;
+  img.src = "/css/img/newcastle.png";
+  img.style.width = "2vw";
+  imageDiv.appendChild(onlineIcon);
+  userDetails.id = `${users[i]}`;
 
-    //   userDetails.setAttribute("type", "button");
+  //   userDetails.setAttribute("type", "button");
 
-    userDetails.className = "registered-user";
-    username.innerText = `${users[i]}`;
-    imageDiv.append(img);
-    userDetails.appendChild(username);
-    userDetails.appendChild(imageDiv);
-    onlineUsers.appendChild(userDetails);
+  userDetails.className = "registered-user";
+  username.innerText = `${users[i]}`;
+  imageDiv.append(img);
+  userDetails.appendChild(username);
+  userDetails.appendChild(imageDiv);
+  onlineUsers.appendChild(userDetails);
 }
 
 let postTitlesClick = document.getElementsByClassName("post-title-class");
 Array.from(postTitlesClick).forEach(function (postTitle) {
-    postTitle.addEventListener("click", function (e) {
-        displayPostModal.style.display = "block";
-    });
+  postTitle.addEventListener("click", function (e) {
+    displayPostModal.style.display = "block";
+  });
 });
 
 let modal = document.getElementsByClassName("modal");
@@ -71,7 +71,7 @@ let createPostModal = document.getElementById("create-post-modal");
 let displayPostModal = document.getElementById("display-post-modal");
 
 postButton.addEventListener("click", function () {
-    createPostModal.style.display = "block";
+  createPostModal.style.display = "block";
 });
 
 let userRg = document.querySelectorAll(".registered-user");
@@ -86,30 +86,30 @@ let span = document.getElementsByClassName("close");
 // When the user clicks the button, open the modal
 
 for (let i = 0; i < userRg.length; i++) {
-    userRg[i].onclick = function () {
-        chatRecipient.innerText = userRg[i].id;
+  userRg[i].onclick = function () {
+    chatRecipient.innerText = userRg[i].id;
 
-        console.log("Users clicked");
-        chatModal.style.display = "block";
-    };
+    console.log("Users clicked");
+    chatModal.style.display = "block";
+  };
 }
 
 // When the user clicks on <span> (x), close the modal
 for (let i = 0; i < span.length; i++) {
-    span[i].onclick = function () {
-        modal[i].style.display = "none";
-    };
+  span[i].onclick = function () {
+    modal[i].style.display = "none";
+  };
 }
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function (event) {
-    for (let i = 0; i < modal.length; i++) {
-        // console.log("modal -> ", modal[i]);
-        // console.log("evt -> ", event.target);
-        if (event.target == modal[i]) {
-            modal[i].style.display = "none";
-        }
+  for (let i = 0; i < modal.length; i++) {
+    // console.log("modal -> ", modal[i]);
+    // console.log("evt -> ", event.target);
+    if (event.target == modal[i]) {
+      modal[i].style.display = "none";
     }
+  }
 };
 
 let sendArrow = document.getElementById("chat-arrow");
@@ -120,95 +120,94 @@ let displayPostBody = document.getElementById("display-post-body");
 let sender = true;
 
 sendArrow.addEventListener("click", function () {
-    console.log("arrow clicked");
-    let newChatBubble = document.createElement("div");
+  console.log("arrow clicked");
+  let newChatBubble = document.createElement("div");
 
-    newChatBubble.innerText = chatTextArea.value;
-    chatTextArea.value = "";
-    if (sender) {
-        newChatBubble.id = "chat-message-sender";
-        sender = false;
-    } else {
-        newChatBubble.id = "chat-message-recipient";
-        sender = true;
-    }
+  newChatBubble.innerText = chatTextArea.value;
+  chatTextArea.value = "";
+  if (sender) {
+    newChatBubble.id = "chat-message-sender";
+    sender = false;
+  } else {
+    newChatBubble.id = "chat-message-recipient";
+    sender = true;
+  }
 
-    chatContainer.appendChild(newChatBubble);
+  chatContainer.appendChild(newChatBubble);
 
-    chatBody.scrollTo(0, chatBody.scrollHeight);
+  chatBody.scrollTo(0, chatBody.scrollHeight);
 });
 
 const teamCrests = [
-    "/css/img/newcastle.png",
-    "/css/img/chelsea.png",
-    "/css/img/man-u.png",
-    "/css/img/man-city.png",
-    "/css/img/liverpool.png",
-    "/css/img/spurs.png",
+  "/css/img/newcastle.png",
+  "/css/img/chelsea.png",
+  "/css/img/man-u.png",
+  "/css/img/man-city.png",
+  "/css/img/liverpool.png",
+  "/css/img/spurs.png",
 ];
 
 const categorySelection = document.getElementById("category-selection");
 
 for (let i = 0; i < teamCrests.length; i++) {
-    let img = document.createElement("img");
-    img.style.backgroundColor = "white";
-    img.alt = "none";
-    img.id = teamCrests[i].slice(
-        teamCrests[i].lastIndexOf("/") + 1,
-        teamCrests[i].length - 4
-    );
-    img.classList = "crest-colors";
-    img.src = teamCrests[i];
-    categorySelection.append(img);
+  let img = document.createElement("img");
+  img.style.backgroundColor = "white";
+  img.alt = "none";
+  img.id = teamCrests[i].slice(
+    teamCrests[i].lastIndexOf("/") + 1,
+    teamCrests[i].length - 4
+  );
+  img.classList = "crest-colors";
+  img.src = teamCrests[i];
+  categorySelection.append(img);
 }
 
 let crestcolors = document.getElementsByClassName("crest-colors");
 
 const colorSwitch = {
-    newcastle: `linear-gradient(
+  newcastle: `linear-gradient(
       to right,
       #040108,
       #040108 50%,
       #f0f0f0 50%,
       #f0f0f0
     )`,
-    spurs: "lightgrey",
-    "man-u": "red",
-    chelsea: "blue",
-    liverpool: "red",
-    "man-city": "skyblue",
+  spurs: "lightgrey",
+  "man-u": "red",
+  chelsea: "blue",
+  liverpool: "red",
+  "man-city": "skyblue",
 };
 
 for (let i = 0; i < crestcolors.length; i++) {
-    crestcolors[i].addEventListener("mouseup", (e) => {
-        if (e.target.alt == "none") {
-            e.target.style.background = colorSwitch[e.target.id];
-            e.target.alt = colorSwitch[e.target.id];
-        } else {
-            e.target.style.background = "white";
-            e.target.alt = "none";
-        }
-    });
+  crestcolors[i].addEventListener("mouseup", (e) => {
+    if (e.target.alt == "none") {
+      e.target.style.background = colorSwitch[e.target.id];
+      e.target.alt = colorSwitch[e.target.id];
+    } else {
+      e.target.style.background = "white";
+      e.target.alt = "none";
+    }
+  });
 }
 let commentContainer = document.getElementById("comment-container");
 let commentArrow = document.getElementById("comment-arrow");
 let commentTextArea = document.getElementById("comment-input");
 
 commentArrow.addEventListener("click", function () {
-    let i = 0;
-    let comment = document.createElement("div");
-    let commentDetails = document.createElement("div");
-    commentDetails.innerText = `Created by: McTom Date: ${
-        new Date().toISOString().split("T")[0]
+  let i = 0;
+  let comment = document.createElement("div");
+  let commentDetails = document.createElement("div");
+  commentDetails.innerText = `Created by: McTom Date: ${new Date().toISOString().split("T")[0]
     } ${new Date().toISOString().split("T")[1].substring(0, 5)}`;
-    comment.style.marginBottom = "1vh";
-    comment.id = `comment-${i}`;
-    commentDetails.id = `comment-detail-${i}`;
-    comment.innerText = `${commentTextArea.value}`;
-    commentTextArea.value = "";
-    comment.appendChild(commentDetails);
-    commentContainer.appendChild(comment);
-    displayPostBody.scrollTo(0, displayPostBody.scrollHeight);
+  comment.style.marginBottom = "1vh";
+  comment.id = `comment-${i}`;
+  commentDetails.id = `comment-detail-${i}`;
+  comment.innerText = `${commentTextArea.value}`;
+  commentTextArea.value = "";
+  comment.appendChild(commentDetails);
+  commentContainer.appendChild(comment);
+  displayPostBody.scrollTo(0, displayPostBody.scrollHeight);
 });
 
 let signupSwitch = document.getElementById("sign-up-button");
@@ -221,71 +220,70 @@ let loginModal = document.querySelector(".login-modal");
 let loginForm = document.getElementById("login-form");
 
 signupSwitch.addEventListener("click", (e) => {
-    loginBox.style.display = "none";
-    registerBox.style.display = "block";
+  loginBox.style.display = "none";
+  registerBox.style.display = "block";
 });
 
 loginReturn.addEventListener("click", (e) => {
-    loginBox.style.display = "block";
-    registerBox.style.display = "none";
+  loginBox.style.display = "block";
+  registerBox.style.display = "none";
 });
 
 let ws;
 
 loginButton.addEventListener("click", (e) => {
-    let loginData = new FormData(loginForm);
-    let loginFormToGo = Object.fromEntries(loginData);
-    loginFormToGo["type"] = "login";
-    console.log("---", loginFormToGo);
+  let loginData = new FormData(loginForm);
+  let loginFormToGo = Object.fromEntries(loginData);
+  loginFormToGo["type"] = "login";
+  console.log("---", loginFormToGo);
 
-    // fetch, send login data to backend server
+  // fetch, send login data to backend server
 
-    fetch("http://localhost:8080/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(loginFormToGo),
-    })
-        .then((resp) => resp.json())
-        .then(function (data) {
-            if (data === "login valid") {
-                loginModal.style.display = "none";
-                forumBody.style.display = "block";
-                ws = new WebSocket("ws://localhost:8080/ws");
-                ws.onopen = () => {
-                    console.log("connection established");
-                };
-                ws.onmessage = (e) => {
-                    let data = JSON.parse(e.data);
-                    if (data.tipo === "post") {
-                        let postDivs = document.createElement("div");
-                        let postTitle = document.createElement("div");
-                        postTitle.className = "post-title-class";
-                        let postContent = document.createElement("div");
+  fetch("http://localhost:8080/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(loginFormToGo),
+  })
+    .then((resp) => resp.json())
+    .then(function (data) {
+      if (data === "login valid") {
+        loginModal.style.display = "none";
+        forumBody.style.display = "block";
+        ws = new WebSocket("ws://localhost:8080/ws");
+        ws.onopen = () => {
+          console.log("connection established");
+        };
+        ws.onmessage = (e) => {
+          let data = JSON.parse(e.data);
+          if (data.tipo === "post") {
+            let postDivs = document.createElement("div");
+            let postTitle = document.createElement("div");
+            postTitle.className = "post-title-class";
+            let postContent = document.createElement("div");
 
-                        postContent.className = "post-content-class";
+            postContent.className = "post-content-class";
 
-                        let postFooter = document.createElement("div");
-                        postFooter.className = "post-footer-class";
-                        postDivs.className = "post-class ";
-                        // this will eventually hold the id given by go from the database (data.id)
-                        postDivs.id = 1;
-                        postTitle.innerText = data.title;
-                        postContent.innerText = data.postcontent;
-                        postContent.style.borderBottom = "0.2vh solid black";
-                        postFooter.innerText = `Created by ${
-                            data.user
-                        },   Date: ${data.posttime}, Comments: ${1 + 13}`;
-                        postDivs.appendChild(postTitle);
-                        postDivs.appendChild(postContent);
-                        postDivs.appendChild(postFooter);
+            let postFooter = document.createElement("div");
+            postFooter.className = "post-footer-class";
+            postDivs.className = "post-class ";
+            // this will eventually hold the id given by go from the database (data.id)
+            postDivs.id = 1;
+            postTitle.innerText = data.title;
+            postContent.innerText = data.postcontent;
+            postContent.style.borderBottom = "0.2vh solid black";
+            postFooter.innerText = `Created by ${data.user
+              },   Date: ${data.posttime}, Comments: ${1 + 13}`;
+            postDivs.appendChild(postTitle);
+            postDivs.appendChild(postContent);
+            postDivs.appendChild(postFooter);
 
-                        posts.appendChild(postDivs);
-                    }
-                };
-            }
-        });
+            posts.appendChild(postDivs);
+          }
+        };
+      }
+    });
 });
 
 let submitPostButton = document.querySelector("#submit-post-button");
@@ -297,39 +295,48 @@ let signUpForm = document.getElementById("signup-form");
 // dummy post info being sent to server
 let objData = {};
 submitPostButton.addEventListener("click", function (e) {
-    e.preventDefault();
+  e.preventDefault();
 
-    objData["title"] = postTitle.value;
-    objData["postcontent"] = postContent.value;
-    objData["type"] = "post";
-    objData["posttime"] = new Date().toISOString().slice(0, 10);
-    objData["user"] = "Bruno8";
+  objData["title"] = postTitle.value;
+  objData["postcontent"] = postContent.value;
+  objData["type"] = "post";
+  objData["posttime"] = new Date().toISOString().slice(0, 10);
+  objData["user"] = "Bruno8";
 
-    createPostModal.style.display = "none";
-    postTitle.value = "";
-    postContent.value = "";
+  createPostModal.style.display = "none";
+  postTitle.value = "";
+  postContent.value = "";
 
-    // message sent to server
-    ws.send(JSON.stringify(objData));
+  // message sent to server
+  ws.send(JSON.stringify(objData));
 });
 
+let successfulRegistrationMessage = document.getElementById("registered-login-success")
+console.log(successfulRegistrationMessage)
 registerBtn.addEventListener("click", function (e) {
-    e.preventDefault();
+  // e.preventDefault();
 
-    let signupData = new FormData(signUpForm);
-    let signUpFormToGo = Object.fromEntries(signupData);
-    signUpFormToGo.type = "signup";
+  let signupData = new FormData(signUpForm);
+  let signUpFormToGo = Object.fromEntries(signupData);
+  signUpFormToGo.type = "signup";
 
-    fetch("http://localhost:8080/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            //"Access-Control-Allow-Origin": "*",
-        },
-        body: JSON.stringify(signUpFormToGo),
-    })
-        .then((resp) => resp.json())
-        .then(function (data) {
-            console.log(data);
-        });
+
+  fetch("http://localhost:8080/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(signUpFormToGo),
+  })
+    .then((resp) => resp.json())
+    .then(function (data) {
+      if (data === "registration valid") {
+        registerBox.style.display = "none"
+        loginBox.style.display = "block"
+        signupSwitch.style.display = "none"
+        successfulRegistrationMessage.style.display = "block"
+      } else {
+        console.log(data);
+      }
+    });
 });

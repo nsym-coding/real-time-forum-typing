@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 
 	"real-time-forum/users"
 
@@ -59,11 +60,13 @@ type Login struct {
 }
 
 type formValidation struct {
+	UsernameLength    bool   `json:"usernameLength"`
+	UsernameSpace     bool   `json:"usernameSpace"`
 	UsernameDuplicate bool   `json:"usernameDuplicate"`
 	EmailDuplicate    bool   `json:"emailDuplicate"`
+	PasswordLength    bool   `json:"passwordLength"`
 	Tipo              string `json:"tipo"`
 }
-
 type loginValidation struct {
 	InvalidUsername bool   `json:"invalidUsername"`
 	InvalidPassword bool   `json:"invalidPassword"`
@@ -240,6 +243,19 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 		u.Tipo = "formValidation"
 		canRegister := true
 
+		if len(t.Register.Username) < 5 {
+			u.UsernameLength = true
+			canRegister = false
+		}
+		if strings.Contains(t.Register.Username, " ") {
+			u.UsernameSpace = true
+			canRegister = false
+		}
+
+		if len(t.Register.Password) < 5 {
+			u.PasswordLength = true
+			canRegister = false
+		}
 		if users.UserExists(db, t.Register.Username) {
 
 			u.UsernameDuplicate = true
@@ -253,6 +269,7 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 
 		}
 
+		// all validations passed
 		if canRegister {
 			// hash password
 			var hash []byte
@@ -262,16 +279,14 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 			}
 			users.RegisterUser(db, t.Username, t.Register.Age, t.Gender, t.FirstName, t.LastName, hash, t.Email)
 
-		
-		// data gets marshalled and sent to client
-		toSend, _ := json.Marshal("registration valid")
-		w.Write(toSend)
-	//	http.HandleFunc("/ws", WebSocketEndpoint)
+			// data gets marshalled and sent to client
+			toSend, _ := json.Marshal("registration valid")
+			w.Write(toSend)
+			//	http.HandleFunc("/ws", WebSocketEndpoint)
 		} else {
-		toSend, _ := json.Marshal("registration invalid")
-		w.Write(toSend)
+			toSend, _ := json.Marshal(u)
+			w.Write(toSend)
 		}
-
 	}
 
 	if t.Type == "login" {
@@ -281,7 +296,6 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 		toSend, _ := json.Marshal("login valid")
 		w.Write(toSend)
 		http.HandleFunc("/ws", WebSocketEndpoint)
-
 	}
 
 }
