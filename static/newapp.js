@@ -336,6 +336,7 @@ registerBtn.addEventListener("click", function (e) {
         signupSwitch.style.display = "none"
         successfulRegistrationMessage.style.display = "block"
       } else {
+        // switch case for errors, validated from back end. 
         console.log(data);
       }
     });
