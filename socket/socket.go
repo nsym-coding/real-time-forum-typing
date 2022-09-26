@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
-	"strings"
 
 	"real-time-forum/users"
 
@@ -59,11 +59,8 @@ type Login struct {
 }
 
 type formValidation struct {
-	UsernameLength    bool   `json:"usernameLength"`
-	UsernameSpace     bool   `json:"usernameSpace"`
 	UsernameDuplicate bool   `json:"usernameDuplicate"`
 	EmailDuplicate    bool   `json:"emailDuplicate"`
-	PasswordLength    bool   `json:"passwordLength"`
 	Tipo              string `json:"tipo"`
 }
 
@@ -143,46 +140,28 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		} else if f.Type == "register" {
 			fmt.Println("-----", f.Register.Age)
 
-			var u formValidation
-			u.Tipo = "formValidation"
-			canRegister := true
-			if len(f.Username) < 5 {
-				u.UsernameLength = true
-				canRegister = false
-			}
-			if strings.Contains(f.Username, " ") {
-				u.UsernameSpace = true
-				canRegister = false
-			}
-			if users.UserExists(db, f.Username) {
-				u.UsernameDuplicate = true
-				canRegister = false
+			// var u formValidation
+			// u.Tipo = "formValidation"
+			// canRegister := true
 
-			}
+			// if users.UserExists(db, f.Username) {
+			// 	u.UsernameDuplicate = true
+			// 	canRegister = false
 
-			if users.EmailExists(db, f.Email) {
-				u.EmailDuplicate = true
-				canRegister = false
+			// }
 
-			}
+			// if users.EmailExists(db, f.Email) {
+			// 	u.EmailDuplicate = true
+			// 	canRegister = false
 
-			if len(f.Password) < 5 {
-				u.PasswordLength = true
-				canRegister = false
+			// }
 
-			}
-			wsConn.WriteJSON(u)
+			// if len(f.Password) < 5 {
+			// 	u.PasswordLength = true
+			// 	canRegister = false
 
-			if canRegister {
-				// hash password
-				var hash []byte
-				hash, err = bcrypt.GenerateFromPassword([]byte(f.Password), bcrypt.DefaultCost)
-				if err != nil {
-					fmt.Println("bcrypt err:", err)
-				}
-				users.RegisterUser(db, f.Username, f.Register.Age, f.Gender, f.FirstName, f.LastName, hash, f.Email)
-				// wsConn.WriteJSON(u)
-			}
+			// }
+			//wsConn.WriteJSON(u)
 
 			// f.Register.Username = "tols"
 			f.Register.Tipo = "registration"
@@ -245,25 +224,61 @@ func broadcastToAllClients() {
 	}
 }
 
-type LoginA struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
 func GetLoginData(w http.ResponseWriter, r *http.Request) {
+	db, _ := sql.Open("sqlite3", "real-time-forum.db")
 	fmt.Println(r.Method)
-	var l LoginA
-	err := json.NewDecoder(r.Body).Decode(&l)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+
+	var t T
+
+	data, _ := io.ReadAll(r.Body)
+
+	t.UnmarshalForumData(data)
+
+	if t.Type == "signup" {
+
+		var u formValidation
+		u.Tipo = "formValidation"
+		canRegister := true
+
+		if users.UserExists(db, t.Username) {
+
+			u.UsernameDuplicate = true
+			canRegister = false
+
+		}
+
+		if users.EmailExists(db, t.Email) {
+			u.EmailDuplicate = true
+			canRegister = false
+
+		}
+
+		if canRegister {
+			// hash password
+			var hash []byte
+			hash, err := bcrypt.GenerateFromPassword([]byte(t.Password), bcrypt.DefaultCost)
+			if err != nil {
+				fmt.Println("bcrypt err:", err)
+			}
+			users.RegisterUser(db, t.Username, t.Register.Age, t.Gender, t.FirstName, t.LastName, hash, t.Email)
+
+		
+		// data gets marshalled and sent to client
+		toSend, _ := json.Marshal("registeration valid")
+		w.Write(toSend)
+	//	http.HandleFunc("/ws", WebSocketEndpoint)
+		}
+
 	}
 
-	// login form data (l), needs to be validated and then we need to send a message back to client
-	fmt.Println(l)
+	if t.Type == "login" {
+		//validate values then
 
-	// data gets marshalled and sent to client
-	toSend, _ := json.Marshal("login valid")
-	w.Write(toSend)
-	http.HandleFunc("/ws", WebSocketEndpoint)
+		// data gets marshalled and sent to client
+		toSend, _ := json.Marshal("login valid")
+		w.Write(toSend)
+		http.HandleFunc("/ws", WebSocketEndpoint)
+
+	}
+
 }

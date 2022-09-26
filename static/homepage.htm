@@ -29,8 +29,8 @@
 
 
           <div id="login-box-body">
-            <input type="text" name="username" placeholder="Email/Username" class="login-input"></input>
-            <input type="password" name="password" placeholder="Password" class="login-input"></input>
+            <input type="text" name="loginUsername" placeholder="Email/Username" class="login-input"></input>
+            <input type="password" name="loginPassword" placeholder="Password" class="login-input"></input>
             <button id="login-button" class="buttons">Log In</button>
             <a id="sign-up-button">Click here to sign up!</a>
 
@@ -46,8 +46,9 @@
         <form action="javascript:void(0)" id="signup-form">
           <div id="register-box-body">
             <!-- <label for="username">Username</label> -->
-            <input type="text" name="username" id="signup-username" placeholder="Username" class="login-input"
-              required></input>
+            <input type="text" name="username" id="signup-username" placeholder="Username" class="login-input" maxlength="15"
+            required pattern=".\S+." title="No Spaces Allowed!"
+            ></input>
             <!-- <label for="age">Age</label> -->
             <input type="number" name="age" id="signup-age" placeholder="Age" class="login-input" min="16" max="100"
               required></input>
@@ -58,7 +59,7 @@
             <input type="text" name="lastname" id="signup-lastname" placeholder="Last Name" class="login-input"
               required></input>
             <!-- <label for="email">Email</label> -->
-            <input type="text" name="email" id="signup-email" placeholder="Email" class="login-input" required></input>
+            <input type="email" name="email" id="signup-email" placeholder="Email" class="login-input" required></input>
             <!-- <label for="gender">Gender</label> -->
 
             <!-- <label for="password">Password</label> -->
