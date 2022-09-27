@@ -65,6 +65,10 @@ type formValidation struct {
 	UsernameDuplicate bool   `json:"usernameDuplicate"`
 	EmailDuplicate    bool   `json:"emailDuplicate"`
 	PasswordLength    bool   `json:"passwordLength"`
+	AgeEmpty          bool   `json:"ageEmpty"`
+	FirstNameEmpty    bool   `json:"firstnameEmpty"`
+	LastNameEmpty     bool   `json:"lastnameEmpty"`
+	EmailInvalid      bool   `json:"emailInvalid"`
 	Tipo              string `json:"tipo"`
 }
 type loginValidation struct {
@@ -247,6 +251,25 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 			u.UsernameLength = true
 			canRegister = false
 		}
+
+		if t.Register.Age == "" {
+			u.AgeEmpty = true
+			canRegister = false
+		}
+		if t.Register.FirstName == "" {
+			u.FirstNameEmpty = true
+			canRegister = false
+		}
+		if t.Register.LastName == "" {
+			u.LastNameEmpty = true
+			canRegister = false
+		}
+
+		if len(t.Register.Password) < 5 {
+			u.PasswordLength = true
+			canRegister = false
+		}
+
 		if strings.Contains(t.Register.Username, " ") {
 			u.UsernameSpace = true
 			canRegister = false
@@ -256,17 +279,19 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 			u.PasswordLength = true
 			canRegister = false
 		}
-		if users.UserExists(db, t.Register.Username) {
 
+		if !users.ValidEmail(t.Register.Email) {
+			u.EmailInvalid = true
+			canRegister = false
+		}
+		if users.UserExists(db, t.Register.Username) {
 			u.UsernameDuplicate = true
 			canRegister = false
-
 		}
 
 		if users.EmailExists(db, t.Register.Email) {
 			u.EmailDuplicate = true
 			canRegister = false
-
 		}
 
 		// all validations passed

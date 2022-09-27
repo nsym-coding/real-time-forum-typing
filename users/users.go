@@ -3,7 +3,9 @@ package users
 import (
 	"database/sql"
 	"fmt"
+	"net"
 	"net/http"
+	"strings"
 
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -80,4 +82,18 @@ func CreateCookie(writer http.ResponseWriter, req *http.Request, username string
 
 	fmt.Println(LoggedInUsers)
 	/////////////////////////////////////
+}
+
+func ValidEmail(email string) bool {
+	i := strings.Index(email, "@")
+	fmt.Println("i:", i)
+	domain := email[i+1:]
+	fmt.Println("Domain: ", domain)
+	_, err := net.LookupMX(domain)
+	// , err2 := mail.ParseAddress(email)
+	if err != nil {
+		fmt.Println("invalid email")
+		return false
+	}
+	return true
 }

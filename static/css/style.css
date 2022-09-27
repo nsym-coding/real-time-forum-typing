@@ -552,3 +552,9 @@ img {
   left: 4vw;
   position: relative;
 }
+
+.registration-errors {
+  margin-bottom: 1vh;
+  color: red;
+  margin-top: -1vh;
+}

@@ -312,7 +312,9 @@ submitPostButton.addEventListener("click", function (e) {
 });
 
 let successfulRegistrationMessage = document.getElementById("registered-login-success")
-console.log(successfulRegistrationMessage)
+
+let usernameError = document.getElementById("username-error")
+
 registerBtn.addEventListener("click", function (e) {
   // e.preventDefault();
 
@@ -337,7 +339,10 @@ registerBtn.addEventListener("click", function (e) {
         successfulRegistrationMessage.style.display = "block"
       } else {
         // switch case for errors, validated from back end. 
-        console.log(data);
+        // console.log(data.usernameLength);
+        if (data.usernameLength) {
+          usernameError.style.display = "block"
+        }
       }
     });
 });
