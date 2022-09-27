@@ -26,7 +26,7 @@ body {
 
 .home-logo {
   position: relative;
-  left:-1.5vw;
+  left: -1.5vw;
   top: 3vh;
 }
 
@@ -406,7 +406,7 @@ body {
   border-radius: 5vh;
   max-width: 13vw;
   overflow-wrap: break-word;
-  background: rgb(253, 253, 253);
+  background: rgb(236, 236, 238);
   color: black;
   padding: 2vh;
   margin-right: auto;
@@ -529,14 +529,40 @@ img {
   position: relative;
   display: none;
 }
-.gender{
+
+.gender {
   display: flex;
   margin-bottom: 2vh;
 }
-#register-box-body input{
+
+#register-box-body input {
   line-height: 2.5vh;
 }
 
-#register-btn{
+#register-btn {
   width: -webkit-fill-available;
+}
+
+#registered-login-success {
+  display: none;
+  margin-top: 1vh;
+  font-size: small;
+  color: var(--ourBlue);
+  width: 20vw;
+  left: 4vw;
+  position: relative;
+}
+
+.registration-errors {
+  margin-bottom: 1vh;
+  color: red;
+  margin-top: -1vh;
+  font-size: 1.7vh;
+}
+
+#login-error {
+  margin-bottom: 1vh;
+  color: red;
+  margin-top: -1vh;
+  font-size: 1.7vh;
 }
