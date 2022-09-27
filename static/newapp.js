@@ -198,8 +198,9 @@ commentArrow.addEventListener("click", function () {
   let i = 0;
   let comment = document.createElement("div");
   let commentDetails = document.createElement("div");
-  commentDetails.innerText = `Created by: McTom Date: ${new Date().toISOString().split("T")[0]
-    } ${new Date().toISOString().split("T")[1].substring(0, 5)}`;
+  commentDetails.innerText = `Created by: McTom Date: ${
+    new Date().toISOString().split("T")[0]
+  } ${new Date().toISOString().split("T")[1].substring(0, 5)}`;
   comment.style.marginBottom = "1vh";
   comment.id = `comment-${i}`;
   commentDetails.id = `comment-detail-${i}`;
@@ -273,8 +274,9 @@ loginButton.addEventListener("click", (e) => {
             postTitle.innerText = data.title;
             postContent.innerText = data.postcontent;
             postContent.style.borderBottom = "0.2vh solid black";
-            postFooter.innerText = `Created by ${data.user
-              },   Date: ${data.posttime}, Comments: ${1 + 13}`;
+            postFooter.innerText = `Created by ${data.user},   Date: ${
+              data.posttime
+            }, Comments: ${1 + 13}`;
             postDivs.appendChild(postTitle);
             postDivs.appendChild(postContent);
             postDivs.appendChild(postFooter);
@@ -311,17 +313,85 @@ submitPostButton.addEventListener("click", function (e) {
   ws.send(JSON.stringify(objData));
 });
 
-let successfulRegistrationMessage = document.getElementById("registered-login-success")
+let successfulRegistrationMessage = document.getElementById(
+  "registered-login-success"
+);
 
-let usernameError = document.getElementById("username-error")
+let registrationErrors = document.querySelectorAll(".registration-errors");
+
+let usernameError = document.getElementById("username-error");
+let ageError = document.getElementById("age-error");
+let firstnameError = document.getElementById("firstname-error");
+let lastnameError = document.getElementById("lastname-error");
+let emailError = document.getElementById("email-error");
+let passwordError = document.getElementById("password-error");
+
+const registrationValidation = (data) => {
+  if (data === "registration valid") {
+    registerBox.style.display = "none";
+    loginBox.style.display = "block";
+    signupSwitch.style.display = "none";
+    successfulRegistrationMessage.style.display = "block";
+  } else {
+    // switch case for errors, validated from back end.
+    // console.log(data.usernameLength);
+
+    if (data.usernameLength || data.usernameSpace) {
+      usernameError.innerText = "";
+      usernameError.innerText = "min 5 characters, no spaces";
+      usernameError.style.display = "block";
+    }
+
+    if (data.usernameDuplicate) {
+      usernameError.innerText = "";
+      usernameError.innerText = "Username exists";
+      usernameError.style.display = "block";
+    }
+
+    if (data.emailDuplicate) {
+      emailError.innerText = "";
+      emailError.innerText = "Email exists";
+      emailError.style.display = "block";
+    }
+
+    if (data.emailInvalid) {
+      emailError.innerText = "";
+      emailError.innerText = " Valid email required";
+      emailError.style.display = "block";
+    }
+
+    if (data.passwordLength) {
+      passwordError.style.display = "block";
+    }
+    if (data.ageEmpty) {
+      console.log("age empty");
+
+      ageError.style.display = "block";
+    }
+
+    if (data.firstnameEmpty) {
+      console.log("first name empty");
+      firstnameError.style.display = "block";
+    }
+
+    if (data.lastnameEmpty) {
+      console.log("last name empty");
+
+      lastnameError.style.display = "block";
+    }
+  }
+};
 
 registerBtn.addEventListener("click", function (e) {
   // e.preventDefault();
+  registrationErrors.forEach(function (el) {
+    el.style.display = "none";
+    // el.innerText = "";
+  });
 
   let signupData = new FormData(signUpForm);
   let signUpFormToGo = Object.fromEntries(signupData);
   signUpFormToGo.type = "signup";
-
 
   fetch("http://localhost:8080/login", {
     method: "POST",
@@ -332,17 +402,8 @@ registerBtn.addEventListener("click", function (e) {
   })
     .then((resp) => resp.json())
     .then(function (data) {
-      if (data === "registration valid") {
-        registerBox.style.display = "none"
-        loginBox.style.display = "block"
-        signupSwitch.style.display = "none"
-        successfulRegistrationMessage.style.display = "block"
-      } else {
-        // switch case for errors, validated from back end. 
-        // console.log(data.usernameLength);
-        if (data.usernameLength) {
-          usernameError.style.display = "block"
-        }
+      if (data.tipo === "formValidation") {
+        registrationValidation(data);
       }
     });
 });

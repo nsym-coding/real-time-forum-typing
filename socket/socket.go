@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"real-time-forum/users"
@@ -252,15 +253,20 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 			canRegister = false
 		}
 
-		if t.Register.Age == "" {
+		intAge, _ := strconv.Atoi(t.Register.Age)
+		if intAge < 16 {
+			fmt.Println(t.Register.Age)
+			fmt.Println("age invalid")
 			u.AgeEmpty = true
 			canRegister = false
 		}
 		if t.Register.FirstName == "" {
+			fmt.Println("first name empty")
 			u.FirstNameEmpty = true
 			canRegister = false
 		}
 		if t.Register.LastName == "" {
+			fmt.Println("last name empty")
 			u.LastNameEmpty = true
 			canRegister = false
 		}
@@ -309,6 +315,7 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 			w.Write(toSend)
 			//	http.HandleFunc("/ws", WebSocketEndpoint)
 		} else {
+
 			toSend, _ := json.Marshal(u)
 			w.Write(toSend)
 		}
