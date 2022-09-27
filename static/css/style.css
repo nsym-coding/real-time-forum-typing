@@ -559,3 +559,10 @@ img {
   margin-top: -1vh;
   font-size: 1.7vh;
 }
+
+#login-error {
+  margin-bottom: 1vh;
+  color: red;
+  margin-top: -1vh;
+  font-size: 1.7vh;
+}

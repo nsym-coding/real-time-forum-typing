@@ -219,6 +219,7 @@ let loginButton = document.getElementById("login-button");
 let forumBody = document.getElementById("forumbody");
 let loginModal = document.querySelector(".login-modal");
 let loginForm = document.getElementById("login-form");
+let loginError = document.getElementById("login-error");
 
 signupSwitch.addEventListener("click", (e) => {
   loginBox.style.display = "none";
@@ -231,6 +232,47 @@ loginReturn.addEventListener("click", (e) => {
 });
 
 let ws;
+
+const loginValidation = (data) => {
+  if (data.successfulLogin) {
+    loginModal.style.display = "none";
+    forumBody.style.display = "block";
+    ws = new WebSocket("ws://localhost:8080/ws");
+    ws.onopen = () => {
+      console.log("connection established");
+    };
+    ws.onmessage = (e) => {
+      let data = JSON.parse(e.data);
+      if (data.tipo === "post") {
+        let postDivs = document.createElement("div");
+        let postTitle = document.createElement("div");
+        postTitle.className = "post-title-class";
+        let postContent = document.createElement("div");
+
+        postContent.className = "post-content-class";
+
+        let postFooter = document.createElement("div");
+        postFooter.className = "post-footer-class";
+        postDivs.className = "post-class ";
+        // this will eventually hold the id given by go from the database (data.id)
+        postDivs.id = 1;
+        postTitle.innerText = data.title;
+        postContent.innerText = data.postcontent;
+        postContent.style.borderBottom = "0.2vh solid black";
+        postFooter.innerText = `Created by ${data.user},   Date: ${
+          data.posttime
+        }, Comments: ${1 + 13}`;
+        postDivs.appendChild(postTitle);
+        postDivs.appendChild(postContent);
+        postDivs.appendChild(postFooter);
+
+        posts.appendChild(postDivs);
+      }
+    };
+  } else {
+    loginError.style.display = "block";
+  }
+};
 
 loginButton.addEventListener("click", (e) => {
   let loginData = new FormData(loginForm);
@@ -249,42 +291,7 @@ loginButton.addEventListener("click", (e) => {
   })
     .then((resp) => resp.json())
     .then(function (data) {
-      if (data === "login valid") {
-        loginModal.style.display = "none";
-        forumBody.style.display = "block";
-        ws = new WebSocket("ws://localhost:8080/ws");
-        ws.onopen = () => {
-          console.log("connection established");
-        };
-        ws.onmessage = (e) => {
-          let data = JSON.parse(e.data);
-          if (data.tipo === "post") {
-            let postDivs = document.createElement("div");
-            let postTitle = document.createElement("div");
-            postTitle.className = "post-title-class";
-            let postContent = document.createElement("div");
-
-            postContent.className = "post-content-class";
-
-            let postFooter = document.createElement("div");
-            postFooter.className = "post-footer-class";
-            postDivs.className = "post-class ";
-            // this will eventually hold the id given by go from the database (data.id)
-            postDivs.id = 1;
-            postTitle.innerText = data.title;
-            postContent.innerText = data.postcontent;
-            postContent.style.borderBottom = "0.2vh solid black";
-            postFooter.innerText = `Created by ${data.user},   Date: ${
-              data.posttime
-            }, Comments: ${1 + 13}`;
-            postDivs.appendChild(postTitle);
-            postDivs.appendChild(postContent);
-            postDivs.appendChild(postFooter);
-
-            posts.appendChild(postDivs);
-          }
-        };
-      }
+      if (data.tipo === "loginValidation") loginValidation(data);
     });
 });
 
@@ -327,7 +334,9 @@ let emailError = document.getElementById("email-error");
 let passwordError = document.getElementById("password-error");
 
 const registrationValidation = (data) => {
-  if (data === "registration valid") {
+  console.log("check data -> ", data);
+  if (data.successfulRegistration) {
+    console.log("CHECKING LOOP");
     registerBox.style.display = "none";
     loginBox.style.display = "block";
     signupSwitch.style.display = "none";
@@ -403,6 +412,7 @@ registerBtn.addEventListener("click", function (e) {
     .then((resp) => resp.json())
     .then(function (data) {
       if (data.tipo === "formValidation") {
+        console.log("Check form val is being called");
         registrationValidation(data);
       }
     });

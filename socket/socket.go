@@ -61,16 +61,17 @@ type Login struct {
 }
 
 type formValidation struct {
-	UsernameLength    bool   `json:"usernameLength"`
-	UsernameSpace     bool   `json:"usernameSpace"`
-	UsernameDuplicate bool   `json:"usernameDuplicate"`
-	EmailDuplicate    bool   `json:"emailDuplicate"`
-	PasswordLength    bool   `json:"passwordLength"`
-	AgeEmpty          bool   `json:"ageEmpty"`
-	FirstNameEmpty    bool   `json:"firstnameEmpty"`
-	LastNameEmpty     bool   `json:"lastnameEmpty"`
-	EmailInvalid      bool   `json:"emailInvalid"`
-	Tipo              string `json:"tipo"`
+	UsernameLength         bool   `json:"usernameLength"`
+	UsernameSpace          bool   `json:"usernameSpace"`
+	UsernameDuplicate      bool   `json:"usernameDuplicate"`
+	EmailDuplicate         bool   `json:"emailDuplicate"`
+	PasswordLength         bool   `json:"passwordLength"`
+	AgeEmpty               bool   `json:"ageEmpty"`
+	FirstNameEmpty         bool   `json:"firstnameEmpty"`
+	LastNameEmpty          bool   `json:"lastnameEmpty"`
+	EmailInvalid           bool   `json:"emailInvalid"`
+	SuccessfulRegistration bool   `json:"successfulRegistration"`
+	Tipo                   string `json:"tipo"`
 }
 type loginValidation struct {
 	InvalidUsername bool   `json:"invalidUsername"`
@@ -311,7 +312,9 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 			users.RegisterUser(db, t.Username, t.Register.Age, t.Gender, t.FirstName, t.LastName, hash, t.Email)
 
 			// data gets marshalled and sent to client
-			toSend, _ := json.Marshal("registration valid")
+			u.SuccessfulRegistration = true
+			toSend, _ := json.Marshal(u)
+			fmt.Println("toSend -- > ", toSend)
 			w.Write(toSend)
 			//	http.HandleFunc("/ws", WebSocketEndpoint)
 		} else {
@@ -323,11 +326,40 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 
 	if t.Type == "login" {
 		//validate values then
+		var loginData loginValidation
+
+		loginData.Tipo = "loginValidation"
+
+		if !users.UserExists(db, t.Login.LoginUsername) {
+			fmt.Println("Checking f.login.loginusername --> ", t.Login.LoginUsername)
+			loginData.InvalidUsername = true
+			toSend, _ := json.Marshal(loginData)
+			w.Write(toSend)
+
+		} else if users.UserExists(db, t.Login.LoginUsername) {
+			fmt.Println("user exists")
+			if !users.CorrectPassword(db, t.Login.LoginUsername, t.Login.LoginPassword) {
+				loginData.InvalidPassword = true
+				toSend, _ := json.Marshal(loginData)
+				w.Write(toSend)
+
+			} else {
+				loginData.SuccessfulLogin = true
+				toSend, _ := json.Marshal(loginData)
+				w.Write(toSend)
+				http.HandleFunc("/ws", WebSocketEndpoint)
+				//loggedInUsers[f.Login.LoginUsername] = wsConn
+				fmt.Println(loggedInUsers)
+
+				fmt.Println("SUCCESSFUL LOGIN")
+			}
+
+			// Check username exists
+			// Check the password matches
+		}
 
 		// data gets marshalled and sent to client
-		toSend, _ := json.Marshal("login valid")
-		w.Write(toSend)
-		http.HandleFunc("/ws", WebSocketEndpoint)
+
 	}
 
 }
