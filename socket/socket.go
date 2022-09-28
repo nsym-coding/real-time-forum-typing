@@ -295,7 +295,7 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 				w.Write(toSend)
 				// this function upgrades the connection to a websocket.
 				currentUser = t.Login.LoginUsername
-				go http.HandleFunc("/ws", WebSocketEndpoint)
+				// go http.HandleFunc("/ws", WebSocketEndpoint)
 
 				fmt.Println("SUCCESSFUL LOGIN")
 			}
