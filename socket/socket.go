@@ -86,6 +86,8 @@ var (
 	broadcastChannelPosts    = make(chan *Posts, 1)
 	broadcastChannelComments = make(chan *Comments, 1)
 	broadcastChannelRegister = make(chan *Register, 1)
+	currentUser              = ""
+	Mux                      = http.NewServeMux()
 )
 
 // unmarshall data based on type
@@ -118,7 +120,7 @@ var upgrader = websocket.Upgrader{
 }
 
 func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
-	db, _ := sql.Open("sqlite3", "real-time-forum.db")
+	// db, _ := sql.Open("sqlite3", "real-time-forum.db")
 
 	go broadcastToAllClients()
 	wsConn, err := upgrader.Upgrade(w, r, nil)
@@ -128,6 +130,8 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("CONNECTION TO CLIENT")
 	defer wsConn.Close()
 
+	loggedInUsers[currentUser] = wsConn
+	fmt.Println("LOGGED IN USERS", loggedInUsers)
 	clients[wsConn] = true
 
 	for {
@@ -141,66 +145,13 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			f.Posts.Tipo = "post"
 			fmt.Println("this is the post content       ", f.PostContent)
 			// f.Posts.User = "yonas"
+			// STORE POSTS IN DATABASE
 			broadcastChannelPosts <- f.Posts
 		} else if f.Type == "comment" {
 			// f.Comments.User = "yonas"
+			// STORE COMMENTS IN THE DATABSE
 			f.Comments.Tipo = "comment"
 			broadcastChannelComments <- f.Comments
-		} else if f.Type == "register" {
-			fmt.Println("-----", f.Register.Age)
-
-			// var u formValidation
-			// u.Tipo = "formValidation"
-			// canRegister := true
-
-			// if users.UserExists(db, f.Username) {
-			// 	u.UsernameDuplicate = true
-			// 	canRegister = false
-
-			// }
-
-			// if users.EmailExists(db, f.Email) {
-			// 	u.EmailDuplicate = true
-			// 	canRegister = false
-
-			// }
-
-			// if len(f.Password) < 5 {
-			// 	u.PasswordLength = true
-			// 	canRegister = false
-
-			// }
-			//wsConn.WriteJSON(u)
-
-			// f.Register.Username = "tols"
-			f.Register.Tipo = "registration"
-
-			// below solely for testing
-			broadcastChannelRegister <- f.Register
-
-		} else if f.Type == "login" {
-			var loginData loginValidation
-			loginData.Tipo = "loginValidation"
-
-			if !users.UserExists(db, f.Login.LoginUsername) {
-				fmt.Println("Checking f.login.loginusername --> ", f.Login.LoginUsername)
-				loginData.InvalidUsername = true
-				wsConn.WriteJSON(loginData)
-			} else if users.UserExists(db, f.Login.LoginUsername) {
-				if !users.CorrectPassword(db, f.Login.LoginUsername, f.Login.LoginPassword) {
-					loginData.InvalidPassword = true
-					wsConn.WriteJSON(loginData)
-				} else {
-					loginData.SuccessfulLogin = true
-					loggedInUsers[f.Login.LoginUsername] = wsConn
-					fmt.Println(loggedInUsers)
-					wsConn.WriteJSON(loginData)
-					fmt.Println("SUCCESSFUL LOGIN")
-				}
-			}
-
-			// Check username exists
-			// Check the password matches
 		}
 
 		log.Println("Checking what's in f ---> ", f)
@@ -210,25 +161,21 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 func broadcastToAllClients() {
 	for {
 		select {
-		case x, ok := <-broadcastChannelPosts:
+		case post, ok := <-broadcastChannelPosts:
 			if ok {
 				for client := range clients {
-					client.WriteJSON(x)
-					fmt.Printf("Value %v was read.\n", x)
+					client.WriteJSON(post)
+					fmt.Printf("Value %v was read.\n", post)
 				}
 			}
-		case y, ok := <-broadcastChannelComments:
+		case comment, ok := <-broadcastChannelComments:
 			if ok {
 				for client := range clients {
-					client.WriteJSON(y)
+					client.WriteJSON(comment)
 				}
 			}
-		case z, ok := <-broadcastChannelRegister:
-			if ok {
-				for client := range clients {
-					client.WriteJSON(z)
-				}
-			}
+			// BROADCAST TO EVERYONE WITH A WEBSOCKET ALL ONLINE USERS
+
 		}
 	}
 }
@@ -347,9 +294,9 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 				loginData.SuccessfulLogin = true
 				toSend, _ := json.Marshal(loginData)
 				w.Write(toSend)
-				http.HandleFunc("/ws", WebSocketEndpoint)
-				//loggedInUsers[f.Login.LoginUsername] = wsConn
-				fmt.Println(loggedInUsers)
+				// this function upgrades the connection to a websocket.
+				currentUser = t.Login.LoginUsername
+				go http.HandleFunc("/ws", WebSocketEndpoint)
 
 				fmt.Println("SUCCESSFUL LOGIN")
 			}
