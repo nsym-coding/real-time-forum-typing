@@ -97,3 +97,17 @@ func ValidEmail(email string) bool {
 	}
 	return true
 }
+
+func GetUserID(db *sql.DB, username string) int {
+	// check if username already exists
+	userStmt := "SELECT userID FROM users WHERE username = ?"
+	rowU := db.QueryRow(userStmt, username)
+	var uIDs int
+	error := rowU.Scan(&uIDs)
+	if error != sql.ErrNoRows {
+		fmt.Println("username already exists, err:", error)
+		//intUID, _ := strconv.Atoi(uIDs)
+		return uIDs
+	}
+	return 0
+}

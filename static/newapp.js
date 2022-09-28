@@ -5,6 +5,10 @@ let postButton = document.getElementById("new-post-btn");
 
 let users = ["tb38r", "abmutungi", "eternal17", "million"];
 
+let loggedInUser = "";
+
+let homepageUsername = document.getElementById("active-username");
+
 // for (let i = 0; i < 10; i++) {
 //   let postDivs = document.createElement("div");
 //   let postTitle = document.createElement("div");
@@ -153,10 +157,7 @@ for (let i = 0; i < teamCrests.length; i++) {
   let img = document.createElement("img");
   img.style.backgroundColor = "white";
   img.alt = "none";
-  img.id = teamCrests[i].slice(
-    teamCrests[i].lastIndexOf("/") + 1,
-    teamCrests[i].length - 4
-  );
+  img.id = teamCrests[i].slice(teamCrests[i].lastIndexOf("/") + 1, teamCrests[i].length - 4);
   img.classList = "crest-colors";
   img.src = teamCrests[i];
   categorySelection.append(img);
@@ -198,9 +199,10 @@ commentArrow.addEventListener("click", function () {
   let i = 0;
   let comment = document.createElement("div");
   let commentDetails = document.createElement("div");
-  commentDetails.innerText = `Created by: McTom Date: ${
-    new Date().toISOString().split("T")[0]
-  } ${new Date().toISOString().split("T")[1].substring(0, 5)}`;
+  commentDetails.innerText = `Created by: McTom Date: ${new Date().toISOString().split("T")[0]} ${new Date()
+    .toISOString()
+    .split("T")[1]
+    .substring(0, 5)}`;
   comment.style.marginBottom = "1vh";
   comment.id = `comment-${i}`;
   commentDetails.id = `comment-detail-${i}`;
@@ -235,12 +237,15 @@ let ws;
 
 const loginValidation = (data) => {
   if (data.successfulLogin) {
+    loggedInUser = data.successfulusername;
+    homepageUsername.innerText = loggedInUser;
     loginModal.style.display = "none";
     forumBody.style.display = "block";
     ws = new WebSocket("ws://localhost:8080/ws");
     ws.onopen = () => {
       console.log("connection established");
     };
+
     ws.onmessage = (e) => {
       let data = JSON.parse(e.data);
       if (data.tipo === "post") {
@@ -259,9 +264,7 @@ const loginValidation = (data) => {
         postTitle.innerText = data.title;
         postContent.innerText = data.postcontent;
         postContent.style.borderBottom = "0.2vh solid black";
-        postFooter.innerText = `Created by ${data.user},   Date: ${
-          data.posttime
-        }, Comments: ${1 + 13}`;
+        postFooter.innerText = `Created by ${data.user},   Date: ${data.posttime}, Comments: ${1 + 13}`;
         postDivs.appendChild(postTitle);
         postDivs.appendChild(postContent);
         postDivs.appendChild(postFooter);
@@ -272,6 +275,10 @@ const loginValidation = (data) => {
   } else {
     loginError.style.display = "block";
   }
+};
+
+ws.onclose = () => {
+  console.log("WS CLOSED");
 };
 
 loginButton.addEventListener("click", (e) => {
@@ -310,7 +317,7 @@ submitPostButton.addEventListener("click", function (e) {
   objData["postcontent"] = postContent.value;
   objData["type"] = "post";
   objData["posttime"] = new Date().toISOString().slice(0, 10);
-  objData["user"] = "Bruno8";
+  objData["username"] = loggedInUser;
 
   createPostModal.style.display = "none";
   postTitle.value = "";
@@ -320,9 +327,7 @@ submitPostButton.addEventListener("click", function (e) {
   ws.send(JSON.stringify(objData));
 });
 
-let successfulRegistrationMessage = document.getElementById(
-  "registered-login-success"
-);
+let successfulRegistrationMessage = document.getElementById("registered-login-success");
 
 let registrationErrors = document.querySelectorAll(".registration-errors");
 

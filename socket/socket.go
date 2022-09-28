@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"real-time-forum/posts"
 	"real-time-forum/users"
 
 	"github.com/gorilla/websocket"
@@ -33,7 +34,7 @@ type Posts struct {
 	PostContent string `json:"postcontent"`
 	Date        string `json:"posttime"`
 	Tipo        string `json:"tipo"`
-	User        string `json:"user"`
+	Username    string `json:"username"`
 }
 
 type Comments struct {
@@ -74,10 +75,11 @@ type formValidation struct {
 	Tipo                   string `json:"tipo"`
 }
 type loginValidation struct {
-	InvalidUsername bool   `json:"invalidUsername"`
-	InvalidPassword bool   `json:"invalidPassword"`
-	SuccessfulLogin bool   `json:"successfulLogin"`
-	Tipo            string `json:"tipo"`
+	InvalidUsername    bool   `json:"invalidUsername"`
+	InvalidPassword    bool   `json:"invalidPassword"`
+	SuccessfulLogin    bool   `json:"successfulLogin"`
+	SuccessfulUsername string `json:"successfulusername"`
+	Tipo               string `json:"tipo"`
 }
 
 var (
@@ -119,7 +121,8 @@ var upgrader = websocket.Upgrader{
 }
 
 func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
-	// db, _ := sql.Open("sqlite3", "real-time-forum.db")
+
+	db, _ := sql.Open("sqlite3", "real-time-forum.db")
 
 	go broadcastToAllClients()
 	wsConn, err := upgrader.Upgrade(w, r, nil)
@@ -129,7 +132,16 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("CONNECTION TO CLIENT")
 	defer wsConn.Close()
 
+	if _, ok := loggedInUsers[currentUser]; ok {
+
+		loggedInUsers[currentUser].Close()
+		delete(clients, loggedInUsers[currentUser])
+		delete(loggedInUsers, currentUser)
+
+	}
+
 	loggedInUsers[currentUser] = wsConn
+
 	fmt.Println("LOGGED IN USERS", loggedInUsers)
 	clients[wsConn] = true
 
@@ -142,6 +154,9 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 		if f.Type == "post" {
 			f.Posts.Tipo = "post"
+
+			posts.StorePosts(db, 1, f.Posts.Title, f.Posts.PostContent)
+
 			fmt.Println("this is the post content       ", f.PostContent)
 			// f.Posts.User = "yonas"
 			// STORE POSTS IN DATABASE
@@ -255,7 +270,7 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Println("bcrypt err:", err)
 			}
-			users.RegisterUser(db, t.Username, t.Register.Age, t.Gender, t.FirstName, t.LastName, hash, t.Email)
+			users.RegisterUser(db, t.Register.Username, t.Register.Age, t.Gender, t.FirstName, t.LastName, hash, t.Email)
 
 			// data gets marshalled and sent to client
 			u.SuccessfulRegistration = true
@@ -290,11 +305,13 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 				w.Write(toSend)
 
 			} else {
+				currentUser = t.Login.LoginUsername
 				loginData.SuccessfulLogin = true
+				loginData.SuccessfulUsername = currentUser
 				toSend, _ := json.Marshal(loginData)
 				w.Write(toSend)
 				// this function upgrades the connection to a websocket.
-				currentUser = t.Login.LoginUsername
+
 				// go http.HandleFunc("/ws", WebSocketEndpoint)
 
 				fmt.Println("SUCCESSFUL LOGIN")
