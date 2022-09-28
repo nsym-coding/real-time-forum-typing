@@ -85,9 +85,8 @@ var (
 	loggedInUsers            = make(map[string]*websocket.Conn)
 	broadcastChannelPosts    = make(chan *Posts, 1)
 	broadcastChannelComments = make(chan *Comments, 1)
-	broadcastChannelRegister = make(chan *Register, 1)
 	currentUser              = ""
-	Mux                      = http.NewServeMux()
+	CallWS                   = false
 )
 
 // unmarshall data based on type
@@ -263,7 +262,7 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 			toSend, _ := json.Marshal(u)
 			fmt.Println("toSend -- > ", toSend)
 			w.Write(toSend)
-			//	http.HandleFunc("/ws", WebSocketEndpoint)
+			// http.HandleFunc("/ws", WebSocketEndpoint)
 		} else {
 
 			toSend, _ := json.Marshal(u)
