@@ -275,11 +275,11 @@ const loginValidation = (data) => {
   } else {
     loginError.style.display = "block";
   }
+  ws.onclose = () => {
+    window.location.reload()
+  };
 };
 
-ws.onclose = () => {
-  console.log("WS CLOSED");
-};
 
 loginButton.addEventListener("click", (e) => {
   let loginData = new FormData(loginForm);

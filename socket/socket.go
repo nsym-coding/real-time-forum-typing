@@ -83,7 +83,7 @@ type loginValidation struct {
 }
 
 var (
-	clients                  = make(map[*websocket.Conn]bool)
+	// clients                  = make(map[*websocket.Conn]bool)
 	loggedInUsers            = make(map[string]*websocket.Conn)
 	broadcastChannelPosts    = make(chan *Posts, 1)
 	broadcastChannelComments = make(chan *Comments, 1)
@@ -132,23 +132,24 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("CONNECTION TO CLIENT")
 	defer wsConn.Close()
 
+	// if user logs into 2 clients, close first connection
 	if _, ok := loggedInUsers[currentUser]; ok {
-
 		loggedInUsers[currentUser].Close()
-		delete(clients, loggedInUsers[currentUser])
-		delete(loggedInUsers, currentUser)
-
 	}
 
 	loggedInUsers[currentUser] = wsConn
 
 	fmt.Println("LOGGED IN USERS", loggedInUsers)
-	clients[wsConn] = true
 
 	for {
-		_, info, _ := wsConn.ReadMessage()
+		message, info, _ := wsConn.ReadMessage()
 		fmt.Println("----", string(info))
 
+		// if a connection is closed, we return out of this loop
+		if message == -1 {
+			fmt.Println("connection closed")
+			return
+		}
 		var f T
 		f.UnmarshalForumData(info)
 
@@ -177,15 +178,15 @@ func broadcastToAllClients() {
 		select {
 		case post, ok := <-broadcastChannelPosts:
 			if ok {
-				for client := range clients {
-					client.WriteJSON(post)
+				for _, user := range loggedInUsers {
+					user.WriteJSON(post)
 					fmt.Printf("Value %v was read.\n", post)
 				}
 			}
 		case comment, ok := <-broadcastChannelComments:
 			if ok {
-				for client := range clients {
-					client.WriteJSON(comment)
+				for _, user := range loggedInUsers {
+					user.WriteJSON(comment)
 				}
 			}
 			// BROADCAST TO EVERYONE WITH A WEBSOCKET ALL ONLINE USERS
