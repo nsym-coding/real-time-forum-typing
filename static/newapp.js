@@ -422,3 +422,11 @@ registerBtn.addEventListener("click", function (e) {
       }
     });
 });
+
+
+// logout 
+let logoutButton = document.getElementById("log-out-button")
+
+logoutButton.onclick = () => {
+  window.location.reload()
+} 
