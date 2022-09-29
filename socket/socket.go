@@ -19,7 +19,7 @@ import (
 
 type T struct {
 	TypeChecker
-	*Posts
+	*posts.Posts
 	*Comments
 	*Register
 	*Login
@@ -29,13 +29,13 @@ type TypeChecker struct {
 	Type string `json:"type"`
 }
 
-type Posts struct {
-	Title       string `json:"title"`
-	PostContent string `json:"postcontent"`
-	Date        string `json:"posttime"`
-	Tipo        string `json:"tipo"`
-	Username    string `json:"username"`
-}
+// type Posts struct {
+// 	Title       string `json:"title"`
+// 	PostContent string `json:"postcontent"`
+// 	Date        string `json:"posttime"`
+// 	Tipo        string `json:"tipo"`
+// 	Username    string `json:"username"`
+// }
 
 type Comments struct {
 	CommentContent string `json:"commentcontent"`
@@ -75,17 +75,18 @@ type formValidation struct {
 	Tipo                   string `json:"tipo"`
 }
 type loginValidation struct {
-	InvalidUsername    bool   `json:"invalidUsername"`
-	InvalidPassword    bool   `json:"invalidPassword"`
-	SuccessfulLogin    bool   `json:"successfulLogin"`
-	SuccessfulUsername string `json:"successfulusername"`
-	Tipo               string `json:"tipo"`
+	InvalidUsername    bool          `json:"invalidUsername"`
+	InvalidPassword    bool          `json:"invalidPassword"`
+	SuccessfulLogin    bool          `json:"successfulLogin"`
+	SuccessfulUsername string        `json:"successfulusername"`
+	Tipo               string        `json:"tipo"`
+	SentPosts          []posts.Posts `json:"dbposts"`
 }
 
 var (
 	// clients                  = make(map[*websocket.Conn]bool)
 	loggedInUsers            = make(map[string]*websocket.Conn)
-	broadcastChannelPosts    = make(chan *Posts, 1)
+	broadcastChannelPosts    = make(chan *posts.Posts, 1)
 	broadcastChannelComments = make(chan *Comments, 1)
 	currentUser              = ""
 	CallWS                   = false
@@ -99,7 +100,7 @@ func (t *T) UnmarshalForumData(data []byte) error {
 
 	switch t.Type {
 	case "post":
-		t.Posts = &Posts{}
+		t.Posts = &posts.Posts{}
 		return json.Unmarshal(data, t.Posts)
 	case "comment":
 		t.Comments = &Comments{}
@@ -156,7 +157,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		if f.Type == "post" {
 			f.Posts.Tipo = "post"
 
-			posts.StorePosts(db, 1, f.Posts.Title, f.Posts.PostContent)
+			posts.StorePosts(db, f.Posts.Username, f.Posts.PostTitle, f.Posts.PostContent)
 
 			fmt.Println("this is the post content       ", f.PostContent)
 			// f.Posts.User = "yonas"
@@ -306,11 +307,15 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 				w.Write(toSend)
 
 			} else {
+
+				loginData.SentPosts = posts.SendPostsInDatabase(db)
 				currentUser = t.Login.LoginUsername
 				loginData.SuccessfulLogin = true
 				loginData.SuccessfulUsername = currentUser
 				toSend, _ := json.Marshal(loginData)
+
 				w.Write(toSend)
+
 				// this function upgrades the connection to a websocket.
 
 				// go http.HandleFunc("/ws", WebSocketEndpoint)

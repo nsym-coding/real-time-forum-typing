@@ -62,13 +62,6 @@ for (let i = 0; i < 4; i++) {
   onlineUsers.appendChild(userDetails);
 }
 
-let postTitlesClick = document.getElementsByClassName("post-title-class");
-Array.from(postTitlesClick).forEach(function (postTitle) {
-  postTitle.addEventListener("click", function (e) {
-    displayPostModal.style.display = "block";
-  });
-});
-
 let modal = document.getElementsByClassName("modal");
 let chatModal = document.getElementById("my-chat-modal");
 let createPostModal = document.getElementById("create-post-modal");
@@ -157,7 +150,10 @@ for (let i = 0; i < teamCrests.length; i++) {
   let img = document.createElement("img");
   img.style.backgroundColor = "white";
   img.alt = "none";
-  img.id = teamCrests[i].slice(teamCrests[i].lastIndexOf("/") + 1, teamCrests[i].length - 4);
+  img.id = teamCrests[i].slice(
+    teamCrests[i].lastIndexOf("/") + 1,
+    teamCrests[i].length - 4
+  );
   img.classList = "crest-colors";
   img.src = teamCrests[i];
   categorySelection.append(img);
@@ -199,10 +195,9 @@ commentArrow.addEventListener("click", function () {
   let i = 0;
   let comment = document.createElement("div");
   let commentDetails = document.createElement("div");
-  commentDetails.innerText = `Created by: McTom Date: ${new Date().toISOString().split("T")[0]} ${new Date()
-    .toISOString()
-    .split("T")[1]
-    .substring(0, 5)}`;
+  commentDetails.innerText = `Created by: McTom Date: ${
+    new Date().toISOString().split("T")[0]
+  } ${new Date().toISOString().split("T")[1].substring(0, 5)}`;
   comment.style.marginBottom = "1vh";
   comment.id = `comment-${i}`;
   commentDetails.id = `comment-detail-${i}`;
@@ -243,43 +238,25 @@ const loginValidation = (data) => {
     forumBody.style.display = "block";
     ws = new WebSocket("ws://localhost:8080/ws");
     ws.onopen = () => {
+      for (let i = 0; i < data.dbposts.length; i++) {
+        DisplayPosts(data.dbposts[i]);
+      }
       console.log("connection established");
     };
 
     ws.onmessage = (e) => {
       let data = JSON.parse(e.data);
       if (data.tipo === "post") {
-        let postDivs = document.createElement("div");
-        let postTitle = document.createElement("div");
-        postTitle.className = "post-title-class";
-        let postContent = document.createElement("div");
-
-        postContent.className = "post-content-class";
-
-        let postFooter = document.createElement("div");
-        postFooter.className = "post-footer-class";
-        postDivs.className = "post-class ";
-        // this will eventually hold the id given by go from the database (data.id)
-        postDivs.id = 1;
-        postTitle.innerText = data.title;
-        postContent.innerText = data.postcontent;
-        postContent.style.borderBottom = "0.2vh solid black";
-        postFooter.innerText = `Created by ${data.user},   Date: ${data.posttime}, Comments: ${1 + 13}`;
-        postDivs.appendChild(postTitle);
-        postDivs.appendChild(postContent);
-        postDivs.appendChild(postFooter);
-
-        posts.appendChild(postDivs);
+        DisplayPosts(data);
       }
     };
   } else {
     loginError.style.display = "block";
   }
   ws.onclose = () => {
-    window.location.reload()
+    window.location.reload();
   };
 };
-
 
 loginButton.addEventListener("click", (e) => {
   let loginData = new FormData(loginForm);
@@ -327,7 +304,9 @@ submitPostButton.addEventListener("click", function (e) {
   ws.send(JSON.stringify(objData));
 });
 
-let successfulRegistrationMessage = document.getElementById("registered-login-success");
+let successfulRegistrationMessage = document.getElementById(
+  "registered-login-success"
+);
 
 let registrationErrors = document.querySelectorAll(".registration-errors");
 
@@ -423,10 +402,39 @@ registerBtn.addEventListener("click", function (e) {
     });
 });
 
-
-// logout 
-let logoutButton = document.getElementById("log-out-button")
+// logout
+let logoutButton = document.getElementById("log-out-button");
 
 logoutButton.onclick = () => {
-  window.location.reload()
-} 
+  window.location.reload();
+};
+
+const DisplayPosts = (data) => {
+  let postDivs = document.createElement("div");
+  let postTitle = document.createElement("div");
+
+  postTitle.className = "post-title-class";
+  let postContent = document.createElement("div");
+
+  postContent.className = "post-content-class";
+
+  let postFooter = document.createElement("div");
+  postFooter.className = "post-footer-class";
+  postDivs.className = "post-class ";
+  // this will eventually hold the id given by go from the database (data.id)
+  postDivs.id = 1;
+  postTitle.innerText = data.title;
+  postContent.innerText = data.postcontent;
+  postContent.style.borderBottom = "0.2vh solid black";
+  postFooter.innerText = `Created by ${data.user},   Date: ${
+    data.posttime
+  }, Comments: ${1 + 13}`;
+  postDivs.appendChild(postTitle);
+  postDivs.appendChild(postContent);
+  postDivs.appendChild(postFooter);
+  postTitle.addEventListener("click", function (e) {
+    console.log("Checking if listener working");
+    displayPostModal.style.display = "block";
+  });
+  posts.appendChild(postDivs);
+};
