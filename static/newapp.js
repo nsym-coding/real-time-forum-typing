@@ -195,9 +195,8 @@ commentArrow.addEventListener("click", function () {
   let i = 0;
   let comment = document.createElement("div");
   let commentDetails = document.createElement("div");
-  commentDetails.innerText = `Created by: McTom Date: ${
-    new Date().toISOString().split("T")[0]
-  } ${new Date().toISOString().split("T")[1].substring(0, 5)}`;
+  commentDetails.innerText = `Created by: McTom Date: ${new Date().toISOString().split("T")[0]
+    } ${new Date().toISOString().split("T")[1].substring(0, 5)}`;
   comment.style.marginBottom = "1vh";
   comment.id = `comment-${i}`;
   commentDetails.id = `comment-detail-${i}`;
@@ -240,6 +239,8 @@ const loginValidation = (data) => {
     ws.onopen = () => {
       for (let i = 0; i < data.dbposts.length; i++) {
         DisplayPosts(data.dbposts[i]);
+
+
       }
       console.log("connection established");
     };
@@ -422,19 +423,30 @@ const DisplayPosts = (data) => {
   postFooter.className = "post-footer-class";
   postDivs.className = "post-class ";
   // this will eventually hold the id given by go from the database (data.id)
-  postDivs.id = 1;
+  postDivs.id = data.postid;
   postTitle.innerText = data.title;
   postContent.innerText = data.postcontent;
   postContent.style.borderBottom = "0.2vh solid black";
-  postFooter.innerText = `Created by ${data.user},   Date: ${
-    data.posttime
-  }, Comments: ${1 + 13}`;
+  postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime
+    }, Comments: ${1 + 13}`;
   postDivs.appendChild(postTitle);
   postDivs.appendChild(postContent);
   postDivs.appendChild(postFooter);
-  postTitle.addEventListener("click", function (e) {
-    console.log("Checking if listener working");
-    displayPostModal.style.display = "block";
-  });
+  // postTitle.addEventListener("click", function (e) {
+  //   console.log("Checking if listener working");
+
+  // });
   posts.appendChild(postDivs);
+
+  postDivs.addEventListener("click", e => {
+    let displayPostTitle = document.querySelector(".display-post-title")
+    let displayPostContent = document.querySelector(".display-post-content")
+    let postUsername = document.querySelector(".post-username")
+    let postDate = document.querySelector(".post-date")
+    displayPostTitle.innerText = data.title
+    displayPostContent.innerText = data.postcontent
+    postUsername.innerText = data.username
+    postDate.innerText = data.posttime
+    displayPostModal.style.display = "block";
+  })
 };
