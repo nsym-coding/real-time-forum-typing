@@ -6,6 +6,7 @@ import (
 )
 
 type Comments struct {
+	CommentID      int    `json:"commentid"`
 	CommentContent string `json:"commentcontent"`
 	User           string `json:"user"`
 	Date           string `json:"commenttime"`
@@ -15,7 +16,7 @@ type Comments struct {
 
 type CommentsFromPosts struct {
 	ClickedPostID string `json:"clickedPostID"`
-	Tipo          string `json:"getcommentsfrompost"`
+	Tipo          string `json:"tipo"`
 }
 
 // commentID integer primary key AUTOINCREMENT,
@@ -36,3 +37,50 @@ func StoreComment(db *sql.DB, user string, postID int, commentContent string) {
 	fmt.Println("rows affected: ", rowsAff)
 	fmt.Println("last inserted: ", LastIns)
 }
+
+// func GetCommentData(db *sql.DB, postID int, userId int) []Comment {
+//     rows, err := db.Query(SELECT commentID, commentText, comments.creationDate as cmntDate, users.username
+//     FROM comments
+//     INNER JOIN post ON post.postID = comments.postID
+//     INNER JOIN users ON users.userID = comments.userID
+//     WHERE post.postID = ?;, postID)
+//     if err != nil {
+//         fmt.Println(err)
+//     }
+//     comment := []Comment{}
+//     defer rows.Close()
+//     for rows.Next() {
+//         var c Comment
+//         err2 := rows.Scan(&c.CommentID, &c.CommentText, &c.CreationDate, &c.CommentUserName)
+//         c.UserType = users.GetUserType(db, userId)
+//         c.Likes = likes.GetCommentLikes(db, c.CommentID)
+//         c.Dislikes = dislikes.GetCommentDislikes(db, c.CommentID)
+//         comment = append(comment, c)
+//         if err2 != nil {
+//             fmt.Println(err2)
+//         }
+//     }
+//     fmt.Println()
+//     return comment
+// }
+func DisplayAllComments(db *sql.DB, postID int) []Comments {
+	rows, err := db.Query(`SELECT commentID, commentText, creationDate, username FROM comments 
+	WHERE postID = ?;`, postID)
+	if err != nil {
+		fmt.Println("ERROR getting comments from posts", err)
+	}
+	comment := []Comments{}
+	defer rows.Close()
+	for rows.Next() {
+		var c Comments
+		err2 := rows.Scan(&c.CommentID, &c.CommentContent, &c.Date, &c.User)
+		comment = append(comment, c)
+		if err2 != nil {
+			fmt.Println(err2)
+		}
+	}
+	return comment
+}
+
+// INNER JOIN posts ON posts.postID = comments.postID
+// INNER JOIN users ON users.username = comments.username

@@ -42,7 +42,7 @@ func CreateDB() {
 	_, err3 := db.Exec(`create table if not exists comments (
 			commentID integer primary key AUTOINCREMENT, 
 			username CHAR(50) REFERENCES users(username), 
-			postID integer REFERENCES post(postID), 
+			postID integer REFERENCES posts(postID), 
 			commentText CHAR(250), 
 			creationDate integer);`)
 	fmt.Println("err3", err3)

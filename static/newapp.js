@@ -237,9 +237,14 @@ const loginValidation = (data) => {
 
     ws.onmessage = (e) => {
       let data = JSON.parse(e.data);
+      console.log("data when a post is clicked", data);
       if (data.tipo === "post") {
         DisplayPosts(data);
       }
+
+      // if (data.tipo === "commentsfrompost") {
+      //   console.log(data);
+      // }
     };
   } else {
     loginError.style.display = "block";
@@ -425,18 +430,16 @@ const DisplayPosts = (data) => {
   posts.appendChild(postDivs);
 
 
-let getCommentsForPosts = {}
+  let getCommentsForPosts = {}
 
   postDivs.addEventListener("click", (e) => {
 
     clickedPostID = postDivs.id;
 
-    getCommentsForPosts.postID = clickedPostID
-    getCommentsForPosts.type = "getcommentsfrompost"
-
+    getCommentsForPosts["clickedPostID"] = clickedPostID
+    getCommentsForPosts["type"] = "getcommentsfrompost"
+    console.log("comments for posts object", getCommentsForPosts);
     ws.send(JSON.stringify(getCommentsForPosts))
-
-
 
     let displayPostTitle = document.querySelector(".display-post-title");
     let displayPostContent = document.querySelector(".display-post-content");
@@ -448,7 +451,8 @@ let getCommentsForPosts = {}
     postDate.innerText = data.posttime;
     displayPostModal.style.display = "block";
 
-
+    /* create struct in posts.go to hold all post info and comments info which will be sent when a user clicks
+      on a post. Currently only sending post info.*/
 
 
   });

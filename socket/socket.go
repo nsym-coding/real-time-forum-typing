@@ -24,6 +24,7 @@ type T struct {
 	*comments.Comments
 	*Register
 	*Login
+	*comments.CommentsFromPosts
 }
 
 type TypeChecker struct {
@@ -105,6 +106,9 @@ func (t *T) UnmarshalForumData(data []byte) error {
 	case "login":
 		t.Login = &Login{}
 		return json.Unmarshal(data, t.Login)
+	case "getcommentsfrompost":
+		t.CommentsFromPosts = &comments.CommentsFromPosts{}
+		return json.Unmarshal(data, t.CommentsFromPosts)
 	default:
 		return fmt.Errorf("unrecognized type value %q", t.Type)
 	}
@@ -158,19 +162,21 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			// STORE POSTS IN DATABASE
 			broadcastChannelPosts <- posts.SendLastPostInDatabase(db)
 		} else if f.Type == "comment" {
-	
 
 			// STORE COMMENTS IN THE DATABSE
-			 postID, _ := strconv.Atoi( f.Comments.PostID)
-			comments.StoreComment(db, f.Comments.User,postID, f.Comments.CommentContent)
+			postID, _ := strconv.Atoi(f.Comments.PostID)
+			comments.StoreComment(db, f.Comments.User, postID, f.Comments.CommentContent)
 
 			f.Comments.Tipo = "comment"
 			broadcastChannelComments <- f.Comments
-		}else if f.Type == "getcommentsfrompost"{
-			
-fmt.Println("comment ID from JS", f.Type)
+		} else if f.Type == "getcommentsfrompost" {
+			// Display all comments in a post to a single user.
 
-
+			fmt.Println("comments from post struct when unmarshalled", f.CommentsFromPosts)
+			f.CommentsFromPosts.Tipo = "commentsfrompost"
+			clickedPostID, _ := strconv.Atoi(f.CommentsFromPosts.ClickedPostID)
+			wsConn.WriteJSON(comments.DisplayAllComments(db, clickedPostID))
+			// fmt.Println("postID from JS", f.)
 		}
 
 		log.Println("Checking what's in f ---> ", f)
