@@ -8,6 +8,7 @@ let users = ["tb38r", "abmutungi", "eternal17", "million"];
 let loggedInUser = "";
 
 let homepageUsername = document.getElementById("active-username");
+let crests = document.getElementsByClassName("crest-colors");
 
 // for (let i = 0; i < 10; i++) {
 //   let postDivs = document.createElement("div");
@@ -195,8 +196,9 @@ commentArrow.addEventListener("click", function () {
   let i = 0;
   let comment = document.createElement("div");
   let commentDetails = document.createElement("div");
-  commentDetails.innerText = `Created by: McTom Date: ${new Date().toISOString().split("T")[0]
-    } ${new Date().toISOString().split("T")[1].substring(0, 5)}`;
+  commentDetails.innerText = `Created by: McTom Date: ${
+    new Date().toISOString().split("T")[0]
+  } ${new Date().toISOString().split("T")[1].substring(0, 5)}`;
   comment.style.marginBottom = "1vh";
   comment.id = `comment-${i}`;
   commentDetails.id = `comment-detail-${i}`;
@@ -239,8 +241,6 @@ const loginValidation = (data) => {
     ws.onopen = () => {
       for (let i = 0; i < data.dbposts.length; i++) {
         DisplayPosts(data.dbposts[i]);
-
-
       }
       console.log("connection established");
     };
@@ -290,19 +290,24 @@ let signUpForm = document.getElementById("signup-form");
 let objData = {};
 submitPostButton.addEventListener("click", function (e) {
   e.preventDefault();
-
+  console.log("getSelTeams test -> ", getSelectedTeams());
   objData["title"] = postTitle.value;
   objData["postcontent"] = postContent.value;
   objData["type"] = "post";
-  objData["posttime"] = new Date().toISOString().slice(0, 10);
+  // objData["posttime"] = new Date().toISOString().slice(0, 10);
   objData["username"] = loggedInUser;
-
+  objData["categories"] = getSelectedTeams();
   createPostModal.style.display = "none";
   postTitle.value = "";
   postContent.value = "";
 
   // message sent to server
   ws.send(JSON.stringify(objData));
+
+  for (let i = 0; i < crests.length; i++) {
+    crests[i].alt = "none";
+    crests[i].style.background = "white";
+  }
 });
 
 let successfulRegistrationMessage = document.getElementById(
@@ -415,9 +420,9 @@ const DisplayPosts = (data) => {
   let postTitle = document.createElement("div");
 
   postTitle.className = "post-title-class";
-  let postContent = document.createElement("div");
+  // let postContent = document.createElement("div");
 
-  postContent.className = "post-content-class";
+  //postContent.className = "post-content-class";
 
   let postFooter = document.createElement("div");
   postFooter.className = "post-footer-class";
@@ -425,12 +430,13 @@ const DisplayPosts = (data) => {
   // this will eventually hold the id given by go from the database (data.id)
   postDivs.id = data.postid;
   postTitle.innerText = data.title;
-  postContent.innerText = data.postcontent;
-  postContent.style.borderBottom = "0.2vh solid black";
-  postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime
-    }, Comments: ${1 + 13}`;
+  // postContent.innerText = data.postcontent;
+  postTitle.style.borderBottom = "0.2vh solid black";
+  postFooter.innerText = `Created by ${data.username},   Date: ${
+    data.posttime
+  }, Comments: ${1 + 13} ${data.categories}`;
   postDivs.appendChild(postTitle);
-  postDivs.appendChild(postContent);
+  //postDivs.appendChild(postContent);
   postDivs.appendChild(postFooter);
   // postTitle.addEventListener("click", function (e) {
   //   console.log("Checking if listener working");
@@ -438,15 +444,57 @@ const DisplayPosts = (data) => {
   // });
   posts.appendChild(postDivs);
 
-  postDivs.addEventListener("click", e => {
-    let displayPostTitle = document.querySelector(".display-post-title")
-    let displayPostContent = document.querySelector(".display-post-content")
-    let postUsername = document.querySelector(".post-username")
-    let postDate = document.querySelector(".post-date")
-    displayPostTitle.innerText = data.title
-    displayPostContent.innerText = data.postcontent
-    postUsername.innerText = data.username
-    postDate.innerText = data.posttime
+  postDivs.addEventListener("click", (e) => {
+    let displayPostTitle = document.querySelector(".display-post-title");
+    let displayPostContent = document.querySelector(".display-post-content");
+    let postUsername = document.querySelector(".post-username");
+    let postDate = document.querySelector(".post-date");
+    displayPostTitle.innerText = data.title;
+    displayPostContent.innerText = data.postcontent;
+    postUsername.innerText = data.username;
+    postDate.innerText = data.posttime;
     displayPostModal.style.display = "block";
-  })
+  });
 };
+
+const getSelectedTeams = () => {
+  let crestList = "";
+  for (let i = 0; i < crests.length; i++) {
+    if (crests[i].alt !== "none") {
+      crestList += `${crests[i].id},`;
+    }
+  }
+  return crestList;
+};
+
+// const colouredCategories = (data) => {
+//   console.log("cat before split -> ", data);
+
+//   let crestArr = data.split(",");
+//   console.log("cat after split --> ", crestArr);
+
+//   let masterCrestList = document.createElement("div");
+//   for (let i = 0; i < crestArr.length; i++) {
+//     //let crestList = document.createElement("p");
+//     let clubName = document.createTextNode(`${crestArr[i]}`);
+
+//     // crestList.insertAdjacentText("afterend", `#${crestArr[i]}`);
+//     //clubName.style.color = `${colorSwitch[crestArr[i]]}`;
+//     console.log("crest list before append --> ", clubName);
+//     masterCrestList.append(clubName);
+//   }
+//   return masterCrestList;
+// };
+
+// const getSelectedTeams = () => {
+//   let masterCrestList = document.createElement("p");
+//   for (let i = 0; i < crests.length; i++) {
+//     let crestList = document.createElement("p");
+//     if (crests[i].alt !== "none") {
+//       crestList.innerText += `#${crests[i].id},`;
+//       crestList.style.color = `${crests[i].alt}`;
+//       masterCrestList.append(crestList[i]);
+//     }
+//   }
+//   return masterCrestList;
+// };

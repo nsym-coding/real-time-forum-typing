@@ -35,6 +35,7 @@ func CreateDB() {
 			username CHAR(50) REFERENCES users(username), 
 			creationDate integer,
 			postTitle CHAR(50),
+			categories CHAR(50),
 			postContent CHAR(250));`)
 	fmt.Println("err2", err2)
 

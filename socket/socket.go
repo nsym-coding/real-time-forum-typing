@@ -86,7 +86,7 @@ type loginValidation struct {
 var (
 	// clients                  = make(map[*websocket.Conn]bool)
 	loggedInUsers            = make(map[string]*websocket.Conn)
-	broadcastChannelPosts    = make(chan *posts.Posts, 1)
+	broadcastChannelPosts    = make(chan posts.Posts, 1)
 	broadcastChannelComments = make(chan *Comments, 1)
 	currentUser              = ""
 	CallWS                   = false
@@ -157,12 +157,12 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		if f.Type == "post" {
 			f.Posts.Tipo = "post"
 
-			posts.StorePosts(db, f.Posts.Username, f.Posts.PostTitle, f.Posts.PostContent)
+			posts.StorePosts(db, f.Posts.Username, f.Posts.PostTitle, f.Posts.PostContent, f.Posts.Categories)
 
 			fmt.Println("this is the post content       ", f.PostContent)
 			// f.Posts.User = "yonas"
 			// STORE POSTS IN DATABASE
-			broadcastChannelPosts <- f.Posts
+			broadcastChannelPosts <- posts.SendLastPostInDatabase(db)
 		} else if f.Type == "comment" {
 			// f.Comments.User = "yonas"
 			// STORE COMMENTS IN THE DATABSE
