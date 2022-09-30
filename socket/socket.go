@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"real-time-forum/comments"
 	"real-time-forum/posts"
 	"real-time-forum/users"
 
@@ -20,7 +21,7 @@ import (
 type T struct {
 	TypeChecker
 	*posts.Posts
-	*Comments
+	*comments.Comments
 	*Register
 	*Login
 }
@@ -36,13 +37,6 @@ type TypeChecker struct {
 // 	Tipo        string `json:"tipo"`
 // 	Username    string `json:"username"`
 // }
-
-type Comments struct {
-	CommentContent string `json:"commentcontent"`
-	User           string `json:"user"`
-	Date           string `json:"commenttime"`
-	Tipo           string `json:"tipo"`
-}
 
 type Register struct {
 	Username  string `json:"username"`
@@ -87,7 +81,7 @@ var (
 	// clients                  = make(map[*websocket.Conn]bool)
 	loggedInUsers            = make(map[string]*websocket.Conn)
 	broadcastChannelPosts    = make(chan posts.Posts, 1)
-	broadcastChannelComments = make(chan *Comments, 1)
+	broadcastChannelComments = make(chan *comments.Comments, 1)
 	currentUser              = ""
 	CallWS                   = false
 )
@@ -103,7 +97,7 @@ func (t *T) UnmarshalForumData(data []byte) error {
 		t.Posts = &posts.Posts{}
 		return json.Unmarshal(data, t.Posts)
 	case "comment":
-		t.Comments = &Comments{}
+		t.Comments = &comments.Comments{}
 		return json.Unmarshal(data, t.Comments)
 	case "signup":
 		t.Register = &Register{}
@@ -164,10 +158,19 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			// STORE POSTS IN DATABASE
 			broadcastChannelPosts <- posts.SendLastPostInDatabase(db)
 		} else if f.Type == "comment" {
-			// f.Comments.User = "yonas"
+	
+
 			// STORE COMMENTS IN THE DATABSE
+			 postID, _ := strconv.Atoi( f.Comments.PostID)
+			comments.StoreComment(db, f.Comments.User,postID, f.Comments.CommentContent)
+
 			f.Comments.Tipo = "comment"
 			broadcastChannelComments <- f.Comments
+		}else if f.Type == "getcommentsfrompost"{
+			
+fmt.Println("comment ID from JS", f.Type)
+
+
 		}
 
 		log.Println("Checking what's in f ---> ", f)

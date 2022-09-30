@@ -44,10 +44,7 @@ func CreateDB() {
 			username CHAR(50) REFERENCES users(username), 
 			postID integer REFERENCES post(postID), 
 			commentText CHAR(250), 
-			edited integer, 
-			creationDate integer,
-			notified integer,
-			creatorID integer);`)
+			creationDate integer);`)
 	fmt.Println("err3", err3)
 
 	_, err4 := db.Exec(`create table if not exists messages(

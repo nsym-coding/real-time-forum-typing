@@ -63,10 +63,22 @@ for (let i = 0; i < 4; i++) {
   onlineUsers.appendChild(userDetails);
 }
 
+let ws;
+
 let modal = document.getElementsByClassName("modal");
 let chatModal = document.getElementById("my-chat-modal");
 let createPostModal = document.getElementById("create-post-modal");
 let displayPostModal = document.getElementById("display-post-modal");
+
+let submitPostButton = document.querySelector("#submit-post-button");
+let postTitle = document.querySelector("#post-title");
+let postContent = document.querySelector("#post-content");
+let registerBtn = document.getElementById("register-btn");
+let signUpForm = document.getElementById("signup-form");
+
+let commentContainer = document.getElementById("comment-container");
+let commentArrow = document.getElementById("comment-arrow");
+let commentTextArea = document.getElementById("comment-input");
 
 postButton.addEventListener("click", function () {
   createPostModal.style.display = "block";
@@ -151,10 +163,7 @@ for (let i = 0; i < teamCrests.length; i++) {
   let img = document.createElement("img");
   img.style.backgroundColor = "white";
   img.alt = "none";
-  img.id = teamCrests[i].slice(
-    teamCrests[i].lastIndexOf("/") + 1,
-    teamCrests[i].length - 4
-  );
+  img.id = teamCrests[i].slice(teamCrests[i].lastIndexOf("/") + 1, teamCrests[i].length - 4);
   img.classList = "crest-colors";
   img.src = teamCrests[i];
   categorySelection.append(img);
@@ -188,26 +197,9 @@ for (let i = 0; i < crestcolors.length; i++) {
     }
   });
 }
-let commentContainer = document.getElementById("comment-container");
-let commentArrow = document.getElementById("comment-arrow");
-let commentTextArea = document.getElementById("comment-input");
 
-commentArrow.addEventListener("click", function () {
-  let i = 0;
-  let comment = document.createElement("div");
-  let commentDetails = document.createElement("div");
-  commentDetails.innerText = `Created by: McTom Date: ${
-    new Date().toISOString().split("T")[0]
-  } ${new Date().toISOString().split("T")[1].substring(0, 5)}`;
-  comment.style.marginBottom = "1vh";
-  comment.id = `comment-${i}`;
-  commentDetails.id = `comment-detail-${i}`;
-  comment.innerText = `${commentTextArea.value}`;
-  commentTextArea.value = "";
-  comment.appendChild(commentDetails);
-  commentContainer.appendChild(comment);
-  displayPostBody.scrollTo(0, displayPostBody.scrollHeight);
-});
+let commentData = {};
+let clickedPostID;
 
 let signupSwitch = document.getElementById("sign-up-button");
 let loginBox = document.querySelector(".login-box");
@@ -228,8 +220,6 @@ loginReturn.addEventListener("click", (e) => {
   loginBox.style.display = "block";
   registerBox.style.display = "none";
 });
-
-let ws;
 
 const loginValidation = (data) => {
   if (data.successfulLogin) {
@@ -280,12 +270,6 @@ loginButton.addEventListener("click", (e) => {
     });
 });
 
-let submitPostButton = document.querySelector("#submit-post-button");
-let postTitle = document.querySelector("#post-title");
-let postContent = document.querySelector("#post-content");
-let registerBtn = document.getElementById("register-btn");
-let signUpForm = document.getElementById("signup-form");
-
 // dummy post info being sent to server
 let objData = {};
 submitPostButton.addEventListener("click", function (e) {
@@ -310,9 +294,7 @@ submitPostButton.addEventListener("click", function (e) {
   }
 });
 
-let successfulRegistrationMessage = document.getElementById(
-  "registered-login-success"
-);
+let successfulRegistrationMessage = document.getElementById("registered-login-success");
 
 let registrationErrors = document.querySelectorAll(".registration-errors");
 
@@ -432,9 +414,7 @@ const DisplayPosts = (data) => {
   postTitle.innerText = data.title;
   // postContent.innerText = data.postcontent;
   postTitle.style.borderBottom = "0.2vh solid black";
-  postFooter.innerText = `Created by ${data.username},   Date: ${
-    data.posttime
-  }, Comments: ${1 + 13} ${data.categories}`;
+  postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime}, Comments: ${1 + 13} ${data.categories}`;
   postDivs.appendChild(postTitle);
   //postDivs.appendChild(postContent);
   postDivs.appendChild(postFooter);
@@ -444,7 +424,20 @@ const DisplayPosts = (data) => {
   // });
   posts.appendChild(postDivs);
 
+
+let getCommentsForPosts = {}
+
   postDivs.addEventListener("click", (e) => {
+
+    clickedPostID = postDivs.id;
+
+    getCommentsForPosts.postID = clickedPostID
+    getCommentsForPosts.type = "getcommentsfrompost"
+
+    ws.send(JSON.stringify(getCommentsForPosts))
+
+
+
     let displayPostTitle = document.querySelector(".display-post-title");
     let displayPostContent = document.querySelector(".display-post-content");
     let postUsername = document.querySelector(".post-username");
@@ -454,6 +447,10 @@ const DisplayPosts = (data) => {
     postUsername.innerText = data.username;
     postDate.innerText = data.posttime;
     displayPostModal.style.display = "block";
+
+
+
+
   });
 };
 
@@ -466,6 +463,15 @@ const getSelectedTeams = () => {
   }
   return crestList;
 };
+
+commentArrow.addEventListener("click", function () {
+  commentData["commentcontent"] = commentTextArea.value;
+  commentData["user"] = loggedInUser;
+  commentData["postid"] = clickedPostID;
+  commentData["type"] = "comment";
+
+  ws.send(JSON.stringify(commentData));
+});
 
 // const colouredCategories = (data) => {
 //   console.log("cat before split -> ", data);
