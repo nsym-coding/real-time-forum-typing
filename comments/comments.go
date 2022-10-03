@@ -38,8 +38,6 @@ func StoreComment(db *sql.DB, user string, postID int, commentContent string) {
 	fmt.Println("last inserted: ", LastIns)
 }
 
-
-
 func DisplayAllComments(db *sql.DB, postID int) []Comments {
 	rows, err := db.Query(`SELECT commentID, commentText, creationDate, username FROM comments 
 	WHERE postID = ?;`, postID)
@@ -59,5 +57,12 @@ func DisplayAllComments(db *sql.DB, postID int) []Comments {
 	return comment
 }
 
-// INNER JOIN posts ON posts.postID = comments.postID
-// INNER JOIN users ON users.username = comments.username
+func GetLastComment(db *sql.DB) Comments {
+	stmt := db.QueryRow(`SELECT commentID, commentText, creationDate, username FROM comments ORDER BY commentID DESC LIMIT 1`)
+
+	c := Comments{}
+	c.Tipo = "lastcomment"
+	stmt.Scan(&c.CommentID, &c.CommentContent, &c.Date, &c.User)
+	fmt.Println("GET LAST COMMENT FUNC", c)
+	return c
+}

@@ -489,12 +489,13 @@ img {
 #display-post-footer {
   display: flex;
   justify-content: space-between;
+  position: absolute;
+  top: 56vh;
 }
 
 #display-post-footer i {
   font-size: 4vh;
   left: 32.5vw;
-  position: absolute;
   top: 53.5vh;
   cursor: pointer;
   color: var(--ourBlue);
@@ -504,7 +505,7 @@ img {
   /* border: 5px red solid; */
 
   overflow: scroll;
-  height: 23vh;
+  height: 38vh;
 }
 
 #display-post-body::-webkit-scrollbar {

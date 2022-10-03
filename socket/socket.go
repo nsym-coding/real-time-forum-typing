@@ -167,6 +167,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			comments.StoreComment(db, f.Comments.User, postID, f.Comments.CommentContent)
 
 			f.Comments.Tipo = "comment"
+			wsConn.WriteJSON(comments.GetLastComment(db))
 			broadcastChannelComments <- f.Comments
 		} else if f.Type == "getcommentsfrompost" {
 			// Display all comments in a post to a single user.

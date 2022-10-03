@@ -237,7 +237,7 @@ const loginValidation = (data) => {
 
     ws.onmessage = (e) => {
       let data = JSON.parse(e.data);
-      console.log("data when a post is clicked", data);
+      // console.log("data when a post is clicked", data);
       if (data.tipo === "post") {
         DisplayPosts(data);
       }
@@ -454,6 +454,38 @@ const DisplayPosts = (data) => {
     /* create struct in posts.go to hold all post info and comments info which will be sent when a user clicks
       on a post. Currently only sending post info.*/
 
+    // let comment = document.createElement("div");
+    // comment.style.marginBottom = "1vh";
+    // comment.id = `comment-${i}`;
+
+    // comment.innerText = `${
+    //   commentTextArea.value
+    // }\n Created by: McTom Date: ${new Date()
+    //   .toISOString()
+    //   .split("T")[1]
+    //   .substring(0, 5)}\n`;
+    // commentTextArea.value = "";
+
+    // commentContainer.appendChild(comment);
+
+    // Auto scroll to last comment
+    // displayPostBody.scrollTo(0, displayPostBody.scrollHeight);
+
+    // data coming through for comments
+    ws.onmessage = (e) => {
+      let commentData = JSON.parse(e.data);
+      // console.log("is this comment data?", commentData);
+
+      commentData.forEach((comment) => {
+        let commentDiv = document.createElement("div")
+        commentDiv.style.marginBottom = "1vh"
+        commentDiv.id = `comment${comment.commentId}`
+        commentDiv.innerText = `${comment.commentcontent} \n ${comment.user}, ${comment.commenttime}`
+        commentContainer.appendChild(commentDiv)
+
+      })
+
+    };
 
   });
 };
@@ -475,6 +507,21 @@ commentArrow.addEventListener("click", function () {
   commentData["type"] = "comment";
 
   ws.send(JSON.stringify(commentData));
+  commentTextArea.value = ""
+  // 
+  ws.onmessage = (e) => {
+    let lastComment = JSON.parse(e.data);
+    if (lastComment.tipo === "lastcomment") {
+
+      let commentDiv = document.createElement("div")
+      commentDiv.style.marginBottom = "1vh"
+      commentDiv.id = `comment${lastComment.commentId}`
+      commentDiv.innerText = `${lastComment.commentcontent} \n ${lastComment.user}, ${lastComment.commenttime}`
+      commentContainer.appendChild(commentDiv)
+    }
+    // console.log("is this comment data?", commentData);
+  };
+
 });
 
 // const colouredCategories = (data) => {
