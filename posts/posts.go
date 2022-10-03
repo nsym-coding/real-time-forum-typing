@@ -3,6 +3,7 @@ package posts
 import (
 	"database/sql"
 	"fmt"
+	"real-time-forum/comments"
 )
 
 type Posts struct {
@@ -13,6 +14,7 @@ type Posts struct {
 	Tipo        string `json:"tipo"`
 	Categories  string `json:"categories"`
 	Username    string `json:"username"`
+	Comments 	[]comments.Comments `json:"comments"`
 }
 
 func StorePosts(db *sql.DB, username string, title string, content string, categories string) {
@@ -54,7 +56,7 @@ func SendPostsInDatabase(db *sql.DB) []Posts {
 
 func SendLastPostInDatabase(db *sql.DB) Posts {
 
-	rows, err := db.Query(`SELECT postID, postTitle, postContent, username, categories,creationDate FROM posts ;`)
+	rows, err := db.Query(`SELECT postID, postTitle, postContent, username, categories,creationDate FROM posts;`)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -72,4 +74,30 @@ func SendLastPostInDatabase(db *sql.DB) Posts {
 	}
 	return postdata[len(postdata)-1]
 
+}
+
+//SELECT * FROM Table ORDER BY ID DESC LIMIT 1
+
+func GetCommentData(db *sql.DB, postID int) Posts {
+    rows, err := db.Query(`SELECT commentID, commentText, comments.creationDate as cmntDate, posts.username
+    FROM comments
+    INNER JOIN posts ON posts.postID = comments.postID
+    WHERE comments.postID = ?;`, postID)
+    if err != nil {
+        fmt.Println(err)
+    }
+    post := Posts{}
+    defer rows.Close()
+    for rows.Next() {
+       // var c Posts
+		var comments comments.Comments
+        err2 := rows.Scan(&comments.CommentID, &comments.CommentContent, &comments.Date, &comments.User)
+    
+        post.Comments = append(post.Comments, comments)
+        if err2 != nil {
+            fmt.Println(err2)
+        }
+    }
+    fmt.Println("comments for post", post.Comments)
+    return post
 }

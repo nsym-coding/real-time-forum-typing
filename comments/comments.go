@@ -38,31 +38,8 @@ func StoreComment(db *sql.DB, user string, postID int, commentContent string) {
 	fmt.Println("last inserted: ", LastIns)
 }
 
-// func GetCommentData(db *sql.DB, postID int, userId int) []Comment {
-//     rows, err := db.Query(SELECT commentID, commentText, comments.creationDate as cmntDate, users.username
-//     FROM comments
-//     INNER JOIN post ON post.postID = comments.postID
-//     INNER JOIN users ON users.userID = comments.userID
-//     WHERE post.postID = ?;, postID)
-//     if err != nil {
-//         fmt.Println(err)
-//     }
-//     comment := []Comment{}
-//     defer rows.Close()
-//     for rows.Next() {
-//         var c Comment
-//         err2 := rows.Scan(&c.CommentID, &c.CommentText, &c.CreationDate, &c.CommentUserName)
-//         c.UserType = users.GetUserType(db, userId)
-//         c.Likes = likes.GetCommentLikes(db, c.CommentID)
-//         c.Dislikes = dislikes.GetCommentDislikes(db, c.CommentID)
-//         comment = append(comment, c)
-//         if err2 != nil {
-//             fmt.Println(err2)
-//         }
-//     }
-//     fmt.Println()
-//     return comment
-// }
+
+
 func DisplayAllComments(db *sql.DB, postID int) []Comments {
 	rows, err := db.Query(`SELECT commentID, commentText, creationDate, username FROM comments 
 	WHERE postID = ?;`, postID)

@@ -120,7 +120,6 @@ var upgrader = websocket.Upgrader{
 }
 
 func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
-
 	db, _ := sql.Open("sqlite3", "real-time-forum.db")
 
 	go broadcastToAllClients()
@@ -156,7 +155,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			f.Posts.Tipo = "post"
 
 			posts.StorePosts(db, f.Posts.Username, f.Posts.PostTitle, f.Posts.PostContent, f.Posts.Categories)
-
+			posts.GetCommentData(db, 1)
 			fmt.Println("this is the post content       ", f.PostContent)
 			// f.Posts.User = "yonas"
 			// STORE POSTS IN DATABASE
@@ -297,7 +296,7 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if t.Type == "login" {
-		//validate values then
+		// validate values then
 		var loginData loginValidation
 
 		loginData.Tipo = "loginValidation"
@@ -339,5 +338,4 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 		// data gets marshalled and sent to client
 
 	}
-
 }
