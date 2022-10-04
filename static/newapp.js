@@ -173,6 +173,8 @@ loginReturn.addEventListener("click", (e) => {
   registerBox.style.display = "none";
 });
 
+let loggedInBool = false
+
 const loginValidation = (data) => {
   if (data.successfulLogin) {
     loggedInUser = data.successfulusername;
@@ -184,7 +186,7 @@ const loginValidation = (data) => {
       for (let i = 0; i < data.dbposts.length; i++) {
         DisplayPosts(data.dbposts[i]);
       }
- 
+
       //populateUsers(data.allUsers);
 
       console.log("connection established");
@@ -199,14 +201,11 @@ const loginValidation = (data) => {
 
       if (data.tipo === "onlineUsers") {
         onlineUsersFromGo = data.onlineUsers;
+        console.log("This is a test", data.onlineUsers);
         populateUsers(data.allUsers);
 
         console.log("first OUFG", onlineUsersFromGo);
       }
-
-      // if (data.tipo === "commentsfrompost") {
-      //   console.log(data);
-      // }
     };
   } else {
     loginError.style.display = "block";
@@ -215,6 +214,27 @@ const loginValidation = (data) => {
     window.location.reload();
   };
 };
+
+
+// if(loggedInBool){
+
+
+// ws.onmessage = (e) => {
+//   let data = JSON.parse(e.data);
+
+
+//   if (data.tipo === "onlineUsers") {
+//     onlineUsersFromGo = data.onlineUsers;
+//     console.log("This is a test", data.onlineUsers);
+//     populateUsers(data.allUsers);
+
+//     console.log("first OUFG", onlineUsersFromGo);
+//   }
+// };
+
+// }
+
+
 
 loginButton.addEventListener("click", (e) => {
   let loginData = new FormData(loginForm);

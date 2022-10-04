@@ -490,9 +490,7 @@ img {
   border-bottom: 0.6vh var(--ourBlue) solid;
 }
 
-#display-post-header {
-  /* border: 0.5px red solid; */
-}
+
 
 #display-post-footer {
   display: flex;

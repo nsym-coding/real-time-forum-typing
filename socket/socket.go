@@ -85,12 +85,15 @@ type loginValidation struct {
 
 var (
 	// clients                  = make(map[*websocket.Conn]bool)
-	loggedInUsers            = make(map[string]*websocket.Conn)
-	broadcastChannelPosts    = make(chan posts.Posts, 1)
+	loggedInUsers         = make(map[string]*websocket.Conn)
+	broadcastChannelPosts = make(chan posts.Posts, 1)
+
 	broadcastChannelComments = make(chan *comments.Comments, 1)
 	currentUser              = ""
 	CallWS                   = false
 	online                   loginValidation
+	broadcastOnlineUsers     = make(chan loginValidation, 1)
+	usersFromChan            []string
 )
 
 // unmarshall data based on type
@@ -145,6 +148,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("LOGGED IN USERS", loggedInUsers)
 
 	online.Tipo = "onlineUsers"
+	online.OnlineUsers = []string{}
 	for k := range loggedInUsers {
 		fmt.Println("--k", k)
 		online.OnlineUsers = append(online.OnlineUsers, k)
@@ -161,13 +165,18 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		// if a connection is closed, we return out of this loop
 		if message == -1 {
 			fmt.Println("connection closed")
+
 			delete(loggedInUsers, currentUser)
 			online.OnlineUsers = []string{}
+			online.Tipo = "onlineUsers"
+
 			for k := range loggedInUsers {
 				online.OnlineUsers = append(online.OnlineUsers, k)
 			}
-			
-			wsConn.WriteJSON(online)
+
+			broadcastOnlineUsers <- online
+
+			//wsConn.WriteJSON(online)
 			return
 		}
 		var f T
@@ -211,20 +220,40 @@ func broadcastToAllClients() {
 		case post, ok := <-broadcastChannelPosts:
 			if ok {
 				for _, user := range loggedInUsers {
+
 					user.WriteJSON(post)
 					fmt.Printf("Value %v was read.\n", post)
 				}
 			}
 		case comment, ok := <-broadcastChannelComments:
 			if ok {
+
 				for _, user := range loggedInUsers {
 					user.WriteJSON(comment)
 				}
 			}
+
+		case onlineuser, ok := <-broadcastOnlineUsers:
+
+			if ok {
+				for _, user := range loggedInUsers {
+
+					user.WriteJSON(onlineuser)
+				}
+			}
+
 			// BROADCAST TO EVERYONE WITH A WEBSOCKET ALL ONLINE USERS
 
 		}
 	}
+}
+
+func getUsersForChan() []string {
+	for k, _ := range loggedInUsers {
+		usersFromChan = append(usersFromChan, k)
+	}
+	return usersFromChan
+
 }
 
 func GetLoginData(w http.ResponseWriter, r *http.Request) {
