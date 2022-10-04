@@ -57,17 +57,20 @@ type Login struct {
 }
 
 type formValidation struct {
-	UsernameLength         bool   `json:"usernameLength"`
-	UsernameSpace          bool   `json:"usernameSpace"`
-	UsernameDuplicate      bool   `json:"usernameDuplicate"`
-	EmailDuplicate         bool   `json:"emailDuplicate"`
-	PasswordLength         bool   `json:"passwordLength"`
-	AgeEmpty               bool   `json:"ageEmpty"`
-	FirstNameEmpty         bool   `json:"firstnameEmpty"`
-	LastNameEmpty          bool   `json:"lastnameEmpty"`
-	EmailInvalid           bool   `json:"emailInvalid"`
-	SuccessfulRegistration bool   `json:"successfulRegistration"`
-	Tipo                   string `json:"tipo"`
+	UsernameLength         bool     `json:"usernameLength"`
+	UsernameSpace          bool     `json:"usernameSpace"`
+	UsernameDuplicate      bool     `json:"usernameDuplicate"`
+	EmailDuplicate         bool     `json:"emailDuplicate"`
+	PasswordLength         bool     `json:"passwordLength"`
+	AgeEmpty               bool     `json:"ageEmpty"`
+	FirstNameEmpty         bool     `json:"firstnameEmpty"`
+	LastNameEmpty          bool     `json:"lastnameEmpty"`
+	EmailInvalid           bool     `json:"emailInvalid"`
+	SuccessfulRegistration bool     `json:"successfulRegistration"`
+	AllUserAfterNewReg     []string `json:"allUserAfterNewReg"`
+	OnlineUsers            []string `json:"onlineUsers"`
+
+	Tipo string `json:"tipo"`
 }
 type loginValidation struct {
 	InvalidUsername    bool          `json:"invalidUsername"`
@@ -76,6 +79,8 @@ type loginValidation struct {
 	SuccessfulUsername string        `json:"successfulusername"`
 	Tipo               string        `json:"tipo"`
 	SentPosts          []posts.Posts `json:"dbposts"`
+	AllUsers           []string      `json:"allUsers"`
+	OnlineUsers        []string      `json:"onlineUsers"`
 }
 
 var (
@@ -85,6 +90,7 @@ var (
 	broadcastChannelComments = make(chan *comments.Comments, 1)
 	currentUser              = ""
 	CallWS                   = false
+	online                   loginValidation
 )
 
 // unmarshall data based on type
@@ -136,8 +142,17 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	}
 
 	loggedInUsers[currentUser] = wsConn
-
 	fmt.Println("LOGGED IN USERS", loggedInUsers)
+
+	online.Tipo = "onlineUsers"
+	for k := range loggedInUsers {
+		fmt.Println("--k", k)
+		online.OnlineUsers = append(online.OnlineUsers, k)
+	}
+	online.AllUsers = users.GetAllUsers(db)
+	fmt.Println("looped  ", online.OnlineUsers)
+
+	wsConn.WriteJSON(online)
 
 	for {
 		message, info, _ := wsConn.ReadMessage()
@@ -146,6 +161,13 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		// if a connection is closed, we return out of this loop
 		if message == -1 {
 			fmt.Println("connection closed")
+			delete(loggedInUsers, currentUser)
+			online.OnlineUsers = []string{}
+			for k := range loggedInUsers {
+				online.OnlineUsers = append(online.OnlineUsers, k)
+			}
+			
+			wsConn.WriteJSON(online)
 			return
 		}
 		var f T
@@ -285,6 +307,7 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 
 			// data gets marshalled and sent to client
 			u.SuccessfulRegistration = true
+			u.AllUserAfterNewReg = users.GetAllUsers(db)
 			toSend, _ := json.Marshal(u)
 			fmt.Println("toSend -- > ", toSend)
 			w.Write(toSend)
@@ -318,6 +341,8 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 			} else {
 
 				loginData.SentPosts = posts.SendPostsInDatabase(db)
+				loginData.AllUsers = users.GetAllUsers(db)
+
 				currentUser = t.Login.LoginUsername
 				loginData.SuccessfulLogin = true
 				loginData.SuccessfulUsername = currentUser

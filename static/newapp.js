@@ -3,65 +3,17 @@ let onlineUsers = document.getElementById("onlineusers");
 
 let postButton = document.getElementById("new-post-btn");
 
-let users = ["tb38r", "abmutungi", "eternal17", "million"];
+let users = [];
+let onlineUsersFromGo = [];
 
 let loggedInUser = "";
 
 let homepageUsername = document.getElementById("active-username");
 let crests = document.getElementsByClassName("crest-colors");
 
-// for (let i = 0; i < 10; i++) {
-//   let postDivs = document.createElement("div");
-//   let postTitle = document.createElement("div");
-//   postTitle.id = i;
-//   postTitle.className = "post-title-class";
-//   let postContent = document.createElement("div");
-//   postContent.id = i;
-//   postContent.className = "post-content-class";
-
-//   let postFooter = document.createElement("div");
-//   postFooter.id = i;
-//   postFooter.className = "post-footer-class";
-//   postDivs.className = "post-class ";
-//   postDivs.id = i;
-//   postTitle.innerText = `This is post number ${i}\n`;
-//   postContent.innerText =
-//     " This is a post bla blablalala\n___________________________________________________";
-//   postFooter.innerText = `Created by abmutungi,   Date: ${new Date().toDateString()}, Comments: ${i + 13}`;
-//   postDivs.appendChild(postTitle);
-//   postDivs.appendChild(postContent);
-//   postDivs.appendChild(postFooter);
-
-//   posts.appendChild(postDivs);
-// }
-
 let userDetails;
 let imageDiv;
 let img;
-
-for (let i = 0; i < 4; i++) {
-  userDetails = document.createElement("div");
-  let username = document.createElement("div");
-  imageDiv = document.createElement("div");
-  img = document.createElement("img");
-  let onlineIcon = document.createElement("div");
-
-  onlineIcon.className = "online-icon-class";
-
-  img.src = "/css/img/newcastle.png";
-  img.style.width = "2vw";
-  imageDiv.appendChild(onlineIcon);
-  userDetails.id = `${users[i]}`;
-
-  //   userDetails.setAttribute("type", "button");
-
-  userDetails.className = "registered-user";
-  username.innerText = `${users[i]}`;
-  imageDiv.append(img);
-  userDetails.appendChild(username);
-  userDetails.appendChild(imageDiv);
-  onlineUsers.appendChild(userDetails);
-}
 
 let ws;
 
@@ -232,6 +184,9 @@ const loginValidation = (data) => {
       for (let i = 0; i < data.dbposts.length; i++) {
         DisplayPosts(data.dbposts[i]);
       }
+ 
+      //populateUsers(data.allUsers);
+
       console.log("connection established");
     };
 
@@ -240,6 +195,13 @@ const loginValidation = (data) => {
       // console.log("data when a post is clicked", data);
       if (data.tipo === "post") {
         DisplayPosts(data);
+      }
+
+      if (data.tipo === "onlineUsers") {
+        onlineUsersFromGo = data.onlineUsers;
+        populateUsers(data.allUsers);
+
+        console.log("first OUFG", onlineUsersFromGo);
       }
 
       // if (data.tipo === "commentsfrompost") {
@@ -429,17 +391,15 @@ const DisplayPosts = (data) => {
   // });
   posts.appendChild(postDivs);
 
-
-  let getCommentsForPosts = {}
+  let getCommentsForPosts = {};
 
   postDivs.addEventListener("click", (e) => {
-
     clickedPostID = postDivs.id;
 
-    getCommentsForPosts["clickedPostID"] = clickedPostID
-    getCommentsForPosts["type"] = "getcommentsfrompost"
+    getCommentsForPosts["clickedPostID"] = clickedPostID;
+    getCommentsForPosts["type"] = "getcommentsfrompost";
     console.log("comments for posts object", getCommentsForPosts);
-    ws.send(JSON.stringify(getCommentsForPosts))
+    ws.send(JSON.stringify(getCommentsForPosts));
 
     let displayPostTitle = document.querySelector(".display-post-title");
     let displayPostContent = document.querySelector(".display-post-content");
@@ -477,16 +437,13 @@ const DisplayPosts = (data) => {
       // console.log("is this comment data?", commentData);
 
       commentData.forEach((comment) => {
-        let commentDiv = document.createElement("div")
-        commentDiv.style.marginBottom = "1vh"
-        commentDiv.id = `comment${comment.commentId}`
-        commentDiv.innerText = `${comment.commentcontent} \n ${comment.user}, ${comment.commenttime}`
-        commentContainer.appendChild(commentDiv)
-
-      })
-
+        let commentDiv = document.createElement("div");
+        commentDiv.style.marginBottom = "1vh";
+        commentDiv.id = `comment${comment.commentId}`;
+        commentDiv.innerText = `${comment.commentcontent} \n ${comment.user}, ${comment.commenttime}`;
+        commentContainer.appendChild(commentDiv);
+      });
     };
-
   });
 };
 
@@ -507,21 +464,19 @@ commentArrow.addEventListener("click", function () {
   commentData["type"] = "comment";
 
   ws.send(JSON.stringify(commentData));
-  commentTextArea.value = ""
-  // 
+  commentTextArea.value = "";
+  //
   ws.onmessage = (e) => {
     let lastComment = JSON.parse(e.data);
     if (lastComment.tipo === "lastcomment") {
-
-      let commentDiv = document.createElement("div")
-      commentDiv.style.marginBottom = "1vh"
-      commentDiv.id = `comment${lastComment.commentId}`
-      commentDiv.innerText = `${lastComment.commentcontent} \n ${lastComment.user}, ${lastComment.commenttime}`
-      commentContainer.appendChild(commentDiv)
+      let commentDiv = document.createElement("div");
+      commentDiv.style.marginBottom = "1vh";
+      commentDiv.id = `comment${lastComment.commentId}`;
+      commentDiv.innerText = `${lastComment.commentcontent} \n ${lastComment.user}, ${lastComment.commenttime}`;
+      commentContainer.appendChild(commentDiv);
     }
     // console.log("is this comment data?", commentData);
   };
-
 });
 
 // const colouredCategories = (data) => {
@@ -555,3 +510,33 @@ commentArrow.addEventListener("click", function () {
 //   }
 //   return masterCrestList;
 // };
+
+const populateUsers = (users) => {
+  console.log("all users", users);
+  console.log("online from Go", onlineUsersFromGo);
+  for (let i = 0; i < users.length; i++) {
+    userDetails = document.createElement("div");
+    let username = document.createElement("div");
+    imageDiv = document.createElement("div");
+    img = document.createElement("img");
+    let onlineIcon = document.createElement("div");
+
+    img.src = "/css/img/newcastle.png";
+    img.style.width = "2vw";
+    imageDiv.appendChild(onlineIcon);
+    userDetails.id = `${users[i]}`;
+
+    userDetails.className = "registered-user";
+
+    if (onlineUsersFromGo.includes(users[i])) {
+      onlineIcon.className = "online-icon-class";
+    } else {
+      onlineIcon.className = "offline-icon-class";
+    }
+    username.innerText = `${users[i]}`;
+    imageDiv.append(img);
+    userDetails.appendChild(username);
+    userDetails.appendChild(imageDiv);
+    onlineUsers.appendChild(userDetails);
+  }
+};

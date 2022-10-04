@@ -111,3 +111,31 @@ func GetUserID(db *sql.DB, username string) int {
 	}
 	return 0
 }
+
+//get all Users from DB for chat
+func GetAllUsers(db *sql.DB) []string {
+
+	rows, err := db.Query(`SELECT username
+    FROM users`)
+	if err != nil {
+		fmt.Println("Error with GetAllUsers func")
+	}
+
+	var allUSers []string
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var user string
+
+		err2 := rows.Scan(&user)
+
+		allUSers = append(allUSers, user)
+		if err2 != nil {
+			fmt.Println("Error appending users GetAllUsers()")
+		}
+	}
+
+	return allUSers
+
+}

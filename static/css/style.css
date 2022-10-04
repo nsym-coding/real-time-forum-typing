@@ -145,10 +145,18 @@ body {
   border-radius: 50vh;
   height: 1vh;
   width: 0.5vw;
-  background-color: rgb(238, 49, 43);
+  background-color: rgb(139, 238, 103);
   position: absolute;
 }
 
+.offline-icon-class {
+  transform: translate(-50%, -50%);
+  border-radius: 50vh;
+  height: 1vh;
+  width: 0.5vw;
+  background-color: rgb(238, 49, 43);
+  position: absolute;
+}
 .header {
   display: flex;
   justify-content: flex-end;
