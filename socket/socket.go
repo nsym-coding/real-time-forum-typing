@@ -156,7 +156,9 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	online.AllUsers = users.GetAllUsers(db)
 	fmt.Println("looped  ", online.OnlineUsers)
 
-	wsConn.WriteJSON(online)
+	broadcastOnlineUsers <- online
+
+	//wsConn.WriteJSON(online)
 
 	for {
 		message, info, _ := wsConn.ReadMessage()
@@ -174,7 +176,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 				online.OnlineUsers = append(online.OnlineUsers, k)
 			}
 
-			broadcastOnlineUsers <- online
+			//broadcastOnlineUsers <- online
 
 			//wsConn.WriteJSON(online)
 			return
