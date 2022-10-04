@@ -24,6 +24,7 @@ type T struct {
 	*comments.Comments
 	*Register
 	*Login
+	*Logout
 	*comments.CommentsFromPosts
 }
 
@@ -53,6 +54,11 @@ type Register struct {
 type Login struct {
 	LoginUsername string `json:"loginUsername"`
 	LoginPassword string `json:"loginPassword"`
+	Tipo          string `json:"tipo"`
+}
+
+type Logout struct {
+	LogoutUsername string `json:"logoutUsername"`
 	Tipo          string `json:"tipo"`
 }
 
@@ -93,7 +99,6 @@ var (
 	CallWS                   = false
 	online                   loginValidation
 	broadcastOnlineUsers     = make(chan loginValidation, 1)
-	usersFromChan            []string
 )
 
 // unmarshall data based on type
@@ -115,6 +120,9 @@ func (t *T) UnmarshalForumData(data []byte) error {
 	case "login":
 		t.Login = &Login{}
 		return json.Unmarshal(data, t.Login)
+	case "logout":
+		t.Logout = &Logout{}
+		return json.Unmarshal(data, t.Logout)
 	case "getcommentsfrompost":
 		t.CommentsFromPosts = &comments.CommentsFromPosts{}
 		return json.Unmarshal(data, t.CommentsFromPosts)
@@ -150,11 +158,9 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	online.Tipo = "onlineUsers"
 	online.OnlineUsers = []string{}
 	for k := range loggedInUsers {
-		fmt.Println("--k", k)
 		online.OnlineUsers = append(online.OnlineUsers, k)
 	}
 	online.AllUsers = users.GetAllUsers(db)
-	fmt.Println("looped  ", online.OnlineUsers)
 
 	broadcastOnlineUsers <- online
 
@@ -167,16 +173,17 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		// if a connection is closed, we return out of this loop
 		if message == -1 {
 			fmt.Println("connection closed")
-
+			
 			delete(loggedInUsers, currentUser)
+			fmt.Println("users left in array", loggedInUsers)
 			online.OnlineUsers = []string{}
 			online.Tipo = "onlineUsers"
-
+			
 			for k := range loggedInUsers {
 				online.OnlineUsers = append(online.OnlineUsers, k)
 			}
-
-			//broadcastOnlineUsers <- online
+			broadcastOnlineUsers <- online
+			
 
 			//wsConn.WriteJSON(online)
 			return
@@ -190,7 +197,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			posts.StorePosts(db, f.Posts.Username, f.Posts.PostTitle, f.Posts.PostContent, f.Posts.Categories)
 			posts.GetCommentData(db, 1)
 			fmt.Println("this is the post content       ", f.PostContent)
-			// f.Posts.User = "yonas"
+
 			// STORE POSTS IN DATABASE
 			broadcastChannelPosts <- posts.SendLastPostInDatabase(db)
 		} else if f.Type == "comment" {
@@ -210,6 +217,8 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			clickedPostID, _ := strconv.Atoi(f.CommentsFromPosts.ClickedPostID)
 			wsConn.WriteJSON(comments.DisplayAllComments(db, clickedPostID))
 			// fmt.Println("postID from JS", f.)
+		} else if f.Type == "Logout" {
+			fmt.Println("LOGOUT USERNAME")
 		}
 
 		log.Println("Checking what's in f ---> ", f)
@@ -248,14 +257,6 @@ func broadcastToAllClients() {
 
 		}
 	}
-}
-
-func getUsersForChan() []string {
-	for k, _ := range loggedInUsers {
-		usersFromChan = append(usersFromChan, k)
-	}
-	return usersFromChan
-
 }
 
 func GetLoginData(w http.ResponseWriter, r *http.Request) {

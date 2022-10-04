@@ -7,7 +7,6 @@ let users = [];
 let onlineUsersFromGo = [];
 
 let loggedInUser = "";
-
 let homepageUsername = document.getElementById("active-username");
 let crests = document.getElementsByClassName("crest-colors");
 
@@ -187,6 +186,14 @@ const loginValidation = (data) => {
             for (let i = 0; i < data.dbposts.length; i++) {
                 DisplayPosts(data.dbposts[i]);
             }
+
+            ws.onclose = () => {
+                console.log("ONCLOSE")
+                objData = {};
+                objData["type"] = "Logout";
+                objData["logoutUsername"] = loggedInUser;
+                ws.send(JSON.stringify(objData));
+            };
 
             //populateUsers(data.allUsers);
 
@@ -550,19 +557,3 @@ const populateUsers = (users) => {
         onlineUsers.appendChild(userDetails);
     }
 };
-
-// let testButton = document.getElementById("test-button");
-
-// testButton.addEventListener("click", function () {
-//     // console.log("test button");
-//     ws.onmessage = (e) => {
-//         let data = JSON.parse(e.data);
-
-//         if (data.tipo === "onlineUsers") {
-//             onlineUsersFromGo = data.onlineUsers;
-//             populateUsers(data.allUsers);
-
-//             console.log("first OUFG", onlineUsersFromGo);
-//         }
-//     };
-// });
