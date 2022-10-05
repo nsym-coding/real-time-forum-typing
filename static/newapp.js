@@ -3,72 +3,33 @@ let onlineUsers = document.getElementById("onlineusers");
 
 let postButton = document.getElementById("new-post-btn");
 
-let users = ["tb38r", "abmutungi", "eternal17", "million"];
+let users = [];
+let onlineUsersFromGo = [];
 
-// for (let i = 0; i < 10; i++) {
-//   let postDivs = document.createElement("div");
-//   let postTitle = document.createElement("div");
-//   postTitle.id = i;
-//   postTitle.className = "post-title-class";
-//   let postContent = document.createElement("div");
-//   postContent.id = i;
-//   postContent.className = "post-content-class";
-
-//   let postFooter = document.createElement("div");
-//   postFooter.id = i;
-//   postFooter.className = "post-footer-class";
-//   postDivs.className = "post-class ";
-//   postDivs.id = i;
-//   postTitle.innerText = `This is post number ${i}\n`;
-//   postContent.innerText =
-//     " This is a post bla blablalala\n___________________________________________________";
-//   postFooter.innerText = `Created by abmutungi,   Date: ${new Date().toDateString()}, Comments: ${i + 13}`;
-//   postDivs.appendChild(postTitle);
-//   postDivs.appendChild(postContent);
-//   postDivs.appendChild(postFooter);
-
-//   posts.appendChild(postDivs);
-// }
+let loggedInUser = "";
+let homepageUsername = document.getElementById("active-username");
+let crests = document.getElementsByClassName("crest-colors");
 
 let userDetails;
 let imageDiv;
 let img;
 
-for (let i = 0; i < 4; i++) {
-  userDetails = document.createElement("div");
-  let username = document.createElement("div");
-  imageDiv = document.createElement("div");
-  img = document.createElement("img");
-  let onlineIcon = document.createElement("div");
-
-  onlineIcon.className = "online-icon-class";
-
-  img.src = "/css/img/newcastle.png";
-  img.style.width = "2vw";
-  imageDiv.appendChild(onlineIcon);
-  userDetails.id = `${users[i]}`;
-
-  //   userDetails.setAttribute("type", "button");
-
-  userDetails.className = "registered-user";
-  username.innerText = `${users[i]}`;
-  imageDiv.append(img);
-  userDetails.appendChild(username);
-  userDetails.appendChild(imageDiv);
-  onlineUsers.appendChild(userDetails);
-}
-
-let postTitlesClick = document.getElementsByClassName("post-title-class");
-Array.from(postTitlesClick).forEach(function (postTitle) {
-  postTitle.addEventListener("click", function (e) {
-    displayPostModal.style.display = "block";
-  });
-});
+let ws;
 
 let modal = document.getElementsByClassName("modal");
 let chatModal = document.getElementById("my-chat-modal");
 let createPostModal = document.getElementById("create-post-modal");
 let displayPostModal = document.getElementById("display-post-modal");
+
+let submitPostButton = document.querySelector("#submit-post-button");
+let postTitle = document.querySelector("#post-title");
+let postContent = document.querySelector("#post-content");
+let registerBtn = document.getElementById("register-btn");
+let signUpForm = document.getElementById("signup-form");
+
+let commentContainer = document.getElementById("comment-container");
+let commentArrow = document.getElementById("comment-arrow");
+let commentTextArea = document.getElementById("comment-input");
 
 postButton.addEventListener("click", function () {
   createPostModal.style.display = "block";
@@ -190,26 +151,9 @@ for (let i = 0; i < crestcolors.length; i++) {
     }
   });
 }
-let commentContainer = document.getElementById("comment-container");
-let commentArrow = document.getElementById("comment-arrow");
-let commentTextArea = document.getElementById("comment-input");
 
-commentArrow.addEventListener("click", function () {
-  let i = 0;
-  let comment = document.createElement("div");
-  let commentDetails = document.createElement("div");
-  commentDetails.innerText = `Created by: McTom Date: ${
-    new Date().toISOString().split("T")[0]
-  } ${new Date().toISOString().split("T")[1].substring(0, 5)}`;
-  comment.style.marginBottom = "1vh";
-  comment.id = `comment-${i}`;
-  commentDetails.id = `comment-detail-${i}`;
-  comment.innerText = `${commentTextArea.value}`;
-  commentTextArea.value = "";
-  comment.appendChild(commentDetails);
-  commentContainer.appendChild(comment);
-  displayPostBody.scrollTo(0, displayPostBody.scrollHeight);
-});
+let commentData = {};
+let clickedPostID;
 
 let signupSwitch = document.getElementById("sign-up-button");
 let loginBox = document.querySelector(".login-box");
@@ -231,48 +175,58 @@ loginReturn.addEventListener("click", (e) => {
   registerBox.style.display = "none";
 });
 
-let ws;
-
 const loginValidation = (data) => {
   if (data.successfulLogin) {
+    loggedInUser = data.successfulusername;
+    homepageUsername.innerText = loggedInUser;
     loginModal.style.display = "none";
     forumBody.style.display = "block";
     ws = new WebSocket("ws://localhost:8080/ws");
     ws.onopen = () => {
+      for (let i = 0; i < data.dbposts.length; i++) {
+        DisplayPosts(data.dbposts[i]);
+      }
+
+
+
+      //populateUsers(data.allUsers);
+
       console.log("connection established");
     };
+
     ws.onmessage = (e) => {
       let data = JSON.parse(e.data);
+      // console.log("data when a post is clicked", data);
       if (data.tipo === "post") {
-        let postDivs = document.createElement("div");
-        let postTitle = document.createElement("div");
-        postTitle.className = "post-title-class";
-        let postContent = document.createElement("div");
-
-        postContent.className = "post-content-class";
-
-        let postFooter = document.createElement("div");
-        postFooter.className = "post-footer-class";
-        postDivs.className = "post-class ";
-        // this will eventually hold the id given by go from the database (data.id)
-        postDivs.id = 1;
-        postTitle.innerText = data.title;
-        postContent.innerText = data.postcontent;
-        postContent.style.borderBottom = "0.2vh solid black";
-        postFooter.innerText = `Created by ${data.user},   Date: ${
-          data.posttime
-        }, Comments: ${1 + 13}`;
-        postDivs.appendChild(postTitle);
-        postDivs.appendChild(postContent);
-        postDivs.appendChild(postFooter);
-
-        posts.appendChild(postDivs);
+        DisplayPosts(data);
       }
+
+      if (data.tipo === "onlineUsers") {
+        onlineUsersFromGo = data.onlineUsers;
+        populateUsers(data.allUsers);
+
+        console.log("first OUFG", onlineUsersFromGo);
+      }
+
+      // if (data.tipo === "commentsfrompost") {
+      //   console.log(data);
+      // }
     };
   } else {
     loginError.style.display = "block";
   }
+  // ws.onclose = () => {
+  //   // window.location.reload();
+  //   console.log("ONCLOSE")
+  //   objData = {};
+  //   objData["type"] = "Logout";
+  //   objData["logoutUsername"] = loggedInUser;
+  //   console.log(objData["logoutUsername"]);
+  //   ws.send(JSON.stringify(objData));
+  // };
 };
+
+
 
 loginButton.addEventListener("click", (e) => {
   let loginData = new FormData(loginForm);
@@ -295,29 +249,28 @@ loginButton.addEventListener("click", (e) => {
     });
 });
 
-let submitPostButton = document.querySelector("#submit-post-button");
-let postTitle = document.querySelector("#post-title");
-let postContent = document.querySelector("#post-content");
-let registerBtn = document.getElementById("register-btn");
-let signUpForm = document.getElementById("signup-form");
-
 // dummy post info being sent to server
 let objData = {};
 submitPostButton.addEventListener("click", function (e) {
   e.preventDefault();
-
+  console.log("getSelTeams test -> ", getSelectedTeams());
   objData["title"] = postTitle.value;
   objData["postcontent"] = postContent.value;
   objData["type"] = "post";
-  objData["posttime"] = new Date().toISOString().slice(0, 10);
-  objData["user"] = "Bruno8";
-
+  // objData["posttime"] = new Date().toISOString().slice(0, 10);
+  objData["username"] = loggedInUser;
+  objData["categories"] = getSelectedTeams();
   createPostModal.style.display = "none";
   postTitle.value = "";
   postContent.value = "";
 
   // message sent to server
   ws.send(JSON.stringify(objData));
+
+  for (let i = 0; i < crests.length; i++) {
+    crests[i].alt = "none";
+    crests[i].style.background = "white";
+  }
 });
 
 let successfulRegistrationMessage = document.getElementById(
@@ -417,3 +370,192 @@ registerBtn.addEventListener("click", function (e) {
       }
     });
 });
+
+// logout
+let logoutButton = document.getElementById("log-out-button");
+
+logoutButton.onclick = () => {
+  objData = {};
+  objData["type"] = "logout";
+  objData["logoutUsername"] = loggedInUser;
+  console.log(objData["logoutUsername"]);
+  ws.send(JSON.stringify(objData));
+  // ws.close()
+  ws.onmessage = (e) => {
+    // let commentData = JSON.parse(e.data);
+    let logoutData = JSON.parse(e.data)
+    if (logoutData.logoutClicked) {
+      ws.close()
+      window.location.reload();
+    }
+  }
+};
+
+const DisplayPosts = (data) => {
+  let postDivs = document.createElement("div");
+  let postTitle = document.createElement("div");
+
+  postTitle.className = "post-title-class";
+  // let postContent = document.createElement("div");
+
+  //postContent.className = "post-content-class";
+
+  let postFooter = document.createElement("div");
+  postFooter.className = "post-footer-class";
+  postDivs.className = "post-class ";
+  // this will eventually hold the id given by go from the database (data.id)
+  postDivs.id = data.postid;
+  postTitle.innerText = data.title;
+  // postContent.innerText = data.postcontent;
+  postTitle.style.borderBottom = "0.2vh solid black";
+  postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime
+    }, Comments: ${1 + 13} ${data.categories}`;
+  postDivs.appendChild(postTitle);
+  //postDivs.appendChild(postContent);
+  postDivs.appendChild(postFooter);
+  // postTitle.addEventListener("click", function (e) {
+  //   console.log("Checking if listener working");
+
+  // });
+  posts.appendChild(postDivs);
+
+  let getCommentsForPosts = {};
+
+  // When a post is clicked on
+  postDivs.addEventListener("click", (e) => {
+    clickedPostID = postDivs.id;
+
+    getCommentsForPosts["clickedPostID"] = clickedPostID;
+    getCommentsForPosts["type"] = "getcommentsfrompost";
+    console.log("comments for posts object", getCommentsForPosts);
+    ws.send(JSON.stringify(getCommentsForPosts));
+
+    let displayPostTitle = document.querySelector(".display-post-title");
+    let displayPostContent = document.querySelector(
+      ".display-post-content"
+    );
+    let postUsername = document.querySelector(".post-username");
+    let postDate = document.querySelector(".post-date");
+    displayPostTitle.innerText = data.title;
+    displayPostContent.innerText = data.postcontent;
+    postUsername.innerText = data.username;
+    postDate.innerText = data.posttime;
+    displayPostModal.style.display = "block";
+
+
+    // Auto scroll to last comment
+    // displayPostBody.scrollTo(0, displayPostBody.scrollHeight);
+
+    // data coming through for comments
+    ws.onmessage = (e) => {
+      let commentData = JSON.parse(e.data);
+      // console.log("is this comment data?", commentData);
+
+      let commentDiv = document.createElement("div");
+      commentData.forEach((comment) => {
+        commentDiv.style.marginBottom = "1vh";
+        commentDiv.id = `comment${comment.commentId}`;
+        commentDiv.innerText = `${comment.commentcontent} \n ${comment.user}, ${comment.commenttime}`;
+        commentContainer.appendChild(commentDiv);
+      });
+    };
+
+    // comment data in the modal needs to be cleared as we are using one modal.
+
+  });
+};
+
+const getSelectedTeams = () => {
+  let crestList = "";
+  for (let i = 0; i < crests.length; i++) {
+    if (crests[i].alt !== "none") {
+      crestList += `${crests[i].id},`;
+    }
+  }
+  return crestList;
+};
+
+commentArrow.addEventListener("click", function () {
+  commentData["commentcontent"] = commentTextArea.value;
+  commentData["user"] = loggedInUser;
+  commentData["postid"] = clickedPostID;
+  commentData["type"] = "comment";
+
+  ws.send(JSON.stringify(commentData));
+  commentTextArea.value = "";
+  //
+  ws.onmessage = (e) => {
+    let lastComment = JSON.parse(e.data);
+    if (lastComment.tipo === "lastcomment") {
+      let commentDiv = document.createElement("div");
+      commentDiv.style.marginBottom = "1vh";
+      commentDiv.id = `comment${lastComment.commentId}`;
+      commentDiv.innerText = `${lastComment.commentcontent} \n ${lastComment.user}, ${lastComment.commenttime}`;
+      commentContainer.appendChild(commentDiv);
+    }
+    // console.log("is this comment data?", commentData);
+  };
+});
+
+// const colouredCategories = (data) => {
+//   console.log("cat before split -> ", data);
+
+//   let crestArr = data.split(",");
+//   console.log("cat after split --> ", crestArr);
+
+//   let masterCrestList = document.createElement("div");
+//   for (let i = 0; i < crestArr.length; i++) {
+//     //let crestList = document.createElement("p");
+//     let clubName = document.createTextNode(`${crestArr[i]}`);
+
+//     // crestList.insertAdjacentText("afterend", `#${crestArr[i]}`);
+//     //clubName.style.color = `${colorSwitch[crestArr[i]]}`;
+//     console.log("crest list before append --> ", clubName);
+//     masterCrestList.append(clubName);
+//   }
+//   return masterCrestList;
+// };
+
+// const getSelectedTeams = () => {
+//   let masterCrestList = document.createElement("p");
+//   for (let i = 0; i < crests.length; i++) {
+//     let crestList = document.createElement("p");
+//     if (crests[i].alt !== "none") {
+//       crestList.innerText += `#${crests[i].id},`;
+//       crestList.style.color = `${crests[i].alt}`;
+//       masterCrestList.append(crestList[i]);
+//     }
+//   }
+//   return masterCrestList;
+// };
+
+const populateUsers = (users) => {
+  onlineUsers.innerHTML = "";
+  console.log("all users", users);
+  console.log("online from Go", onlineUsersFromGo);
+  for (let i = 0; i < users.length; i++) {
+    userDetails = document.createElement("div");
+    let username = document.createElement("div");
+    imageDiv = document.createElement("div");
+    img = document.createElement("img");
+    let onlineIcon = document.createElement("div");
+
+    img.src = "/css/img/newcastle.png";
+    img.style.width = "2vw";
+    imageDiv.appendChild(onlineIcon);
+    userDetails.id = `${users[i]}`;
+
+    userDetails.className = "registered-user";
+
+    if (onlineUsersFromGo.includes(users[i])) {
+      onlineIcon.className = "online-icon-class";
+    } else {
+      onlineIcon.className = "offline-icon-class";
+    }
+    username.innerText = `${users[i]}`;
+    imageDiv.append(img);
+    userDetails.appendChild(username);
+    userDetails.appendChild(imageDiv);
+    onlineUsers.appendChild(userDetails);
+  }
+};

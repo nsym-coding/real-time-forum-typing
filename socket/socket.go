@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 
+	"real-time-forum/comments"
+	"real-time-forum/posts"
 	"real-time-forum/users"
 
 	"github.com/gorilla/websocket"
@@ -18,30 +20,25 @@ import (
 
 type T struct {
 	TypeChecker
-	*Posts
-	*Comments
+	*posts.Posts
+	*comments.Comments
 	*Register
 	*Login
+	*Logout
+	*comments.CommentsFromPosts
 }
 
 type TypeChecker struct {
 	Type string `json:"type"`
 }
 
-type Posts struct {
-	Title       string `json:"title"`
-	PostContent string `json:"postcontent"`
-	Date        string `json:"posttime"`
-	Tipo        string `json:"tipo"`
-	User        string `json:"user"`
-}
-
-type Comments struct {
-	CommentContent string `json:"commentcontent"`
-	User           string `json:"user"`
-	Date           string `json:"commenttime"`
-	Tipo           string `json:"tipo"`
-}
+// type Posts struct {
+// 	Title       string `json:"title"`
+// 	PostContent string `json:"postcontent"`
+// 	Date        string `json:"posttime"`
+// 	Tipo        string `json:"tipo"`
+// 	Username    string `json:"username"`
+// }
 
 type Register struct {
 	Username  string `json:"username"`
@@ -60,33 +57,49 @@ type Login struct {
 	Tipo          string `json:"tipo"`
 }
 
+type Logout struct {
+	LogoutUsername string `json:"logoutUsername"`
+	Tipo           string `json:"tipo"`
+	LogoutClicked  string `json:"logoutClicked"`
+}
+
 type formValidation struct {
-	UsernameLength         bool   `json:"usernameLength"`
-	UsernameSpace          bool   `json:"usernameSpace"`
-	UsernameDuplicate      bool   `json:"usernameDuplicate"`
-	EmailDuplicate         bool   `json:"emailDuplicate"`
-	PasswordLength         bool   `json:"passwordLength"`
-	AgeEmpty               bool   `json:"ageEmpty"`
-	FirstNameEmpty         bool   `json:"firstnameEmpty"`
-	LastNameEmpty          bool   `json:"lastnameEmpty"`
-	EmailInvalid           bool   `json:"emailInvalid"`
-	SuccessfulRegistration bool   `json:"successfulRegistration"`
-	Tipo                   string `json:"tipo"`
+	UsernameLength         bool     `json:"usernameLength"`
+	UsernameSpace          bool     `json:"usernameSpace"`
+	UsernameDuplicate      bool     `json:"usernameDuplicate"`
+	EmailDuplicate         bool     `json:"emailDuplicate"`
+	PasswordLength         bool     `json:"passwordLength"`
+	AgeEmpty               bool     `json:"ageEmpty"`
+	FirstNameEmpty         bool     `json:"firstnameEmpty"`
+	LastNameEmpty          bool     `json:"lastnameEmpty"`
+	EmailInvalid           bool     `json:"emailInvalid"`
+	SuccessfulRegistration bool     `json:"successfulRegistration"`
+	AllUserAfterNewReg     []string `json:"allUserAfterNewReg"`
+	OnlineUsers            []string `json:"onlineUsers"`
+
+	Tipo string `json:"tipo"`
 }
 type loginValidation struct {
-	InvalidUsername bool   `json:"invalidUsername"`
-	InvalidPassword bool   `json:"invalidPassword"`
-	SuccessfulLogin bool   `json:"successfulLogin"`
-	Tipo            string `json:"tipo"`
+	InvalidUsername    bool          `json:"invalidUsername"`
+	InvalidPassword    bool          `json:"invalidPassword"`
+	SuccessfulLogin    bool          `json:"successfulLogin"`
+	SuccessfulUsername string        `json:"successfulusername"`
+	Tipo               string        `json:"tipo"`
+	SentPosts          []posts.Posts `json:"dbposts"`
+	AllUsers           []string      `json:"allUsers"`
+	OnlineUsers        []string      `json:"onlineUsers"`
 }
 
 var (
-	clients                  = make(map[*websocket.Conn]bool)
-	loggedInUsers            = make(map[string]*websocket.Conn)
-	broadcastChannelPosts    = make(chan *Posts, 1)
-	broadcastChannelComments = make(chan *Comments, 1)
+	// clients                  = make(map[*websocket.Conn]bool)
+	loggedInUsers         = make(map[string]*websocket.Conn)
+	broadcastChannelPosts = make(chan posts.Posts, 1)
+
+	broadcastChannelComments = make(chan *comments.Comments, 1)
 	currentUser              = ""
 	CallWS                   = false
+	online                   loginValidation
+	broadcastOnlineUsers     = make(chan loginValidation, 1)
 )
 
 // unmarshall data based on type
@@ -97,10 +110,10 @@ func (t *T) UnmarshalForumData(data []byte) error {
 
 	switch t.Type {
 	case "post":
-		t.Posts = &Posts{}
+		t.Posts = &posts.Posts{}
 		return json.Unmarshal(data, t.Posts)
 	case "comment":
-		t.Comments = &Comments{}
+		t.Comments = &comments.Comments{}
 		return json.Unmarshal(data, t.Comments)
 	case "signup":
 		t.Register = &Register{}
@@ -108,6 +121,12 @@ func (t *T) UnmarshalForumData(data []byte) error {
 	case "login":
 		t.Login = &Login{}
 		return json.Unmarshal(data, t.Login)
+	case "logout":
+		t.Logout = &Logout{}
+		return json.Unmarshal(data, t.Logout)
+	case "getcommentsfrompost":
+		t.CommentsFromPosts = &comments.CommentsFromPosts{}
+		return json.Unmarshal(data, t.CommentsFromPosts)
 	default:
 		return fmt.Errorf("unrecognized type value %q", t.Type)
 	}
@@ -119,7 +138,7 @@ var upgrader = websocket.Upgrader{
 }
 
 func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
-	// db, _ := sql.Open("sqlite3", "real-time-forum.db")
+	db, _ := sql.Open("sqlite3", "real-time-forum.db")
 
 	go broadcastToAllClients()
 	wsConn, err := upgrader.Upgrade(w, r, nil)
@@ -129,28 +148,79 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("CONNECTION TO CLIENT")
 	defer wsConn.Close()
 
+	// if user logs into 2 clients, close first connection
+	if _, ok := loggedInUsers[currentUser]; ok {
+		loggedInUsers[currentUser].Close()
+	}
+
 	loggedInUsers[currentUser] = wsConn
 	fmt.Println("LOGGED IN USERS", loggedInUsers)
-	clients[wsConn] = true
 
+	online.Tipo = "onlineUsers"
+	online.OnlineUsers = []string{}
+	for k := range loggedInUsers {
+		online.OnlineUsers = append(online.OnlineUsers, k)
+	}
+	online.AllUsers = users.GetAllUsers(db)
+
+	broadcastOnlineUsers <- online
+
+	//wsConn.WriteJSON(online)
+
+	var f T
 	for {
-		_, info, _ := wsConn.ReadMessage()
+		message, info, _ := wsConn.ReadMessage()
 		fmt.Println("----", string(info))
 
-		var f T
+		// if a connection is closed, we return out of this loop
+		if message == -1 {
+			fmt.Println("connection closed")
+
+			delete(loggedInUsers, f.Logout.LogoutUsername)
+			fmt.Println("users left in array", loggedInUsers)
+			online.OnlineUsers = []string{}
+			online.Tipo = "onlineUsers"
+
+			for k := range loggedInUsers {
+				online.OnlineUsers = append(online.OnlineUsers, k)
+			}
+			broadcastOnlineUsers <- online
+
+			//wsConn.WriteJSON(online)
+			return
+		}
 		f.UnmarshalForumData(info)
 
 		if f.Type == "post" {
 			f.Posts.Tipo = "post"
+
+			posts.StorePosts(db, f.Posts.Username, f.Posts.PostTitle, f.Posts.PostContent, f.Posts.Categories)
+			posts.GetCommentData(db, 1)
 			fmt.Println("this is the post content       ", f.PostContent)
-			// f.Posts.User = "yonas"
+
 			// STORE POSTS IN DATABASE
-			broadcastChannelPosts <- f.Posts
+			broadcastChannelPosts <- posts.SendLastPostInDatabase(db)
 		} else if f.Type == "comment" {
-			// f.Comments.User = "yonas"
+
 			// STORE COMMENTS IN THE DATABSE
+			postID, _ := strconv.Atoi(f.Comments.PostID)
+			comments.StoreComment(db, f.Comments.User, postID, f.Comments.CommentContent)
+
 			f.Comments.Tipo = "comment"
+			wsConn.WriteJSON(comments.GetLastComment(db))
 			broadcastChannelComments <- f.Comments
+		} else if f.Type == "getcommentsfrompost" {
+			// Display all comments in a post to a single user.
+
+			fmt.Println("comments from post struct when unmarshalled", f.CommentsFromPosts)
+			f.CommentsFromPosts.Tipo = "commentsfrompost"
+			clickedPostID, _ := strconv.Atoi(f.CommentsFromPosts.ClickedPostID)
+			fmt.Println("all comments in this post", comments.DisplayAllComments(db, clickedPostID))
+			wsConn.WriteJSON(comments.DisplayAllComments(db, clickedPostID))
+		} else if f.Type == "logout" {
+			f.Logout.LogoutClicked = "true"
+			fmt.Println("LOGOUT USERNAME", f.Logout.LogoutUsername)
+			wsConn.WriteJSON(f.Logout)
 		}
 
 		log.Println("Checking what's in f ---> ", f)
@@ -162,17 +232,29 @@ func broadcastToAllClients() {
 		select {
 		case post, ok := <-broadcastChannelPosts:
 			if ok {
-				for client := range clients {
-					client.WriteJSON(post)
+				for _, user := range loggedInUsers {
+
+					user.WriteJSON(post)
 					fmt.Printf("Value %v was read.\n", post)
 				}
 			}
 		case comment, ok := <-broadcastChannelComments:
 			if ok {
-				for client := range clients {
-					client.WriteJSON(comment)
+
+				for _, user := range loggedInUsers {
+					user.WriteJSON(comment)
 				}
 			}
+
+		case onlineuser, ok := <-broadcastOnlineUsers:
+
+			if ok {
+				for _, user := range loggedInUsers {
+
+					user.WriteJSON(onlineuser)
+				}
+			}
+
 			// BROADCAST TO EVERYONE WITH A WEBSOCKET ALL ONLINE USERS
 
 		}
@@ -255,10 +337,11 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Println("bcrypt err:", err)
 			}
-			users.RegisterUser(db, t.Username, t.Register.Age, t.Gender, t.FirstName, t.LastName, hash, t.Email)
+			users.RegisterUser(db, t.Register.Username, t.Register.Age, t.Gender, t.FirstName, t.LastName, hash, t.Email)
 
 			// data gets marshalled and sent to client
 			u.SuccessfulRegistration = true
+			u.AllUserAfterNewReg = users.GetAllUsers(db)
 			toSend, _ := json.Marshal(u)
 			fmt.Println("toSend -- > ", toSend)
 			w.Write(toSend)
@@ -271,7 +354,7 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if t.Type == "login" {
-		//validate values then
+		// validate values then
 		var loginData loginValidation
 
 		loginData.Tipo = "loginValidation"
@@ -290,11 +373,19 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 				w.Write(toSend)
 
 			} else {
-				loginData.SuccessfulLogin = true
-				toSend, _ := json.Marshal(loginData)
-				w.Write(toSend)
-				// this function upgrades the connection to a websocket.
+
+				loginData.SentPosts = posts.SendPostsInDatabase(db)
+				loginData.AllUsers = users.GetAllUsers(db)
+
 				currentUser = t.Login.LoginUsername
+				loginData.SuccessfulLogin = true
+				loginData.SuccessfulUsername = currentUser
+				toSend, _ := json.Marshal(loginData)
+
+				w.Write(toSend)
+
+				// this function upgrades the connection to a websocket.
+
 				// go http.HandleFunc("/ws", WebSocketEndpoint)
 
 				fmt.Println("SUCCESSFUL LOGIN")
@@ -307,5 +398,4 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 		// data gets marshalled and sent to client
 
 	}
-
 }

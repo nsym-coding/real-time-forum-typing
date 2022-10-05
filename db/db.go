@@ -32,23 +32,19 @@ func CreateDB() {
 
 	_, err2 := db.Exec(`create table if not exists posts (
 			postID integer primary key AUTOINCREMENT, 
-			userID integer REFERENCES users(userID), 
+			username CHAR(50) REFERENCES users(username), 
 			creationDate integer,
 			postTitle CHAR(50),
-			postContent CHAR(250), 
-			image CHAR(100), 
-			edited integer);`)
+			categories CHAR(50),
+			postContent CHAR(250));`)
 	fmt.Println("err2", err2)
 
 	_, err3 := db.Exec(`create table if not exists comments (
 			commentID integer primary key AUTOINCREMENT, 
-			userID integer REFERENCES users(userID), 
-			postID integer REFERENCES post(postID), 
+			username CHAR(50) REFERENCES users(username), 
+			postID integer REFERENCES posts(postID), 
 			commentText CHAR(250), 
-			edited integer, 
-			creationDate integer,
-			notified integer,
-			creatorID integer);`)
+			creationDate integer);`)
 	fmt.Println("err3", err3)
 
 	_, err4 := db.Exec(`create table if not exists messages(

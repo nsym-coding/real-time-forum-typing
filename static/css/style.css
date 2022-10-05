@@ -145,10 +145,18 @@ body {
   border-radius: 50vh;
   height: 1vh;
   width: 0.5vw;
-  background-color: rgb(238, 49, 43);
+  background-color: rgb(139, 238, 103);
   position: absolute;
 }
 
+.offline-icon-class {
+  transform: translate(-50%, -50%);
+  border-radius: 50vh;
+  height: 1vh;
+  width: 0.5vw;
+  background-color: rgb(238, 49, 43);
+  position: absolute;
+}
 .header {
   display: flex;
   justify-content: flex-end;
@@ -482,19 +490,18 @@ img {
   border-bottom: 0.6vh var(--ourBlue) solid;
 }
 
-#display-post-header {
-  /* border: 0.5px red solid; */
-}
+
 
 #display-post-footer {
   display: flex;
   justify-content: space-between;
+  position: absolute;
+  top: 56vh;
 }
 
 #display-post-footer i {
   font-size: 4vh;
   left: 32.5vw;
-  position: absolute;
   top: 53.5vh;
   cursor: pointer;
   color: var(--ourBlue);
@@ -504,7 +511,7 @@ img {
   /* border: 5px red solid; */
 
   overflow: scroll;
-  height: 23vh;
+  height: 38vh;
 }
 
 #display-post-body::-webkit-scrollbar {

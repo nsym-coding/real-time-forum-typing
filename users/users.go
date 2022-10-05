@@ -97,3 +97,45 @@ func ValidEmail(email string) bool {
 	}
 	return true
 }
+
+func GetUserID(db *sql.DB, username string) int {
+	// check if username already exists
+	userStmt := "SELECT userID FROM users WHERE username = ?"
+	rowU := db.QueryRow(userStmt, username)
+	var uIDs int
+	error := rowU.Scan(&uIDs)
+	if error != sql.ErrNoRows {
+		fmt.Println("username already exists, err:", error)
+		//intUID, _ := strconv.Atoi(uIDs)
+		return uIDs
+	}
+	return 0
+}
+
+//get all Users from DB for chat
+func GetAllUsers(db *sql.DB) []string {
+
+	rows, err := db.Query(`SELECT username
+    FROM users`)
+	if err != nil {
+		fmt.Println("Error with GetAllUsers func")
+	}
+
+	var allUSers []string
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var user string
+
+		err2 := rows.Scan(&user)
+
+		allUSers = append(allUSers, user)
+		if err2 != nil {
+			fmt.Println("Error appending users GetAllUsers()")
+		}
+	}
+
+	return allUSers
+
+}
