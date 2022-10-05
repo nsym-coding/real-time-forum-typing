@@ -32,7 +32,7 @@ let commentArrow = document.getElementById("comment-arrow");
 let commentTextArea = document.getElementById("comment-input");
 
 postButton.addEventListener("click", function () {
-    createPostModal.style.display = "block";
+  createPostModal.style.display = "block";
 });
 
 let userRg = document.querySelectorAll(".registered-user");
@@ -47,30 +47,30 @@ let span = document.getElementsByClassName("close");
 // When the user clicks the button, open the modal
 
 for (let i = 0; i < userRg.length; i++) {
-    userRg[i].onclick = function () {
-        chatRecipient.innerText = userRg[i].id;
+  userRg[i].onclick = function () {
+    chatRecipient.innerText = userRg[i].id;
 
-        console.log("Users clicked");
-        chatModal.style.display = "block";
-    };
+    console.log("Users clicked");
+    chatModal.style.display = "block";
+  };
 }
 
 // When the user clicks on <span> (x), close the modal
 for (let i = 0; i < span.length; i++) {
-    span[i].onclick = function () {
-        modal[i].style.display = "none";
-    };
+  span[i].onclick = function () {
+    modal[i].style.display = "none";
+  };
 }
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function (event) {
-    for (let i = 0; i < modal.length; i++) {
-        // console.log("modal -> ", modal[i]);
-        // console.log("evt -> ", event.target);
-        if (event.target == modal[i]) {
-            modal[i].style.display = "none";
-        }
+  for (let i = 0; i < modal.length; i++) {
+    // console.log("modal -> ", modal[i]);
+    // console.log("evt -> ", event.target);
+    if (event.target == modal[i]) {
+      modal[i].style.display = "none";
     }
+  }
 };
 
 let sendArrow = document.getElementById("chat-arrow");
@@ -81,75 +81,75 @@ let displayPostBody = document.getElementById("display-post-body");
 let sender = true;
 
 sendArrow.addEventListener("click", function () {
-    console.log("arrow clicked");
-    let newChatBubble = document.createElement("div");
+  console.log("arrow clicked");
+  let newChatBubble = document.createElement("div");
 
-    newChatBubble.innerText = chatTextArea.value;
-    chatTextArea.value = "";
-    if (sender) {
-        newChatBubble.id = "chat-message-sender";
-        sender = false;
-    } else {
-        newChatBubble.id = "chat-message-recipient";
-        sender = true;
-    }
+  newChatBubble.innerText = chatTextArea.value;
+  chatTextArea.value = "";
+  if (sender) {
+    newChatBubble.id = "chat-message-sender";
+    sender = false;
+  } else {
+    newChatBubble.id = "chat-message-recipient";
+    sender = true;
+  }
 
-    chatContainer.appendChild(newChatBubble);
+  chatContainer.appendChild(newChatBubble);
 
-    chatBody.scrollTo(0, chatBody.scrollHeight);
+  chatBody.scrollTo(0, chatBody.scrollHeight);
 });
 
 const teamCrests = [
-    "/css/img/newcastle.png",
-    "/css/img/chelsea.png",
-    "/css/img/man-u.png",
-    "/css/img/man-city.png",
-    "/css/img/liverpool.png",
-    "/css/img/spurs.png",
+  "/css/img/newcastle.png",
+  "/css/img/chelsea.png",
+  "/css/img/man-u.png",
+  "/css/img/man-city.png",
+  "/css/img/liverpool.png",
+  "/css/img/spurs.png",
 ];
 
 const categorySelection = document.getElementById("category-selection");
 
 for (let i = 0; i < teamCrests.length; i++) {
-    let img = document.createElement("img");
-    img.style.backgroundColor = "white";
-    img.alt = "none";
-    img.id = teamCrests[i].slice(
-        teamCrests[i].lastIndexOf("/") + 1,
-        teamCrests[i].length - 4
-    );
-    img.classList = "crest-colors";
-    img.src = teamCrests[i];
-    categorySelection.append(img);
+  let img = document.createElement("img");
+  img.style.backgroundColor = "white";
+  img.alt = "none";
+  img.id = teamCrests[i].slice(
+    teamCrests[i].lastIndexOf("/") + 1,
+    teamCrests[i].length - 4
+  );
+  img.classList = "crest-colors";
+  img.src = teamCrests[i];
+  categorySelection.append(img);
 }
 
 let crestcolors = document.getElementsByClassName("crest-colors");
 
 const colorSwitch = {
-    newcastle: `linear-gradient(
+  newcastle: `linear-gradient(
       to right,
       #040108,
       #040108 50%,
       #f0f0f0 50%,
       #f0f0f0
     )`,
-    spurs: "lightgrey",
-    "man-u": "red",
-    chelsea: "blue",
-    liverpool: "red",
-    "man-city": "skyblue",
+  spurs: "lightgrey",
+  "man-u": "red",
+  chelsea: "blue",
+  liverpool: "red",
+  "man-city": "skyblue",
 };
 
 for (let i = 0; i < crestcolors.length; i++) {
-    crestcolors[i].addEventListener("mouseup", (e) => {
-        if (e.target.alt == "none") {
-            e.target.style.background = colorSwitch[e.target.id];
-            e.target.alt = colorSwitch[e.target.id];
-        } else {
-            e.target.style.background = "white";
-            e.target.alt = "none";
-        }
-    });
+  crestcolors[i].addEventListener("mouseup", (e) => {
+    if (e.target.alt == "none") {
+      e.target.style.background = colorSwitch[e.target.id];
+      e.target.alt = colorSwitch[e.target.id];
+    } else {
+      e.target.style.background = "white";
+      e.target.alt = "none";
+    }
+  });
 }
 
 let commentData = {};
@@ -166,113 +166,115 @@ let loginForm = document.getElementById("login-form");
 let loginError = document.getElementById("login-error");
 
 signupSwitch.addEventListener("click", (e) => {
-    loginBox.style.display = "none";
-    registerBox.style.display = "block";
+  loginBox.style.display = "none";
+  registerBox.style.display = "block";
 });
 
 loginReturn.addEventListener("click", (e) => {
-    loginBox.style.display = "block";
-    registerBox.style.display = "none";
+  loginBox.style.display = "block";
+  registerBox.style.display = "none";
 });
 
 const loginValidation = (data) => {
-    if (data.successfulLogin) {
-        loggedInUser = data.successfulusername;
-        homepageUsername.innerText = loggedInUser;
-        loginModal.style.display = "none";
-        forumBody.style.display = "block";
-        ws = new WebSocket("ws://localhost:8080/ws");
-        ws.onopen = () => {
-            for (let i = 0; i < data.dbposts.length; i++) {
-                DisplayPosts(data.dbposts[i]);
-            }
+  if (data.successfulLogin) {
+    loggedInUser = data.successfulusername;
+    homepageUsername.innerText = loggedInUser;
+    loginModal.style.display = "none";
+    forumBody.style.display = "block";
+    ws = new WebSocket("ws://localhost:8080/ws");
+    ws.onopen = () => {
+      for (let i = 0; i < data.dbposts.length; i++) {
+        DisplayPosts(data.dbposts[i]);
+      }
 
-            ws.onclose = () => {
-                console.log("ONCLOSE")
-                objData = {};
-                objData["type"] = "Logout";
-                objData["logoutUsername"] = loggedInUser;
-                ws.send(JSON.stringify(objData));
-            };
 
-            //populateUsers(data.allUsers);
 
-            console.log("connection established");
-        };
+      //populateUsers(data.allUsers);
 
-        ws.onmessage = (e) => {
-            let data = JSON.parse(e.data);
-            // console.log("data when a post is clicked", data);
-            if (data.tipo === "post") {
-                DisplayPosts(data);
-            }
-
-            if (data.tipo === "onlineUsers") {
-                onlineUsersFromGo = data.onlineUsers;
-                populateUsers(data.allUsers);
-
-                console.log("first OUFG", onlineUsersFromGo);
-            }
-
-            // if (data.tipo === "commentsfrompost") {
-            //   console.log(data);
-            // }
-        };
-    } else {
-        loginError.style.display = "block";
-    }
-    ws.onclose = () => {
-        window.location.reload();
+      console.log("connection established");
     };
+
+    ws.onmessage = (e) => {
+      let data = JSON.parse(e.data);
+      // console.log("data when a post is clicked", data);
+      if (data.tipo === "post") {
+        DisplayPosts(data);
+      }
+
+      if (data.tipo === "onlineUsers") {
+        onlineUsersFromGo = data.onlineUsers;
+        populateUsers(data.allUsers);
+
+        console.log("first OUFG", onlineUsersFromGo);
+      }
+
+      // if (data.tipo === "commentsfrompost") {
+      //   console.log(data);
+      // }
+    };
+  } else {
+    loginError.style.display = "block";
+  }
+  // ws.onclose = () => {
+  //   // window.location.reload();
+  //   console.log("ONCLOSE")
+  //   objData = {};
+  //   objData["type"] = "Logout";
+  //   objData["logoutUsername"] = loggedInUser;
+  //   console.log(objData["logoutUsername"]);
+  //   ws.send(JSON.stringify(objData));
+  // };
 };
 
+
+
 loginButton.addEventListener("click", (e) => {
-    let loginData = new FormData(loginForm);
-    let loginFormToGo = Object.fromEntries(loginData);
-    loginFormToGo["type"] = "login";
-    console.log("---", loginFormToGo);
+  let loginData = new FormData(loginForm);
+  let loginFormToGo = Object.fromEntries(loginData);
+  loginFormToGo["type"] = "login";
+  console.log("---", loginFormToGo);
 
-    // fetch, send login data to backend server
+  // fetch, send login data to backend server
 
-    fetch("http://localhost:8080/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(loginFormToGo),
-    })
-        .then((resp) => resp.json())
-        .then(function (data) {
-            if (data.tipo === "loginValidation") loginValidation(data);
-        });
+  fetch("http://localhost:8080/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(loginFormToGo),
+  })
+    .then((resp) => resp.json())
+    .then(function (data) {
+      if (data.tipo === "loginValidation") loginValidation(data);
+    });
 });
 
 // dummy post info being sent to server
 let objData = {};
 submitPostButton.addEventListener("click", function (e) {
-    e.preventDefault();
-    console.log("getSelTeams test -> ", getSelectedTeams());
-    objData["title"] = postTitle.value;
-    objData["postcontent"] = postContent.value;
-    objData["type"] = "post";
-    // objData["posttime"] = new Date().toISOString().slice(0, 10);
-    objData["username"] = loggedInUser;
-    objData["categories"] = getSelectedTeams();
-    createPostModal.style.display = "none";
-    postTitle.value = "";
-    postContent.value = "";
+  e.preventDefault();
+  console.log("getSelTeams test -> ", getSelectedTeams());
+  objData["title"] = postTitle.value;
+  objData["postcontent"] = postContent.value;
+  objData["type"] = "post";
+  // objData["posttime"] = new Date().toISOString().slice(0, 10);
+  objData["username"] = loggedInUser;
+  objData["categories"] = getSelectedTeams();
+  createPostModal.style.display = "none";
+  postTitle.value = "";
+  postContent.value = "";
 
-    // message sent to server
-    ws.send(JSON.stringify(objData));
+  // message sent to server
+  ws.send(JSON.stringify(objData));
 
-    for (let i = 0; i < crests.length; i++) {
-        crests[i].alt = "none";
-        crests[i].style.background = "white";
-    }
+  for (let i = 0; i < crests.length; i++) {
+    crests[i].alt = "none";
+    crests[i].style.background = "white";
+  }
 });
 
 let successfulRegistrationMessage = document.getElementById(
-    "registered-login-success"
+  "registered-login-success"
 );
 
 let registrationErrors = document.querySelectorAll(".registration-errors");
@@ -285,214 +287,214 @@ let emailError = document.getElementById("email-error");
 let passwordError = document.getElementById("password-error");
 
 const registrationValidation = (data) => {
-    console.log("check data -> ", data);
-    if (data.successfulRegistration) {
-        console.log("CHECKING LOOP");
-        registerBox.style.display = "none";
-        loginBox.style.display = "block";
-        signupSwitch.style.display = "none";
-        successfulRegistrationMessage.style.display = "block";
-    } else {
-        // switch case for errors, validated from back end.
-        // console.log(data.usernameLength);
+  console.log("check data -> ", data);
+  if (data.successfulRegistration) {
+    console.log("CHECKING LOOP");
+    registerBox.style.display = "none";
+    loginBox.style.display = "block";
+    signupSwitch.style.display = "none";
+    successfulRegistrationMessage.style.display = "block";
+  } else {
+    // switch case for errors, validated from back end.
+    // console.log(data.usernameLength);
 
-        if (data.usernameLength || data.usernameSpace) {
-            usernameError.innerText = "";
-            usernameError.innerText = "min 5 characters, no spaces";
-            usernameError.style.display = "block";
-        }
-
-        if (data.usernameDuplicate) {
-            usernameError.innerText = "";
-            usernameError.innerText = "Username exists";
-            usernameError.style.display = "block";
-        }
-
-        if (data.emailDuplicate) {
-            emailError.innerText = "";
-            emailError.innerText = "Email exists";
-            emailError.style.display = "block";
-        }
-
-        if (data.emailInvalid) {
-            emailError.innerText = "";
-            emailError.innerText = " Valid email required";
-            emailError.style.display = "block";
-        }
-
-        if (data.passwordLength) {
-            passwordError.style.display = "block";
-        }
-        if (data.ageEmpty) {
-            console.log("age empty");
-
-            ageError.style.display = "block";
-        }
-
-        if (data.firstnameEmpty) {
-            console.log("first name empty");
-            firstnameError.style.display = "block";
-        }
-
-        if (data.lastnameEmpty) {
-            console.log("last name empty");
-
-            lastnameError.style.display = "block";
-        }
+    if (data.usernameLength || data.usernameSpace) {
+      usernameError.innerText = "";
+      usernameError.innerText = "min 5 characters, no spaces";
+      usernameError.style.display = "block";
     }
+
+    if (data.usernameDuplicate) {
+      usernameError.innerText = "";
+      usernameError.innerText = "Username exists";
+      usernameError.style.display = "block";
+    }
+
+    if (data.emailDuplicate) {
+      emailError.innerText = "";
+      emailError.innerText = "Email exists";
+      emailError.style.display = "block";
+    }
+
+    if (data.emailInvalid) {
+      emailError.innerText = "";
+      emailError.innerText = " Valid email required";
+      emailError.style.display = "block";
+    }
+
+    if (data.passwordLength) {
+      passwordError.style.display = "block";
+    }
+    if (data.ageEmpty) {
+      console.log("age empty");
+
+      ageError.style.display = "block";
+    }
+
+    if (data.firstnameEmpty) {
+      console.log("first name empty");
+      firstnameError.style.display = "block";
+    }
+
+    if (data.lastnameEmpty) {
+      console.log("last name empty");
+
+      lastnameError.style.display = "block";
+    }
+  }
 };
 
 registerBtn.addEventListener("click", function (e) {
-    // e.preventDefault();
-    registrationErrors.forEach(function (el) {
-        el.style.display = "none";
-        // el.innerText = "";
+  // e.preventDefault();
+  registrationErrors.forEach(function (el) {
+    el.style.display = "none";
+    // el.innerText = "";
+  });
+
+  let signupData = new FormData(signUpForm);
+  let signUpFormToGo = Object.fromEntries(signupData);
+  signUpFormToGo.type = "signup";
+
+  fetch("http://localhost:8080/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(signUpFormToGo),
+  })
+    .then((resp) => resp.json())
+    .then(function (data) {
+      if (data.tipo === "formValidation") {
+        console.log("Check form val is being called");
+        registrationValidation(data);
+      }
     });
-
-    let signupData = new FormData(signUpForm);
-    let signUpFormToGo = Object.fromEntries(signupData);
-    signUpFormToGo.type = "signup";
-
-    fetch("http://localhost:8080/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(signUpFormToGo),
-    })
-        .then((resp) => resp.json())
-        .then(function (data) {
-            if (data.tipo === "formValidation") {
-                console.log("Check form val is being called");
-                registrationValidation(data);
-            }
-        });
 });
 
 // logout
 let logoutButton = document.getElementById("log-out-button");
 
 logoutButton.onclick = () => {
-    window.location.reload();
+  objData = {};
+  objData["type"] = "logout";
+  objData["logoutUsername"] = loggedInUser;
+  console.log(objData["logoutUsername"]);
+  ws.send(JSON.stringify(objData));
+  // ws.close()
+  ws.onmessage = (e) => {
+    // let commentData = JSON.parse(e.data);
+    let logoutData = JSON.parse(e.data)
+    if (logoutData.logoutClicked) {
+      ws.close()
+      window.location.reload();
+    }
+  }
 };
 
 const DisplayPosts = (data) => {
-    let postDivs = document.createElement("div");
-    let postTitle = document.createElement("div");
+  let postDivs = document.createElement("div");
+  let postTitle = document.createElement("div");
 
-    postTitle.className = "post-title-class";
-    // let postContent = document.createElement("div");
+  postTitle.className = "post-title-class";
+  // let postContent = document.createElement("div");
 
-    //postContent.className = "post-content-class";
+  //postContent.className = "post-content-class";
 
-    let postFooter = document.createElement("div");
-    postFooter.className = "post-footer-class";
-    postDivs.className = "post-class ";
-    // this will eventually hold the id given by go from the database (data.id)
-    postDivs.id = data.postid;
-    postTitle.innerText = data.title;
-    // postContent.innerText = data.postcontent;
-    postTitle.style.borderBottom = "0.2vh solid black";
-    postFooter.innerText = `Created by ${data.username},   Date: ${
-        data.posttime
+  let postFooter = document.createElement("div");
+  postFooter.className = "post-footer-class";
+  postDivs.className = "post-class ";
+  // this will eventually hold the id given by go from the database (data.id)
+  postDivs.id = data.postid;
+  postTitle.innerText = data.title;
+  // postContent.innerText = data.postcontent;
+  postTitle.style.borderBottom = "0.2vh solid black";
+  postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime
     }, Comments: ${1 + 13} ${data.categories}`;
-    postDivs.appendChild(postTitle);
-    //postDivs.appendChild(postContent);
-    postDivs.appendChild(postFooter);
-    // postTitle.addEventListener("click", function (e) {
-    //   console.log("Checking if listener working");
+  postDivs.appendChild(postTitle);
+  //postDivs.appendChild(postContent);
+  postDivs.appendChild(postFooter);
+  // postTitle.addEventListener("click", function (e) {
+  //   console.log("Checking if listener working");
 
-    // });
-    posts.appendChild(postDivs);
+  // });
+  posts.appendChild(postDivs);
 
-    let getCommentsForPosts = {};
+  let getCommentsForPosts = {};
 
-    postDivs.addEventListener("click", (e) => {
-        clickedPostID = postDivs.id;
+  // When a post is clicked on
+  postDivs.addEventListener("click", (e) => {
+    clickedPostID = postDivs.id;
 
-        getCommentsForPosts["clickedPostID"] = clickedPostID;
-        getCommentsForPosts["type"] = "getcommentsfrompost";
-        console.log("comments for posts object", getCommentsForPosts);
-        ws.send(JSON.stringify(getCommentsForPosts));
+    getCommentsForPosts["clickedPostID"] = clickedPostID;
+    getCommentsForPosts["type"] = "getcommentsfrompost";
+    console.log("comments for posts object", getCommentsForPosts);
+    ws.send(JSON.stringify(getCommentsForPosts));
 
-        let displayPostTitle = document.querySelector(".display-post-title");
-        let displayPostContent = document.querySelector(
-            ".display-post-content"
-        );
-        let postUsername = document.querySelector(".post-username");
-        let postDate = document.querySelector(".post-date");
-        displayPostTitle.innerText = data.title;
-        displayPostContent.innerText = data.postcontent;
-        postUsername.innerText = data.username;
-        postDate.innerText = data.posttime;
-        displayPostModal.style.display = "block";
+    let displayPostTitle = document.querySelector(".display-post-title");
+    let displayPostContent = document.querySelector(
+      ".display-post-content"
+    );
+    let postUsername = document.querySelector(".post-username");
+    let postDate = document.querySelector(".post-date");
+    displayPostTitle.innerText = data.title;
+    displayPostContent.innerText = data.postcontent;
+    postUsername.innerText = data.username;
+    postDate.innerText = data.posttime;
+    displayPostModal.style.display = "block";
 
-        /* create struct in posts.go to hold all post info and comments info which will be sent when a user clicks
-      on a post. Currently only sending post info.*/
 
-        // let comment = document.createElement("div");
-        // comment.style.marginBottom = "1vh";
-        // comment.id = `comment-${i}`;
+    // Auto scroll to last comment
+    // displayPostBody.scrollTo(0, displayPostBody.scrollHeight);
 
-        // comment.innerText = `${
-        //   commentTextArea.value
-        // }\n Created by: McTom Date: ${new Date()
-        //   .toISOString()
-        //   .split("T")[1]
-        //   .substring(0, 5)}\n`;
-        // commentTextArea.value = "";
+    // data coming through for comments
+    ws.onmessage = (e) => {
+      let commentData = JSON.parse(e.data);
+      // console.log("is this comment data?", commentData);
 
-        // commentContainer.appendChild(comment);
+      let commentDiv = document.createElement("div");
+      commentData.forEach((comment) => {
+        commentDiv.style.marginBottom = "1vh";
+        commentDiv.id = `comment${comment.commentId}`;
+        commentDiv.innerText = `${comment.commentcontent} \n ${comment.user}, ${comment.commenttime}`;
+        commentContainer.appendChild(commentDiv);
+      });
+    };
 
-        // Auto scroll to last comment
-        // displayPostBody.scrollTo(0, displayPostBody.scrollHeight);
+    // comment data in the modal needs to be cleared as we are using one modal.
 
-        // data coming through for comments
-        ws.onmessage = (e) => {
-            let commentData = JSON.parse(e.data);
-            // console.log("is this comment data?", commentData);
-
-            commentData.forEach((comment) => {
-                let commentDiv = document.createElement("div");
-                commentDiv.style.marginBottom = "1vh";
-                commentDiv.id = `comment${comment.commentId}`;
-                commentDiv.innerText = `${comment.commentcontent} \n ${comment.user}, ${comment.commenttime}`;
-                commentContainer.appendChild(commentDiv);
-            });
-        };
-    });
+  });
 };
 
 const getSelectedTeams = () => {
-    let crestList = "";
-    for (let i = 0; i < crests.length; i++) {
-        if (crests[i].alt !== "none") {
-            crestList += `${crests[i].id},`;
-        }
+  let crestList = "";
+  for (let i = 0; i < crests.length; i++) {
+    if (crests[i].alt !== "none") {
+      crestList += `${crests[i].id},`;
     }
-    return crestList;
+  }
+  return crestList;
 };
 
 commentArrow.addEventListener("click", function () {
-    commentData["commentcontent"] = commentTextArea.value;
-    commentData["user"] = loggedInUser;
-    commentData["postid"] = clickedPostID;
-    commentData["type"] = "comment";
+  commentData["commentcontent"] = commentTextArea.value;
+  commentData["user"] = loggedInUser;
+  commentData["postid"] = clickedPostID;
+  commentData["type"] = "comment";
 
-    ws.send(JSON.stringify(commentData));
-    commentTextArea.value = "";
-    //
-    ws.onmessage = (e) => {
-        let lastComment = JSON.parse(e.data);
-        if (lastComment.tipo === "lastcomment") {
-            let commentDiv = document.createElement("div");
-            commentDiv.style.marginBottom = "1vh";
-            commentDiv.id = `comment${lastComment.commentId}`;
-            commentDiv.innerText = `${lastComment.commentcontent} \n ${lastComment.user}, ${lastComment.commenttime}`;
-            commentContainer.appendChild(commentDiv);
-        }
-        // console.log("is this comment data?", commentData);
-    };
+  ws.send(JSON.stringify(commentData));
+  commentTextArea.value = "";
+  //
+  ws.onmessage = (e) => {
+    let lastComment = JSON.parse(e.data);
+    if (lastComment.tipo === "lastcomment") {
+      let commentDiv = document.createElement("div");
+      commentDiv.style.marginBottom = "1vh";
+      commentDiv.id = `comment${lastComment.commentId}`;
+      commentDiv.innerText = `${lastComment.commentcontent} \n ${lastComment.user}, ${lastComment.commenttime}`;
+      commentContainer.appendChild(commentDiv);
+    }
+    // console.log("is this comment data?", commentData);
+  };
 });
 
 // const colouredCategories = (data) => {
@@ -528,32 +530,32 @@ commentArrow.addEventListener("click", function () {
 // };
 
 const populateUsers = (users) => {
-    onlineUsers.innerHTML = "";
-    console.log("all users", users);
-    console.log("online from Go", onlineUsersFromGo);
-    for (let i = 0; i < users.length; i++) {
-        userDetails = document.createElement("div");
-        let username = document.createElement("div");
-        imageDiv = document.createElement("div");
-        img = document.createElement("img");
-        let onlineIcon = document.createElement("div");
+  onlineUsers.innerHTML = "";
+  console.log("all users", users);
+  console.log("online from Go", onlineUsersFromGo);
+  for (let i = 0; i < users.length; i++) {
+    userDetails = document.createElement("div");
+    let username = document.createElement("div");
+    imageDiv = document.createElement("div");
+    img = document.createElement("img");
+    let onlineIcon = document.createElement("div");
 
-        img.src = "/css/img/newcastle.png";
-        img.style.width = "2vw";
-        imageDiv.appendChild(onlineIcon);
-        userDetails.id = `${users[i]}`;
+    img.src = "/css/img/newcastle.png";
+    img.style.width = "2vw";
+    imageDiv.appendChild(onlineIcon);
+    userDetails.id = `${users[i]}`;
 
-        userDetails.className = "registered-user";
+    userDetails.className = "registered-user";
 
-        if (onlineUsersFromGo.includes(users[i])) {
-            onlineIcon.className = "online-icon-class";
-        } else {
-            onlineIcon.className = "offline-icon-class";
-        }
-        username.innerText = `${users[i]}`;
-        imageDiv.append(img);
-        userDetails.appendChild(username);
-        userDetails.appendChild(imageDiv);
-        onlineUsers.appendChild(userDetails);
+    if (onlineUsersFromGo.includes(users[i])) {
+      onlineIcon.className = "online-icon-class";
+    } else {
+      onlineIcon.className = "offline-icon-class";
     }
+    username.innerText = `${users[i]}`;
+    imageDiv.append(img);
+    userDetails.appendChild(username);
+    userDetails.appendChild(imageDiv);
+    onlineUsers.appendChild(userDetails);
+  }
 };

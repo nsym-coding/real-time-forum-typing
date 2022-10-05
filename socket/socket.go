@@ -59,7 +59,8 @@ type Login struct {
 
 type Logout struct {
 	LogoutUsername string `json:"logoutUsername"`
-	Tipo          string `json:"tipo"`
+	Tipo           string `json:"tipo"`
+	LogoutClicked  string `json:"logoutClicked"`
 }
 
 type formValidation struct {
@@ -166,6 +167,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	//wsConn.WriteJSON(online)
 
+	var f T
 	for {
 		message, info, _ := wsConn.ReadMessage()
 		fmt.Println("----", string(info))
@@ -173,22 +175,20 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		// if a connection is closed, we return out of this loop
 		if message == -1 {
 			fmt.Println("connection closed")
-			
-			delete(loggedInUsers, currentUser)
+
+			delete(loggedInUsers, f.Logout.LogoutUsername)
 			fmt.Println("users left in array", loggedInUsers)
 			online.OnlineUsers = []string{}
 			online.Tipo = "onlineUsers"
-			
+
 			for k := range loggedInUsers {
 				online.OnlineUsers = append(online.OnlineUsers, k)
 			}
 			broadcastOnlineUsers <- online
-			
 
 			//wsConn.WriteJSON(online)
 			return
 		}
-		var f T
 		f.UnmarshalForumData(info)
 
 		if f.Type == "post" {
@@ -215,10 +215,12 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("comments from post struct when unmarshalled", f.CommentsFromPosts)
 			f.CommentsFromPosts.Tipo = "commentsfrompost"
 			clickedPostID, _ := strconv.Atoi(f.CommentsFromPosts.ClickedPostID)
+			fmt.Println("all comments in this post", comments.DisplayAllComments(db, clickedPostID))
 			wsConn.WriteJSON(comments.DisplayAllComments(db, clickedPostID))
-			// fmt.Println("postID from JS", f.)
-		} else if f.Type == "Logout" {
-			fmt.Println("LOGOUT USERNAME")
+		} else if f.Type == "logout" {
+			f.Logout.LogoutClicked = "true"
+			fmt.Println("LOGOUT USERNAME", f.Logout.LogoutUsername)
+			wsConn.WriteJSON(f.Logout)
 		}
 
 		log.Println("Checking what's in f ---> ", f)
