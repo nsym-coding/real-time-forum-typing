@@ -48,6 +48,7 @@ func DisplayAllComments(db *sql.DB, postID int) []Comments {
 	defer rows.Close()
 	for rows.Next() {
 		var c Comments
+		c.Tipo = "getcommentsfrompost"
 		err2 := rows.Scan(&c.CommentID, &c.CommentContent, &c.Date, &c.User)
 		comment = append(comment, c)
 		if err2 != nil {
@@ -61,7 +62,7 @@ func GetLastComment(db *sql.DB) Comments {
 	stmt := db.QueryRow(`SELECT commentID, commentText, creationDate, username FROM comments ORDER BY commentID DESC LIMIT 1`)
 
 	c := Comments{}
-	c.Tipo = "lastcomment"
+	c.Tipo = "lastComment"
 	stmt.Scan(&c.CommentID, &c.CommentContent, &c.Date, &c.User)
 	fmt.Println("GET LAST COMMENT FUNC", c)
 	return c

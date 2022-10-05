@@ -214,11 +214,15 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		} else if f.Type == "getcommentsfrompost" {
 			// Display all comments in a post to a single user.
 
+			var commentsfromPost posts.Posts
+			clickedPostID, _ := strconv.Atoi(f.CommentsFromPosts.ClickedPostID)
+			commentsfromPost.Tipo = "allComments"
+			commentsfromPost.Comments = comments.DisplayAllComments(db, clickedPostID)
+
 			fmt.Println("comments from post struct when unmarshalled", f.CommentsFromPosts)
 			f.CommentsFromPosts.Tipo = "commentsfrompost"
-			clickedPostID, _ := strconv.Atoi(f.CommentsFromPosts.ClickedPostID)
 			fmt.Println("all comments in this post", comments.DisplayAllComments(db, clickedPostID))
-			wsConn.WriteJSON(comments.DisplayAllComments(db, clickedPostID))
+			wsConn.WriteJSON(commentsfromPost)
 		} else if f.Type == "logout" {
 			f.Logout.LogoutClicked = "true"
 			fmt.Println("LOGOUT USERNAME", f.Logout.LogoutUsername)
