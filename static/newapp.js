@@ -31,36 +31,12 @@ let commentContainer = document.getElementById("comment-container");
 let commentArrow = document.getElementById("comment-arrow");
 let commentTextArea = document.getElementById("comment-input");
 
-postButton.addEventListener("click", function () {
-    createPostModal.style.display = "block";
-});
-
-let userRg = document.querySelectorAll(".registered-user");
-let chatRecipient = document.getElementById("chat-recipient");
-
 // Get the button that opens the modal
 let btn = document.getElementById("myBtn");
 
-// Get the <span> element that closes the modal
-let span = document.getElementsByClassName("close");
-
-// When the user clicks the button, open the modal
-
-for (let i = 0; i < userRg.length; i++) {
-    userRg[i].onclick = function () {
-        chatRecipient.innerText = userRg[i].id;
-
-        console.log("Users clicked");
-        chatModal.style.display = "block";
-    };
-}
-
-// When the user clicks on <span> (x), close the modal
-for (let i = 0; i < span.length; i++) {
-    span[i].onclick = function () {
-        modal[i].style.display = "none";
-    };
-}
+postButton.addEventListener("click", function () {
+    createPostModal.style.display = "block";
+});
 
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function (event) {
@@ -440,7 +416,7 @@ const DisplayPosts = (data) => {
 
         // Auto scroll to last comment
         // displayPostBody.scrollTo(0, displayPostBody.scrollHeight);
-        commentContainer.innerHTML = ""
+        commentContainer.innerHTML = "";
 
         // data coming through for comments
         ws.onmessage = (e) => {
@@ -470,7 +446,6 @@ const DisplayPosts = (data) => {
 
         console.log("commentdata---", commentData);
         console.log(commentData.type);
-
 
         // commentData.forEach((comment) => {
 
@@ -573,5 +548,27 @@ const populateUsers = (users) => {
         userDetails.appendChild(username);
         userDetails.appendChild(imageDiv);
         onlineUsers.appendChild(userDetails);
+    }
+    let userRg = document.getElementsByClassName("registered-user");
+    let chatRecipient = document.getElementById("chat-recipient");
+    // Get the <span> element that closes the modal
+    let span = document.getElementsByClassName("close");
+
+    // When the user clicks the button, open the modal
+
+    for (let i = 0; i < userRg.length; i++) {
+        userRg[i].onclick = function () {
+            chatRecipient.innerText = userRg[i].id;
+
+            console.log("Users clicked");
+            chatModal.style.display = "block";
+        };
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    for (let i = 0; i < span.length; i++) {
+        span[i].onclick = function () {
+            modal[i].style.display = "none";
+        };
     }
 };
