@@ -114,10 +114,7 @@ for (let i = 0; i < teamCrests.length; i++) {
   let img = document.createElement("img");
   img.style.backgroundColor = "white";
   img.alt = "none";
-  img.id = teamCrests[i].slice(
-    teamCrests[i].lastIndexOf("/") + 1,
-    teamCrests[i].length - 4
-  );
+  img.id = teamCrests[i].slice(teamCrests[i].lastIndexOf("/") + 1, teamCrests[i].length - 4);
   img.classList = "crest-colors";
   img.src = teamCrests[i];
   categorySelection.append(img);
@@ -187,8 +184,6 @@ const loginValidation = (data) => {
         DisplayPosts(data.dbposts[i]);
       }
 
-
-
       //populateUsers(data.allUsers);
 
       console.log("connection established");
@@ -225,8 +220,6 @@ const loginValidation = (data) => {
   //   ws.send(JSON.stringify(objData));
   // };
 };
-
-
 
 loginButton.addEventListener("click", (e) => {
   let loginData = new FormData(loginForm);
@@ -273,9 +266,7 @@ submitPostButton.addEventListener("click", function (e) {
   }
 });
 
-let successfulRegistrationMessage = document.getElementById(
-  "registered-login-success"
-);
+let successfulRegistrationMessage = document.getElementById("registered-login-success");
 
 let registrationErrors = document.querySelectorAll(".registration-errors");
 
@@ -383,12 +374,12 @@ logoutButton.onclick = () => {
   // ws.close()
   ws.onmessage = (e) => {
     // let commentData = JSON.parse(e.data);
-    let logoutData = JSON.parse(e.data)
+    let logoutData = JSON.parse(e.data);
     if (logoutData.logoutClicked) {
-      ws.close()
+      ws.close();
       window.location.reload();
     }
-  }
+  };
 };
 
 const DisplayPosts = (data) => {
@@ -408,8 +399,7 @@ const DisplayPosts = (data) => {
   postTitle.innerText = data.title;
   // postContent.innerText = data.postcontent;
   postTitle.style.borderBottom = "0.2vh solid black";
-  postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime
-    }, Comments: ${1 + 13} ${data.categories}`;
+  postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime}, Comments: ${1 + 13} ${data.categories}`;
   postDivs.appendChild(postTitle);
   //postDivs.appendChild(postContent);
   postDivs.appendChild(postFooter);
@@ -424,16 +414,13 @@ const DisplayPosts = (data) => {
   // When a post is clicked on
   postDivs.addEventListener("click", (e) => {
     clickedPostID = postDivs.id;
-
     getCommentsForPosts["clickedPostID"] = clickedPostID;
     getCommentsForPosts["type"] = "getcommentsfrompost";
     console.log("comments for posts object", getCommentsForPosts);
     ws.send(JSON.stringify(getCommentsForPosts));
 
     let displayPostTitle = document.querySelector(".display-post-title");
-    let displayPostContent = document.querySelector(
-      ".display-post-content"
-    );
+    let displayPostContent = document.querySelector(".display-post-content");
     let postUsername = document.querySelector(".post-username");
     let postDate = document.querySelector(".post-date");
     displayPostTitle.innerText = data.title;
@@ -442,26 +429,32 @@ const DisplayPosts = (data) => {
     postDate.innerText = data.posttime;
     displayPostModal.style.display = "block";
 
-
     // Auto scroll to last comment
     // displayPostBody.scrollTo(0, displayPostBody.scrollHeight);
 
     // data coming through for comments
     ws.onmessage = (e) => {
       let commentData = JSON.parse(e.data);
-      // console.log("is this comment data?", commentData);
 
-      let commentDiv = document.createElement("div");
-      commentData.forEach((comment) => {
+      console.log("commentdata---", commentData)
+
+     // commentContainer.innerHTML = ""
+      
+      // commentData.forEach((comment) => {
+
+      for (let i = 0 ;i < commentData.length;i++) {
+        
+      
+        let commentDiv = document.createElement("div");
         commentDiv.style.marginBottom = "1vh";
-        commentDiv.id = `comment${comment.commentId}`;
-        commentDiv.innerText = `${comment.commentcontent} \n ${comment.user}, ${comment.commenttime}`;
+        commentDiv.id = `comment${commentData[i].commentId}`;
+        commentDiv.innerText = `${commentData[i].commentcontent} \n ${commentData[i].user}, ${commentData[i].commenttime}`;
         commentContainer.appendChild(commentDiv);
-      });
+      }
+      // });
     };
 
     // comment data in the modal needs to be cleared as we are using one modal.
-
   });
 };
 
@@ -486,6 +479,7 @@ commentArrow.addEventListener("click", function () {
   //
   ws.onmessage = (e) => {
     let lastComment = JSON.parse(e.data);
+    console.log("This is the last coment", lastComment);
     if (lastComment.tipo === "lastcomment") {
       let commentDiv = document.createElement("div");
       commentDiv.style.marginBottom = "1vh";

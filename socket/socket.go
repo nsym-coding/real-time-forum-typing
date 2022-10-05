@@ -95,7 +95,7 @@ var (
 	loggedInUsers         = make(map[string]*websocket.Conn)
 	broadcastChannelPosts = make(chan posts.Posts, 1)
 
-	broadcastChannelComments = make(chan *comments.Comments, 1)
+	broadcastChannelComments = make(chan comments.Comments, 1)
 	currentUser              = ""
 	CallWS                   = false
 	online                   loginValidation
@@ -195,7 +195,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			f.Posts.Tipo = "post"
 
 			posts.StorePosts(db, f.Posts.Username, f.Posts.PostTitle, f.Posts.PostContent, f.Posts.Categories)
-			posts.GetCommentData(db, 1)
+			//posts.GetCommentData(db, 1)
 			fmt.Println("this is the post content       ", f.PostContent)
 
 			// STORE POSTS IN DATABASE
@@ -207,8 +207,10 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			comments.StoreComment(db, f.Comments.User, postID, f.Comments.CommentContent)
 
 			f.Comments.Tipo = "comment"
-			wsConn.WriteJSON(comments.GetLastComment(db))
-			broadcastChannelComments <- f.Comments
+			//wsConn.WriteJSON(comments.GetLastComment(db))
+			broadcastChannelComments <- comments.GetLastComment(db)
+
+			// broadcastChannelComments <- f.Comments
 		} else if f.Type == "getcommentsfrompost" {
 			// Display all comments in a post to a single user.
 
@@ -243,7 +245,9 @@ func broadcastToAllClients() {
 
 				for _, user := range loggedInUsers {
 					user.WriteJSON(comment)
+					fmt.Println("LINE 248", comment)
 				}
+
 			}
 
 		case onlineuser, ok := <-broadcastOnlineUsers:
