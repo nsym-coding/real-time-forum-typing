@@ -62,4 +62,12 @@ func CreateDB() {
 		user2 text REFERENCES users(username),
 		creationDate integer);`)
 	fmt.Println("err5", err5)
+
+	_, err6 := db.Exec(`create table if not exists notifications(
+		notificationID integer PRIMARY KEY AUTOINCREMENT, 
+	    sender text REFERENCES users(username), 
+		recepient text REFERENCES users(username),
+		notifications integer);`)
+	fmt.Println("err6", err6)
+
 }
