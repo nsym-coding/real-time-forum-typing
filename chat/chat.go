@@ -84,3 +84,16 @@ func StoreChat(db *sql.DB, chatsender string, chatrecipient string) {
 	fmt.Println("chat rows affected: ", rowsAff)
 	fmt.Println("chat last inserted: ", LastIns)
 }
+
+func StoreMessages(db *sql.DB, chatID int, message, chatSender, chatRecipient string) {
+	stmt, err := db.Prepare(`INSERT INTO messages (chatID, message, sender, recipient, creationDate ) VALUES (?,?,?,?,strftime('%H:%M %d/%m/%Y','now', 'localtime') )`)
+	if err != nil {
+		fmt.Println("error adding message to DB", err)
+		return
+	}
+	result, _ := stmt.Exec(chatID, message, chatSender, chatRecipient)
+	rowsAff, _ := result.RowsAffected()
+	LastIns, _ := result.LastInsertId()
+	fmt.Println("chat rows affected: ", rowsAff)
+	fmt.Println("chat last inserted: ", LastIns)
+}

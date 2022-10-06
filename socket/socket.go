@@ -240,8 +240,8 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			}
 			fmt.Println("THIS IS THE CHAT ID", chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID)
 
-			//get their chat id
 			// then store messages using chat id
+			chat.StoreMessages(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID, f.Chat.ChatMessage, f.Chat.ChatSender, f.Chat.ChatRecipient)
 			fmt.Println("From JS-->", f.Chat.ChatMessage, f.Chat.ChatSender)
 
 		}
