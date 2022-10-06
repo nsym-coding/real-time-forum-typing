@@ -234,7 +234,14 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("LOGOUT USERNAME", f.Logout.LogoutUsername)
 			wsConn.WriteJSON(f.Logout)
 		} else if f.Type == "chatMessage" {
-			chat.StoreChat(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
+			if !chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).Exists {
+
+				chat.StoreChat(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
+			}
+			fmt.Println("THIS IS THE CHAT ID", chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID)
+
+			//get their chat id
+			// then store messages using chat id
 			fmt.Println("From JS-->", f.Chat.ChatMessage, f.Chat.ChatSender)
 
 		}
