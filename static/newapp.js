@@ -103,7 +103,10 @@ for (let i = 0; i < teamCrests.length; i++) {
   let img = document.createElement("img");
   img.style.backgroundColor = "white";
   img.alt = "none";
-  img.id = teamCrests[i].slice(teamCrests[i].lastIndexOf("/") + 1, teamCrests[i].length - 4);
+  img.id = teamCrests[i].slice(
+    teamCrests[i].lastIndexOf("/") + 1,
+    teamCrests[i].length - 4
+  );
   img.classList = "crest-colors";
   img.src = teamCrests[i];
   categorySelection.append(img);
@@ -263,7 +266,9 @@ submitPostButton.addEventListener("click", function (e) {
   }
 });
 
-let successfulRegistrationMessage = document.getElementById("registered-login-success");
+let successfulRegistrationMessage = document.getElementById(
+  "registered-login-success"
+);
 
 let registrationErrors = document.querySelectorAll(".registration-errors");
 
@@ -396,7 +401,9 @@ const DisplayPosts = (data) => {
   postTitle.innerText = data.title;
   // postContent.innerText = data.postcontent;
   postTitle.style.borderBottom = "0.2vh solid black";
-  postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime}, Comments: ${1 + 13} ${data.categories}`;
+  postFooter.innerText = `Created by ${data.username},   Date: ${
+    data.posttime
+  }, Comments: ${1 + 13} ${data.categories}`;
   postDivs.appendChild(postTitle);
   //postDivs.appendChild(postContent);
   postDivs.appendChild(postFooter);

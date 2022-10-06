@@ -97,3 +97,24 @@ func StoreMessages(db *sql.DB, chatID int, message, chatSender, chatRecipient st
 	fmt.Println("chat rows affected: ", rowsAff)
 	fmt.Println("chat last inserted: ", LastIns)
 }
+
+// Function that returns chats based on a chat id.
+func GetAllMessageHistoryFromChat(db *sql.DB, chatID int) []Chat {
+	rows, err := db.Query(`SELECT message, sender, recipient, creationDate FROM messages WHERE chatID = ?;`, chatID)
+	if err != nil {
+		fmt.Println(err)
+	}
+	messagedata := []Chat{}
+	defer rows.Close()
+	for rows.Next() {
+		var m Chat
+		// fmt.Println(&p.PostID)
+		err2 := rows.Scan(&m.ChatMessage, &m.ChatSender, &m.ChatRecipient, &m.Date)
+		m.Tipo = "messagehistoryfromgo"
+		messagedata = append(messagedata, m)
+		if err2 != nil {
+			fmt.Println(err2)
+		}
+	}
+	return messagedata
+}

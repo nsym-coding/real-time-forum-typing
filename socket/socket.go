@@ -239,9 +239,9 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 				chat.StoreChat(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
 			}
 			fmt.Println("THIS IS THE CHAT ID", chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID)
-
 			// then store messages using chat id
 			chat.StoreMessages(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID, f.Chat.ChatMessage, f.Chat.ChatSender, f.Chat.ChatRecipient)
+			fmt.Println("THIS IS CHAT HISTORY --> ", chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))
 			fmt.Println("From JS-->", f.Chat.ChatMessage, f.Chat.ChatSender)
 
 		}
@@ -279,6 +279,19 @@ func broadcastToAllClients() {
 					user.WriteJSON(onlineuser)
 				}
 			}
+
+			//POTENTIAL WAY TO SEND CHAT TO SPECIFIC USERS
+			// case onlineuser, ok := <-broadcastOnlineUsers:
+
+			// if ok {
+			// 	for userName, userConn := range loggedInUsers {
+			// 		var chat chat.Chat
+			// 		if userName == chat.ChatSender || userName == chat.ChatRecipient{
+
+			// 			userConn.WriteJSON(onlineuser)
+			// 		}
+			// 	}
+			// }
 
 			// BROADCAST TO EVERYONE WITH A WEBSOCKET ALL ONLINE USERS
 
