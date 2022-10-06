@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"real-time-forum/chat"
 	"real-time-forum/comments"
 	"real-time-forum/posts"
 	"real-time-forum/users"
@@ -26,6 +27,7 @@ type T struct {
 	*Login
 	*Logout
 	*comments.CommentsFromPosts
+	*chat.Chat
 }
 
 type TypeChecker struct {
@@ -127,6 +129,10 @@ func (t *T) UnmarshalForumData(data []byte) error {
 	case "getcommentsfrompost":
 		t.CommentsFromPosts = &comments.CommentsFromPosts{}
 		return json.Unmarshal(data, t.CommentsFromPosts)
+	case "chatMessage":
+		t.Chat = &chat.Chat{}
+		return json.Unmarshal(data, t.Chat)
+
 	default:
 		return fmt.Errorf("unrecognized type value %q", t.Type)
 	}
@@ -227,6 +233,10 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			f.Logout.LogoutClicked = "true"
 			fmt.Println("LOGOUT USERNAME", f.Logout.LogoutUsername)
 			wsConn.WriteJSON(f.Logout)
+		} else if f.Type == "chatMessage" {
+			chat.StoreChat(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
+			fmt.Println("From JS-->", f.Chat.ChatMessage, f.Chat.ChatSender)
+
 		}
 
 		log.Println("Checking what's in f ---> ", f)
