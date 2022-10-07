@@ -14,6 +14,11 @@ type Chat struct {
 	Tipo          string `json:"tipo"`
 }
 
+type ChatHistory struct {
+	ChatHist []Chat `json:"chathistory"`
+	Tipo     string `json:"tipo"`
+}
+
 type ChatExistsCheck struct {
 	ChatID int
 	Exists bool
@@ -99,19 +104,21 @@ func StoreMessages(db *sql.DB, chatID int, message, chatSender, chatRecipient st
 }
 
 // Function that returns chats based on a chat id.
-func GetAllMessageHistoryFromChat(db *sql.DB, chatID int) []Chat {
+func GetAllMessageHistoryFromChat(db *sql.DB, chatID int) ChatHistory {
 	rows, err := db.Query(`SELECT message, sender, recipient, creationDate FROM messages WHERE chatID = ?;`, chatID)
 	if err != nil {
 		fmt.Println(err)
 	}
-	messagedata := []Chat{}
+	messagedata := ChatHistory{}
+	messagedata.Tipo = "messagehistoryfromgo"
+
 	defer rows.Close()
 	for rows.Next() {
 		var m Chat
 		// fmt.Println(&p.PostID)
 		err2 := rows.Scan(&m.ChatMessage, &m.ChatSender, &m.ChatRecipient, &m.Date)
-		m.Tipo = "messagehistoryfromgo"
-		messagedata = append(messagedata, m)
+		// m.Tipo = "messagehistoryfromgo"
+		messagedata.ChatHist = append(messagedata.ChatHist, m)
 		if err2 != nil {
 			fmt.Println(err2)
 		}
