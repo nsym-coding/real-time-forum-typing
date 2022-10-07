@@ -185,8 +185,11 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		// if a connection is closed, we return out of this loop
 		if message == -1 {
 			fmt.Println("connection closed")
-
-			delete(loggedInUsers, f.Logout.LogoutUsername)
+			for username, socketConnection := range loggedInUsers {
+				if wsConn == socketConnection {
+					delete(loggedInUsers, username)
+				}
+			}
 			fmt.Println("users left in array", loggedInUsers)
 			online.OnlineUsers = []string{}
 			online.Tipo = "onlineUsers"
@@ -246,7 +249,12 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			chat.StoreMessages(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID, f.Chat.ChatMessage, f.Chat.ChatSender, f.Chat.ChatRecipient)
 			fmt.Println("THIS IS CHAT HISTORY --> ", chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))
 			fmt.Println("From JS-->", f.Chat.ChatMessage, f.Chat.ChatSender)
-
+			for user, connection := range loggedInUsers {
+				if user == f.Chat.ChatSender || user == f.Chat.ChatRecipient {
+					f.Chat.Tipo = "lastMessage"
+					connection.WriteJSON(f.Chat)
+				}
+			}
 		} else if f.Type == "requestChatHistory" {
 			fmt.Println("sender and recipient-------", f.Chat.ChatSender, f.Chat.ChatRecipient)
 			if chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).Exists {
