@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"real-time-forum/chat"
 	"real-time-forum/comments"
 	"real-time-forum/posts"
 	"real-time-forum/users"
@@ -26,6 +27,7 @@ type T struct {
 	*Login
 	*Logout
 	*comments.CommentsFromPosts
+	*chat.Chat
 }
 
 type TypeChecker struct {
@@ -127,6 +129,14 @@ func (t *T) UnmarshalForumData(data []byte) error {
 	case "getcommentsfrompost":
 		t.CommentsFromPosts = &comments.CommentsFromPosts{}
 		return json.Unmarshal(data, t.CommentsFromPosts)
+	case "chatMessage":
+		t.Chat = &chat.Chat{}
+		return json.Unmarshal(data, t.Chat)
+
+	case "requestChatHistory":
+		t.Chat = &chat.Chat{}
+		return json.Unmarshal(data, t.Chat)
+
 	default:
 		return fmt.Errorf("unrecognized type value %q", t.Type)
 	}
@@ -165,7 +175,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	broadcastOnlineUsers <- online
 
-	//wsConn.WriteJSON(online)
+	// wsConn.WriteJSON(online)
 
 	var f T
 	for {
@@ -175,8 +185,11 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		// if a connection is closed, we return out of this loop
 		if message == -1 {
 			fmt.Println("connection closed")
-
-			delete(loggedInUsers, f.Logout.LogoutUsername)
+			for username, socketConnection := range loggedInUsers {
+				if wsConn == socketConnection {
+					delete(loggedInUsers, username)
+				}
+			}
 			fmt.Println("users left in array", loggedInUsers)
 			online.OnlineUsers = []string{}
 			online.Tipo = "onlineUsers"
@@ -186,7 +199,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			}
 			broadcastOnlineUsers <- online
 
-			//wsConn.WriteJSON(online)
+			// wsConn.WriteJSON(online)
 			return
 		}
 		f.UnmarshalForumData(info)
@@ -195,7 +208,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			f.Posts.Tipo = "post"
 
 			posts.StorePosts(db, f.Posts.Username, f.Posts.PostTitle, f.Posts.PostContent, f.Posts.Categories)
-			//posts.GetCommentData(db, 1)
+			// posts.GetCommentData(db, 1)
 			fmt.Println("this is the post content       ", f.PostContent)
 
 			// STORE POSTS IN DATABASE
@@ -207,7 +220,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			comments.StoreComment(db, f.Comments.User, postID, f.Comments.CommentContent)
 
 			f.Comments.Tipo = "comment"
-			//wsConn.WriteJSON(comments.GetLastComment(db))
+			// wsConn.WriteJSON(comments.GetLastComment(db))
 			broadcastChannelComments <- comments.GetLastComment(db)
 
 			// broadcastChannelComments <- f.Comments
@@ -227,9 +240,30 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			f.Logout.LogoutClicked = "true"
 			fmt.Println("LOGOUT USERNAME", f.Logout.LogoutUsername)
 			wsConn.WriteJSON(f.Logout)
+		} else if f.Type == "chatMessage" {
+			if !chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).Exists {
+				chat.StoreChat(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
+			}
+			fmt.Println("THIS IS THE CHAT ID", chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID)
+			// then store messages using chat id
+			chat.StoreMessages(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID, f.Chat.ChatMessage, f.Chat.ChatSender, f.Chat.ChatRecipient)
+			fmt.Println("THIS IS CHAT HISTORY --> ", chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))
+			fmt.Println("From JS-->", f.Chat.ChatMessage, f.Chat.ChatSender)
+			for user, connection := range loggedInUsers {
+				if user == f.Chat.ChatSender || user == f.Chat.ChatRecipient {
+					f.Chat.Tipo = "lastMessage"
+					connection.WriteJSON(f.Chat)
+				}
+			}
+		} else if f.Type == "requestChatHistory" {
+			fmt.Println("sender and recipient-------", f.Chat.ChatSender, f.Chat.ChatRecipient)
+			if chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).Exists {
+				fmt.Println("THIS IS CHAT HISTORY --> ", chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))
+				wsConn.WriteJSON(chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))
+			}
 		}
 
-		log.Println("Checking what's in f ---> ", f)
+		log.Println("Checking what's in f ---> ", f.Chat)
 	}
 }
 
@@ -246,22 +280,32 @@ func broadcastToAllClients() {
 			}
 		case comment, ok := <-broadcastChannelComments:
 			if ok {
-
 				for _, user := range loggedInUsers {
 					user.WriteJSON(comment)
 					fmt.Println("LINE 248", comment)
 				}
-
 			}
 
 		case onlineuser, ok := <-broadcastOnlineUsers:
 
 			if ok {
 				for _, user := range loggedInUsers {
-
 					user.WriteJSON(onlineuser)
 				}
 			}
+
+			// POTENTIAL WAY TO SEND CHAT TO SPECIFIC USERS
+			// case onlineuser, ok := <-broadcastOnlineUsers:
+
+			// if ok {
+			// 	for userName, userConn := range loggedInUsers {
+			// 		var chat chat.Chat
+			// 		if userName == chat.ChatSender || userName == chat.ChatRecipient{
+
+			// 			userConn.WriteJSON(onlineuser)
+			// 		}
+			// 	}
+			// }
 
 			// BROADCAST TO EVERYONE WITH A WEBSOCKET ALL ONLINE USERS
 
