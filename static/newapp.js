@@ -585,8 +585,26 @@ function loadMessages() {
                 console.log("on message check");
                 console.log(data.tipo);
                 if (data.tipo == "messagehistoryfromgo") {
-                    console.log("MESSAGE HISTORY FROM GO----------", data);
-                    for (let i = 0; i < data.chathistory.length; i++) {
+
+                    // for (let i = 0; i < data.chathistory.length; i++) {
+                    //     let newChatBubble = document.createElement("div");
+                    //     newChatBubble.innerText = data.chathistory[i].message;
+                    //     if (data.chathistory[i].chatsender == loggedInUser) {
+                    //         newChatBubble.id = "chat-message-sender";
+                    //     } else {
+                    //         newChatBubble.id = "chat-message-recipient";
+                    //     }
+                    //     chatContainer.appendChild(newChatBubble);
+                    //     chatBody.scrollTo(0, chatBody.scrollHeight);
+                    // }
+                    let loopfrom
+                    if (data.chathistory.length >= 10) {
+                        loopfrom = data.chathistory.length - 10
+                    } else {
+                        loopfrom = 0
+                    }
+
+                    for (let i = loopfrom; i < data.chathistory.length; i++) {
                         let newChatBubble = document.createElement("div");
                         newChatBubble.innerText = data.chathistory[i].message;
                         if (data.chathistory[i].chatsender == loggedInUser) {
