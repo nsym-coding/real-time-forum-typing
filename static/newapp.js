@@ -168,6 +168,7 @@ const loginValidation = (data) => {
       let data = JSON.parse(e.data);
       // console.log("data when a post is clicked", data);
       if (data.tipo === "post") {
+        console.log({ data });
         DisplayPosts(data);
       }
 
@@ -242,6 +243,16 @@ submitPostButton.addEventListener("click", function (e) {
 
   // message sent to server
   ws.send(JSON.stringify(objData));
+  ws.onmessage = (e) => {
+    let data = JSON.parse(e.data);
+    // console.log("data when a post is clicked", data);
+    if (data.tipo === "post") {
+      console.log({ data });
+      DisplayPosts(data);
+    }
+  };
+  // if (data.tipo === "post") {
+  // }
 
   for (let i = 0; i < crests.length; i++) {
     crests[i].alt = "none";
