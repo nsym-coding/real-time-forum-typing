@@ -101,6 +101,7 @@ body {
   height: 52vh;
   background: rgb(253, 253, 253);
   border-radius: 30px;
+  overflow: scroll;
 }
 
 #new-post-btn {
@@ -489,8 +490,6 @@ img {
   margin-top: 4vh;
   border-bottom: 0.6vh var(--ourBlue) solid;
 }
-
-
 
 #display-post-footer {
   display: flex;

@@ -86,7 +86,10 @@ for (let i = 0; i < teamCrests.length; i++) {
   let img = document.createElement("img");
   img.style.backgroundColor = "white";
   img.alt = "none";
-  img.id = teamCrests[i].slice(teamCrests[i].lastIndexOf("/") + 1, teamCrests[i].length - 4);
+  img.id = teamCrests[i].slice(
+    teamCrests[i].lastIndexOf("/") + 1,
+    teamCrests[i].length - 4
+  );
   img.classList = "crest-colors";
   img.src = teamCrests[i];
   categorySelection.append(img);
@@ -246,7 +249,9 @@ submitPostButton.addEventListener("click", function (e) {
   }
 });
 
-let successfulRegistrationMessage = document.getElementById("registered-login-success");
+let successfulRegistrationMessage = document.getElementById(
+  "registered-login-success"
+);
 
 let registrationErrors = document.querySelectorAll(".registration-errors");
 
@@ -379,7 +384,9 @@ const DisplayPosts = (data) => {
   postTitle.innerText = data.title;
   // postContent.innerText = data.postcontent;
   postTitle.style.borderBottom = "0.2vh solid black";
-  postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime}, Comments: ${1 + 13} ${data.categories}`;
+  postFooter.innerText = `Created by ${data.username},   Date: ${
+    data.posttime
+  }, Comments: ${1 + 13} ${data.categories}`;
   postDivs.appendChild(postTitle);
   //postDivs.appendChild(postContent);
   postDivs.appendChild(postFooter);
@@ -584,7 +591,10 @@ function loadInitialTenMessages() {
           if (data.chathistory.length >= 10) {
             loopfrom = data.chathistory.length - 10;
 
-            surplusMessages = data.chathistory.slice(0, data.chathistory.length - 10);
+            surplusMessages = data.chathistory.slice(
+              0,
+              data.chathistory.length - 10
+            );
             // console.log('preslice', data.chathistory);
             // console.log('surplus', surplusMessages);
             loadedTenMessages = true;
@@ -639,16 +649,62 @@ function Throttler(fn = () => {}, wait) {
   };
 }
 
-function callb() {
-  if (loadedTenMessages) {
+function displaySurplusMessages() {
+  console.log("domrect", chatBody.getBoundingClientRect().y);
+  if (loadedTenMessages && chatBody.scrollTop < 100) {
+    chatBody.scrollBy(0, 90);
     if (surplusMessages.length > 10) {
-      console.log("10+ messages left", surplusMessages.slice(0, surplusMessages.length - 10));
+      console.log("CS--------------------", chatBody.scrollTop);
+
+      for (
+        let i = surplusMessages.length - 1;
+        i > surplusMessages.length - 10;
+        i--
+      ) {
+        let newChatBubble = document.createElement("div");
+        newChatBubble.innerText = surplusMessages[i].message;
+        if (surplusMessages[i].chatsender == loggedInUser) {
+          newChatBubble.id = "chat-message-sender";
+        } else {
+          newChatBubble.id = "chat-message-recipient";
+        }
+        chatContainer.insertBefore(newChatBubble, chatContainer.children[0]);
+        // chatBody.scrollTop += 50;
+        //chatBody.scrollBy(0, 100);
+        //console.log("CS--------------------", chatBody.scrollTop);
+        console.log(surplusMessages[i].message);
+        console.log(surplusMessages.length);
+      }
+
+      console.log(
+        "10+ messages left",
+        surplusMessages.slice(0, surplusMessages.length - 10)
+      );
+
       surplusMessages = surplusMessages.slice(0, surplusMessages.length - 10);
     } else {
-        console.log("FINAL 10 MESSAGES POSTED BELOW");
+      //chatBody.scrollTop += 50;
+      for (let j = surplusMessages.length - 1; j >= 0; j--) {
+        let newChatBubble = document.createElement("div");
+        newChatBubble.innerText = surplusMessages[j].message;
+        if (surplusMessages[j].chatsender == loggedInUser) {
+          newChatBubble.id = "chat-message-sender";
+        } else {
+          newChatBubble.id = "chat-message-recipient";
+        }
+        chatContainer.insertBefore(newChatBubble, chatContainer.children[0]);
+        // chatBody.scrollTop += 50;
+        //chatBody.scrollBy(0, 100);
+        //console.log("CS--------------------", chatBody.scrollTop);
+        console.log("Cheight  ----- > ", chatBody.scrollHeight);
+        console.log(surplusMessages[j].message);
+      }
+      surplusMessages = [];
+      loadedTenMessages = false;
+      console.log("FINAL 10 MESSAGES POSTED BELOW");
       console.log(surplusMessages);
     }
   }
 }
 
-chatBody.addEventListener("scroll", Throttler(callb, 4000));
+chatBody.addEventListener("scroll", Throttler(displaySurplusMessages, 50));
