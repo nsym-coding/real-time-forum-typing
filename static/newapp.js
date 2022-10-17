@@ -34,6 +34,8 @@ let commentTextArea = document.getElementById("comment-input");
 // Get the button that opens the modal
 let btn = document.getElementById("myBtn");
 
+
+
 postButton.addEventListener("click", function () {
     createPostModal.style.display = "block";
 });

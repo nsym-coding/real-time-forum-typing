@@ -102,6 +102,11 @@ body {
   background: rgb(253, 253, 253);
   border-radius: 30px;
   overflow: scroll;
+
+}
+
+#onlineusers::-webkit-scrollbar{
+  display: none;
 }
 
 #new-post-btn {
@@ -283,7 +288,7 @@ body {
   font-size: small;
   color: var(--ourBlue);
   width: 20vw;
-  left: 4vw;
+  left: 2.5vw;
   position: relative;
 }
 
@@ -546,7 +551,7 @@ img {
 }
 
 #register-btn {
-  width: -webkit-fill-available;
+  width: 200px;
 }
 
 #registered-login-success {
@@ -571,4 +576,9 @@ img {
   color: red;
   margin-top: -1vh;
   font-size: 1.7vh;
+}
+
+
+#teamreg{
+  height: 24px;
 }
