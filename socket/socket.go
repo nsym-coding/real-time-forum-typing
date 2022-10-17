@@ -50,6 +50,7 @@ type Register struct {
 	FirstName string `json:"firstname"`
 	LastName  string `json:"lastname"`
 	Password  string `json:"password"`
+	Team      string `json:"teamreg"`
 	Tipo      string `json:"tipo"`
 }
 
@@ -389,7 +390,7 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Println("bcrypt err:", err)
 			}
-			users.RegisterUser(db, t.Register.Username, t.Register.Age, t.Gender, t.FirstName, t.LastName, hash, t.Email)
+			users.RegisterUser(db, t.Register.Username, t.Register.Age, t.Gender, t.FirstName, t.LastName, hash, t.Email, t.Team)
 
 			// data gets marshalled and sent to client
 			u.SuccessfulRegistration = true

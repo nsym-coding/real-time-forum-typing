@@ -14,15 +14,15 @@ import (
 var LoggedInUsers = make(map[string]string)
 
 // this func registers a users username, email, firstname, lastname, password(unhashed) and age
-func RegisterUser(db *sql.DB, username string, age string, gender string, firstname string, lastname string, hash []byte, email string) {
+func RegisterUser(db *sql.DB, username string, age string, gender string, firstname string, lastname string, hash []byte, email string, team string) {
 	// db, _ := sql.Open("sqlite3", "real-time-forum.db")
-	stmt, err := db.Prepare("INSERT INTO users (username, age, gender, firstname, lastname, hash, email) VALUES (?, ?, ?, ?, ?, ?, ?)")
+	stmt, err := db.Prepare("INSERT INTO users (username, age, gender, firstname, lastname, hash, email, team) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		fmt.Println("error preparing statement:", err)
 		return
 	}
 	// defer stmt.Close()
-	result, _ := stmt.Exec(username, age, gender, firstname, lastname, hash, email)
+	result, _ := stmt.Exec(username, age, gender, firstname, lastname, hash, email, team)
 	// checking if the result has been added and the last inserted row
 	rowsAff, _ := result.RowsAffected()
 	lastIns, _ := result.LastInsertId()

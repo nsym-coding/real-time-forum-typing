@@ -26,7 +26,8 @@ func CreateDB() {
 		gender CHAR(50),
 		firstname CHAR(50), 
 		lastname CHAR(50), 
-		hash CHAR(50)
+		hash CHAR(50),
+		team CHAR(50)
 		);`)
 	fmt.Println("err1", err1)
 
