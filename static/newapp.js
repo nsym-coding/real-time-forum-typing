@@ -99,6 +99,21 @@ const colorSwitch = {
     chelsea: "blue",
     liverpool: "red",
     "man-city": "skyblue",
+    arsenal: "red",
+    "aston-villa":"lightgrey",
+    "afc-bournemouth":"red",
+    brentford:"red",
+    brighton:"blue",
+    "crystal-palace":"blue",
+    everton:"blue",
+    fulham:"lightgrey",
+    leeds:"lightgrey",
+    leicester:"lightgrey",
+    "nottingham-forest":"lightgrey",
+    "west-ham":"lightgrey",
+    southampton:"red",
+    wolverhampton:"lightgrey",
+
 };
 
 for (let i = 0; i < crestcolors.length; i++) {
