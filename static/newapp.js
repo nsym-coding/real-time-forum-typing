@@ -168,6 +168,7 @@ const loginValidation = (data) => {
       let data = JSON.parse(e.data);
       // console.log("data when a post is clicked", data);
       if (data.tipo === "post") {
+        console.log({ data });
         DisplayPosts(data);
       }
 
@@ -242,6 +243,16 @@ submitPostButton.addEventListener("click", function (e) {
 
   // message sent to server
   ws.send(JSON.stringify(objData));
+  ws.onmessage = (e) => {
+    let data = JSON.parse(e.data);
+    // console.log("data when a post is clicked", data);
+    if (data.tipo === "post") {
+      console.log({ data });
+      DisplayPosts(data);
+    }
+  };
+  // if (data.tipo === "post") {
+  // }
 
   for (let i = 0; i < crests.length; i++) {
     crests[i].alt = "none";
@@ -384,8 +395,9 @@ const DisplayPosts = (data) => {
   postTitle.innerText = data.title;
   // postContent.innerText = data.postcontent;
   postTitle.style.borderBottom = "0.2vh solid black";
-  postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime
-    }, Comments: ${1 + 13} ${data.categories}`;
+  postFooter.innerText = `Created by ${data.username},   Date: ${
+    data.posttime
+  }, Comments: ${1 + 13} ${data.categories}`;
   postDivs.appendChild(postTitle);
   //postDivs.appendChild(postContent);
   postDivs.appendChild(postFooter);
@@ -406,9 +418,7 @@ const DisplayPosts = (data) => {
     ws.send(JSON.stringify(getCommentsForPosts));
 
     let displayPostTitle = document.querySelector(".display-post-title");
-    let displayPostContent = document.querySelector(
-      ".display-post-content"
-    );
+    let displayPostContent = document.querySelector(".display-post-content");
     let postUsername = document.querySelector(".post-username");
     let postDate = document.querySelector(".post-date");
     displayPostTitle.innerText = data.title;
@@ -523,6 +533,8 @@ commentArrow.addEventListener("click", function () {
 //   return masterCrestList;
 // };
 
+let areUsersPopulated = false;
+
 const populateUsers = (users) => {
   onlineUsers.innerHTML = "";
 
@@ -552,13 +564,24 @@ const populateUsers = (users) => {
     userDetails.appendChild(imageDiv);
     onlineUsers.appendChild(userDetails);
   }
+
+  loadInitialTenMessages();
+};
+
+// if (areUsersPopulated) {
+
+//     let userRg = document.getElementsByClassName("registered-user");
+//     console.log(userRg);
+// }
+// Get the <span> element that closes the modal
+let span = document.getElementsByClassName("close");
+let surplusMessages = [];
+let loadedTenMessages = false;
+
+// When the user clicks the button, open the modal
+
+function loadInitialTenMessages() {
   let userRg = document.getElementsByClassName("registered-user");
-
-  // Get the <span> element that closes the modal
-  let span = document.getElementsByClassName("close");
-
-  // When the user clicks the button, open the modal
-
   for (let i = 0; i < userRg.length; i++) {
     userRg[i].onclick = function () {
       chatContainer.innerHTML = "";
@@ -574,8 +597,23 @@ const populateUsers = (users) => {
         console.log("on message check");
         console.log(data.tipo);
         if (data.tipo == "messagehistoryfromgo") {
-          console.log("MESSAGE HISTORY FROM GO----------", data);
-          for (let i = 0; i < data.chathistory.length; i++) {
+          let loopfrom;
+
+          if (data.chathistory.length >= 10) {
+            loopfrom = data.chathistory.length - 10;
+
+            surplusMessages = data.chathistory.slice(
+              0,
+              data.chathistory.length - 10
+            );
+            // console.log('preslice', data.chathistory);
+            // console.log('surplus', surplusMessages);
+            loadedTenMessages = true;
+          } else {
+            loopfrom = 0;
+          }
+
+          for (let i = loopfrom; i < data.chathistory.length; i++) {
             let newChatBubble = document.createElement("div");
             newChatBubble.innerText = data.chathistory[i].message;
             if (data.chathistory[i].chatsender == loggedInUser) {
@@ -610,4 +648,74 @@ const populateUsers = (users) => {
       modal[i].style.display = "none";
     };
   }
-};
+}
+
+function Throttler(fn = () => {}, wait) {
+  var time = Date.now();
+  return function () {
+    if (time + wait - Date.now() < 0) {
+      fn();
+      time = Date.now();
+    }
+  };
+}
+
+function displaySurplusMessages() {
+  console.log("domrect", chatBody.getBoundingClientRect().y);
+  if (loadedTenMessages && chatBody.scrollTop < 100) {
+    chatBody.scrollBy(0, 90);
+    if (surplusMessages.length > 10) {
+      console.log("CS--------------------", chatBody.scrollTop);
+
+      for (
+        let i = surplusMessages.length - 1;
+        i > surplusMessages.length - 10;
+        i--
+      ) {
+        let newChatBubble = document.createElement("div");
+        newChatBubble.innerText = surplusMessages[i].message;
+        if (surplusMessages[i].chatsender == loggedInUser) {
+          newChatBubble.id = "chat-message-sender";
+        } else {
+          newChatBubble.id = "chat-message-recipient";
+        }
+        chatContainer.insertBefore(newChatBubble, chatContainer.children[0]);
+        // chatBody.scrollTop += 50;
+        //chatBody.scrollBy(0, 100);
+        //console.log("CS--------------------", chatBody.scrollTop);
+        console.log(surplusMessages[i].message);
+        console.log(surplusMessages.length);
+      }
+
+      console.log(
+        "10+ messages left",
+        surplusMessages.slice(0, surplusMessages.length - 10)
+      );
+
+      surplusMessages = surplusMessages.slice(0, surplusMessages.length - 10);
+    } else {
+      //chatBody.scrollTop += 50;
+      for (let j = surplusMessages.length - 1; j >= 0; j--) {
+        let newChatBubble = document.createElement("div");
+        newChatBubble.innerText = surplusMessages[j].message;
+        if (surplusMessages[j].chatsender == loggedInUser) {
+          newChatBubble.id = "chat-message-sender";
+        } else {
+          newChatBubble.id = "chat-message-recipient";
+        }
+        chatContainer.insertBefore(newChatBubble, chatContainer.children[0]);
+        // chatBody.scrollTop += 50;
+        //chatBody.scrollBy(0, 100);
+        //console.log("CS--------------------", chatBody.scrollTop);
+        console.log("Cheight  ----- > ", chatBody.scrollHeight);
+        console.log(surplusMessages[j].message);
+      }
+      surplusMessages = [];
+      loadedTenMessages = false;
+      console.log("FINAL 10 MESSAGES POSTED BELOW");
+      console.log(surplusMessages);
+    }
+  }
+}
+
+chatBody.addEventListener("scroll", Throttler(displaySurplusMessages, 50));
