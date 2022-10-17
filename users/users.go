@@ -13,6 +13,11 @@ import (
 
 var LoggedInUsers = make(map[string]string)
 
+type AllUsers struct {
+	Username string `json:"user"`
+	Team     string `json:"team"`
+}
+
 // this func registers a users username, email, firstname, lastname, password(unhashed) and age
 func RegisterUser(db *sql.DB, username string, age string, gender string, firstname string, lastname string, hash []byte, email string, team string) {
 	// db, _ := sql.Open("sqlite3", "real-time-forum.db")
@@ -106,36 +111,41 @@ func GetUserID(db *sql.DB, username string) int {
 	error := rowU.Scan(&uIDs)
 	if error != sql.ErrNoRows {
 		fmt.Println("username already exists, err:", error)
-		//intUID, _ := strconv.Atoi(uIDs)
+		// intUID, _ := strconv.Atoi(uIDs)
 		return uIDs
 	}
 	return 0
 }
 
-//get all Users from DB for chat
-func GetAllUsers(db *sql.DB) []string {
+// get all Users from DB for chat
+func GetAllUsers(db *sql.DB) []AllUsers {
+	var usernameBadges []AllUsers
 
-	rows, err := db.Query(`SELECT username
+	rows, err := db.Query(`SELECT username, team
     FROM users`)
 	if err != nil {
 		fmt.Println("Error with GetAllUsers func")
 	}
 
-	var allUSers []string
+	var allUsers AllUsers
 
 	defer rows.Close()
 
 	for rows.Next() {
 		var user string
+		var team string
 
-		err2 := rows.Scan(&user)
+		err2 := rows.Scan(&user, &team)
 
-		allUSers = append(allUSers, user)
+		allUsers.Username = user
+		allUsers.Team = team
+
+		usernameBadges = append(usernameBadges, allUsers)
+
 		if err2 != nil {
-			fmt.Println("Error appending users GetAllUsers()")
+			fmt.Println("Error appending users GetAllUsers()", err2)
 		}
 	}
 
-	return allUSers
-
+	return usernameBadges
 }

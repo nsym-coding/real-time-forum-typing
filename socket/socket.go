@@ -67,30 +67,30 @@ type Logout struct {
 }
 
 type formValidation struct {
-	UsernameLength         bool     `json:"usernameLength"`
-	UsernameSpace          bool     `json:"usernameSpace"`
-	UsernameDuplicate      bool     `json:"usernameDuplicate"`
-	EmailDuplicate         bool     `json:"emailDuplicate"`
-	PasswordLength         bool     `json:"passwordLength"`
-	AgeEmpty               bool     `json:"ageEmpty"`
-	FirstNameEmpty         bool     `json:"firstnameEmpty"`
-	LastNameEmpty          bool     `json:"lastnameEmpty"`
-	EmailInvalid           bool     `json:"emailInvalid"`
-	SuccessfulRegistration bool     `json:"successfulRegistration"`
-	AllUserAfterNewReg     []string `json:"allUserAfterNewReg"`
-	OnlineUsers            []string `json:"onlineUsers"`
+	UsernameLength         bool             `json:"usernameLength"`
+	UsernameSpace          bool             `json:"usernameSpace"`
+	UsernameDuplicate      bool             `json:"usernameDuplicate"`
+	EmailDuplicate         bool             `json:"emailDuplicate"`
+	PasswordLength         bool             `json:"passwordLength"`
+	AgeEmpty               bool             `json:"ageEmpty"`
+	FirstNameEmpty         bool             `json:"firstnameEmpty"`
+	LastNameEmpty          bool             `json:"lastnameEmpty"`
+	EmailInvalid           bool             `json:"emailInvalid"`
+	SuccessfulRegistration bool             `json:"successfulRegistration"`
+	AllUserAfterNewReg     []users.AllUsers `json:"allUserAfterNewReg"`
+	OnlineUsers            []string         `json:"onlineUsers"`
 
 	Tipo string `json:"tipo"`
 }
 type loginValidation struct {
-	InvalidUsername    bool          `json:"invalidUsername"`
-	InvalidPassword    bool          `json:"invalidPassword"`
-	SuccessfulLogin    bool          `json:"successfulLogin"`
-	SuccessfulUsername string        `json:"successfulusername"`
-	Tipo               string        `json:"tipo"`
-	SentPosts          []posts.Posts `json:"dbposts"`
-	AllUsers           []string      `json:"allUsers"`
-	OnlineUsers        []string      `json:"onlineUsers"`
+	InvalidUsername    bool             `json:"invalidUsername"`
+	InvalidPassword    bool             `json:"invalidPassword"`
+	SuccessfulLogin    bool             `json:"successfulLogin"`
+	SuccessfulUsername string           `json:"successfulusername"`
+	Tipo               string           `json:"tipo"`
+	SentPosts          []posts.Posts    `json:"dbposts"`
+	AllUsers           []users.AllUsers `json:"allUsers"`
+	OnlineUsers        []string         `json:"onlineUsers"`
 }
 
 var (
