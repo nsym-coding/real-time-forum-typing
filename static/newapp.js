@@ -71,27 +71,16 @@ sendArrow.addEventListener("click", function () {
     chatTextArea.value = "";
 });
 
-const teamCrests = [
-    "/css/img/newcastle.png",
-    "/css/img/chelsea.png",
-    "/css/img/man-u.png",
-    "/css/img/man-city.png",
-    "/css/img/liverpool.png",
-    "/css/img/spurs.png",
-];
-
+const crestSelection = document.querySelector("select").options;
 const categorySelection = document.getElementById("category-selection");
 
-for (let i = 0; i < teamCrests.length; i++) {
+for (let crest of crestSelection) {
     let img = document.createElement("img");
     img.style.backgroundColor = "white";
     img.alt = "none";
-    img.id = teamCrests[i].slice(
-        teamCrests[i].lastIndexOf("/") + 1,
-        teamCrests[i].length - 4
-    );
+    img.id = crest.value;
     img.classList = "crest-colors";
-    img.src = teamCrests[i];
+    img.src = `/css/img/${crest.value}.png`;
     categorySelection.append(img);
 }
 
@@ -175,14 +164,8 @@ const loginValidation = (data) => {
             if (data.tipo === "onlineUsers") {
                 onlineUsersFromGo = data.onlineUsers;
                 console.log("DATA---------", data);
-                let usersToDisplay = [];
 
-                for (const name of data.allUsers) {
-                    if (name.user != loggedInUser) {
-                        usersToDisplay.push(name.user);
-                    }
-                }
-                populateUsers(usersToDisplay);
+                populateUsers(data);
 
                 console.log("first OUFG", onlineUsersFromGo);
             }
@@ -548,35 +531,39 @@ let areUsersPopulated = false;
 
 const populateUsers = (users) => {
     onlineUsers.innerHTML = "";
-    console.log("USERS OBJECT--------------", users);
+    console.log("USERS OBJECT--------------", users.allUsers);
 
     console.log("online from Go", onlineUsersFromGo);
-    for (let i = 0; i < users.length; i++) {
-        userDetails = document.createElement("div");
-        let username = document.createElement("div");
-        imageDiv = document.createElement("div");
-        img = document.createElement("img");
-        let onlineIcon = document.createElement("div");
+    for (let usersWithBadge of users.allUsers) {
+        if (usersWithBadge.user != loggedInUser) {
+            console.log("usersWithBadge-----user-------", usersWithBadge.user);
+            console.log("usersWithBadge------team------", usersWithBadge.team);
 
-        img.src = "/css/img/brighton.png";
-        img.style.width = "2vw";
-        imageDiv.appendChild(onlineIcon);
-        userDetails.id = `${users[i]}`;
+            userDetails = document.createElement("div");
+            let username = document.createElement("div");
+            imageDiv = document.createElement("div");
+            img = document.createElement("img");
+            let onlineIcon = document.createElement("div");
 
-        userDetails.className = "registered-user";
+            img.src = `/css/img/${usersWithBadge.team}.png`;
+            img.style.width = "2vw";
+            imageDiv.appendChild(onlineIcon);
+            userDetails.id = `${usersWithBadge.user}`;
 
-        if (onlineUsersFromGo.includes(users[i])) {
-            onlineIcon.className = "online-icon-class";
-        } else {
-            onlineIcon.className = "offline-icon-class";
+            userDetails.className = "registered-user";
+
+            if (onlineUsersFromGo.includes(usersWithBadge.user)) {
+                onlineIcon.className = "online-icon-class";
+            } else {
+                onlineIcon.className = "offline-icon-class";
+            }
+            username.innerText = `${usersWithBadge.user}`;
+            imageDiv.append(img);
+            userDetails.appendChild(username);
+            userDetails.appendChild(imageDiv);
+            onlineUsers.appendChild(userDetails);
         }
-        username.innerText = `${users[i]}`;
-        imageDiv.append(img);
-        userDetails.appendChild(username);
-        userDetails.appendChild(imageDiv);
-        onlineUsers.appendChild(userDetails);
     }
-
     loadInitialTenMessages();
 };
 
