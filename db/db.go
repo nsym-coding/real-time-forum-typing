@@ -66,8 +66,8 @@ func CreateDB() {
 
 	_, err6 := db.Exec(`create table if not exists notifications(
 		notificationID integer PRIMARY KEY AUTOINCREMENT, 
-	    sender text REFERENCES users(username), 
-		recipient text REFERENCES users(username),
+	    sender text REFERENCES messages(sender), 
+		recipient text REFERENCES messages(recipient),
 		notifications integer);`)
 	fmt.Println("err6", err6)
 
