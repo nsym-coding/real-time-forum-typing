@@ -11,6 +11,8 @@ type Notification struct {
 	NotificationRecipient string `json:"notificationrecipient"`
 	NotificationCount     int    `json:"notificationcount"`
 	Tipo                  string `json:"tipo"`
+	Type               string `json:"clientspecificnotifications"`
+
 }
 
 func CheckNotification(db *sql.DB, sender, recipient string) bool {

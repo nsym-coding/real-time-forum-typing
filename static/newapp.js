@@ -152,10 +152,7 @@ loginReturn.addEventListener("click", (e) => {
 
 const loginValidation = (data) => {
   if (data.successfulLogin) {
-    console.log(
-      "NOTIFICATIONS------------------------------",
-      data.notifications
-    );
+    console.log("NOTIFICATIONS------------------------------", data.clientnotifications);
     loggedInUser = data.successfulusername;
     homepageUsername.innerText = loggedInUser;
     loginModal.style.display = "none";
@@ -173,11 +170,21 @@ const loginValidation = (data) => {
 
     ws.onmessage = (e) => {
       let data = JSON.parse(e.data);
-      // console.log("data when a post is clicked", data);
+      console.log("data when a post is clicked---->", data);
+
+      if (data.tipo === "clientnotifications") {
+        console.log("---------------------------------------------------------------->>>>>>");
+        console.log(data);
+
+        console.log("<<<<<<<----------------------------------------------------------------");
+      }
+
       if (data.tipo === "post") {
         console.log({ data });
         DisplayPosts(data);
       }
+
+      // if(data.)
 
       if (data.tipo === "onlineUsers") {
         onlineUsersFromGo = data.onlineUsers;
@@ -262,9 +269,7 @@ submitPostButton.addEventListener("click", function (e) {
   }
 });
 
-let successfulRegistrationMessage = document.getElementById(
-  "registered-login-success"
-);
+let successfulRegistrationMessage = document.getElementById("registered-login-success");
 
 let registrationErrors = document.querySelectorAll(".registration-errors");
 
@@ -399,9 +404,7 @@ const DisplayPosts = (data) => {
   postTitle.innerText = data.title;
   // postContent.innerText = data.postcontent;
   postTitle.style.borderBottom = "0.2vh solid black";
-  postFooter.innerText = `Created by ${data.username},   Date: ${
-    data.posttime
-  }, Comments: ${1 + 13}`;
+  postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime}, Comments: ${1 + 13}`;
   let badgesDiv = document.createElement("div");
   badgesDiv.style.marginLeft = "0.5vh";
   //   ${data.categories}
@@ -592,11 +595,7 @@ const getNotifications = (users) => {
   for (const notice of users.notifications) {
     console.log("notice check --> ", notice);
     for (const user of userRg) {
-      if (
-        notice.notificationsender === user.id &&
-        notice.notificationcount > 0 &&
-        notice.notificationrecipient === loggedInUser
-      ) {
+      if (notice.notificationsender === user.id && notice.notificationcount > 0 && notice.notificationrecipient === loggedInUser) {
         console.log("checking user in func ==> ", user.id);
         user.innerHTML += notice.notificationcount;
       }
@@ -640,10 +639,7 @@ function loadInitialTenMessages() {
           if (data.chathistory.length >= 10) {
             loopfrom = data.chathistory.length - 10;
 
-            surplusMessages = data.chathistory.slice(
-              0,
-              data.chathistory.length - 10
-            );
+            surplusMessages = data.chathistory.slice(0, data.chathistory.length - 10);
             // console.log('preslice', data.chathistory);
             // console.log('surplus', surplusMessages);
             loadedTenMessages = true;
@@ -705,11 +701,7 @@ function displaySurplusMessages() {
     if (surplusMessages.length > 10) {
       console.log("CS--------------------", chatBody.scrollTop);
 
-      for (
-        let i = surplusMessages.length - 1;
-        i > surplusMessages.length - 10;
-        i--
-      ) {
+      for (let i = surplusMessages.length - 1; i > surplusMessages.length - 10; i--) {
         let newChatBubble = document.createElement("div");
         newChatBubble.innerText = surplusMessages[i].message;
         if (surplusMessages[i].chatsender == loggedInUser) {
@@ -725,10 +717,7 @@ function displaySurplusMessages() {
         console.log(surplusMessages.length);
       }
 
-      console.log(
-        "10+ messages left",
-        surplusMessages.slice(0, surplusMessages.length - 10)
-      );
+      console.log("10+ messages left", surplusMessages.slice(0, surplusMessages.length - 10));
 
       surplusMessages = surplusMessages.slice(0, surplusMessages.length - 10);
     } else {

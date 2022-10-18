@@ -166,6 +166,22 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	}
 
 	loggedInUsers[currentUser] = wsConn
+
+	//sending client specific notifications on each unique login
+	for name, connection := range loggedInUsers {
+		var data = notification.NotificationQuery(db, name)
+		for _, value := range data {
+			if name == value.NotificationRecipient {
+				value.Tipo = "clientnotifications"
+
+				//toSend, _ := json.Marshal(value)
+				connection.WriteJSON(value)
+
+			}
+
+		}
+
+	}
 	fmt.Println("LOGGED IN USERS", loggedInUsers)
 
 	online.Tipo = "onlineUsers"
