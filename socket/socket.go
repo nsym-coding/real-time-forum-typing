@@ -12,6 +12,7 @@ import (
 
 	"real-time-forum/chat"
 	"real-time-forum/comments"
+	notification "real-time-forum/notifications"
 	"real-time-forum/posts"
 	"real-time-forum/users"
 
@@ -79,18 +80,18 @@ type formValidation struct {
 	SuccessfulRegistration bool             `json:"successfulRegistration"`
 	AllUserAfterNewReg     []users.AllUsers `json:"allUserAfterNewReg"`
 	OnlineUsers            []string         `json:"onlineUsers"`
-
-	Tipo string `json:"tipo"`
+	Tipo                   string           `json:"tipo"`
 }
 type loginValidation struct {
-	InvalidUsername    bool             `json:"invalidUsername"`
-	InvalidPassword    bool             `json:"invalidPassword"`
-	SuccessfulLogin    bool             `json:"successfulLogin"`
-	SuccessfulUsername string           `json:"successfulusername"`
-	Tipo               string           `json:"tipo"`
-	SentPosts          []posts.Posts    `json:"dbposts"`
-	AllUsers           []users.AllUsers `json:"allUsers"`
-	OnlineUsers        []string         `json:"onlineUsers"`
+	InvalidUsername    bool                        `json:"invalidUsername"`
+	InvalidPassword    bool                        `json:"invalidPassword"`
+	SuccessfulLogin    bool                        `json:"successfulLogin"`
+	SuccessfulUsername string                      `json:"successfulusername"`
+	Tipo               string                      `json:"tipo"`
+	SentPosts          []posts.Posts               `json:"dbposts"`
+	AllUsers           []users.AllUsers            `json:"allUsers"`
+	OnlineUsers        []string                    `json:"onlineUsers"`
+	Notifications      []notification.Notification `json:"notifications"`
 }
 
 var (
@@ -248,6 +249,13 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("THIS IS THE CHAT ID", chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID)
 			// then store messages using chat id
 			chat.StoreMessages(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID, f.Chat.ChatMessage, f.Chat.ChatSender, f.Chat.ChatRecipient)
+
+			if !notification.CheckNotification(db, f.Chat.ChatSender, f.Chat.ChatRecipient) {
+				notification.AddFirstNotificationForUser(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
+			} else {
+				notification.IncrementNotifications(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
+			}
+
 			fmt.Println("THIS IS CHAT HISTORY --> ", chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))
 			fmt.Println("From JS-->", f.Chat.ChatMessage, f.Chat.ChatSender)
 			for user, connection := range loggedInUsers {
@@ -257,6 +265,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		} else if f.Type == "requestChatHistory" {
+			notification.RemoveNotifications(db, f.Chat.ChatRecipient, f.Chat.ChatSender)
 			fmt.Println("sender and recipient-------", f.Chat.ChatSender, f.Chat.ChatRecipient)
 			if chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).Exists {
 				fmt.Println("THIS IS CHAT HISTORY --> ", chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))
@@ -429,7 +438,7 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 
 				loginData.SentPosts = posts.SendPostsInDatabase(db)
 				loginData.AllUsers = users.GetAllUsers(db)
-
+				loginData.Notifications = notification.NotificationQuery(db, t.Login.LoginUsername)
 				currentUser = t.Login.LoginUsername
 				loginData.SuccessfulLogin = true
 				loginData.SuccessfulUsername = currentUser
