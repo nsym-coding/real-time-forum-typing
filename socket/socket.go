@@ -174,7 +174,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		online.OnlineUsers = append(online.OnlineUsers, k)
 	}
 	online.AllUsers = users.GetAllUsers(db)
-
+	online.Notifications = notification.NotificationQuery(db, currentUser)
 	broadcastOnlineUsers <- online
 
 	// wsConn.WriteJSON(online)
