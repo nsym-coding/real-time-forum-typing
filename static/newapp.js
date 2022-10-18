@@ -173,10 +173,19 @@ const loginValidation = (data) => {
       console.log("data when a post is clicked---->", data);
 
       if (data.tipo === "clientnotifications") {
-        console.log("---------------------------------------------------------------->>>>>>");
-        console.log(data);
+        console.log('HELLLLLLLLLLLLLLLLLLLLLO');
+        console.log(document.getElementsByClassName("registered-user"));
+        console.log('HELLLLLLLLLLLLLLLLLLLLLO');
 
+
+        for (const item of document.getElementsByClassName("registered-user")) {
+          console.log('---------hdhdhdgdgd-----', item);
+          
+        }
         console.log("<<<<<<<----------------------------------------------------------------");
+        getNotifications(data);
+        console.log("---------------------------------------------------------------->>>>>>");
+        // console.log(data);
       }
 
       if (data.tipo === "post") {
@@ -191,7 +200,6 @@ const loginValidation = (data) => {
         console.log("DATA---------", data);
 
         populateUsers(data);
-        getNotifications(data);
 
         console.log("first OUFG", onlineUsersFromGo);
       }
@@ -591,16 +599,20 @@ const populateUsers = (users) => {
 
 const getNotifications = (users) => {
   let userRg = document.getElementsByClassName("registered-user");
-  console.log("checking u notifications inside func -- >", users.notifications);
-  for (const notice of users.notifications) {
-    console.log("notice check --> ", notice);
-    for (const user of userRg) {
-      if (notice.notificationsender === user.id && notice.notificationcount > 0 && notice.notificationrecipient === loggedInUser) {
-        console.log("checking user in func ==> ", user.id);
-        user.innerHTML += notice.notificationcount;
-      }
+  // console.log("checking u notifications inside func -- >", users.notifications);
+  // for (const member of users.notifications) {
+  //   console.log("member check --> ", member);
+  for (const member of userRg) {
+    // for (let i = 0; i < userRg.length; i++) {
+    console.log("member id----------->", member.id);
+    console.log("---------", users.notificationsender);
+    console.log(typeof users.notificationcount);
+    if (member.id == users.notificationsender && users.notificationcount > 0) {
+      // console.log("checking user in func ==> ", member.id);
+      member.innerHTML += users.notificationcount;
     }
   }
+  // }
   //users.allusers
   //users.notification
 };

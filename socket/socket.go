@@ -91,7 +91,7 @@ type loginValidation struct {
 	SentPosts          []posts.Posts               `json:"dbposts"`
 	AllUsers           []users.AllUsers            `json:"allUsers"`
 	OnlineUsers        []string                    `json:"onlineUsers"`
-	Notifications      []notification.Notification `json:"notifications"`
+	//Notifications      []notification.Notification `json:"notifications"`
 }
 
 var (
@@ -174,7 +174,6 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			if name == value.NotificationRecipient {
 				value.Tipo = "clientnotifications"
 
-				//toSend, _ := json.Marshal(value)
 				connection.WriteJSON(value)
 
 			}
@@ -190,7 +189,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		online.OnlineUsers = append(online.OnlineUsers, k)
 	}
 	online.AllUsers = users.GetAllUsers(db)
-	online.Notifications = notification.NotificationQuery(db, currentUser)
+	//online.Notifications = notification.NotificationQuery(db, currentUser)
 	broadcastOnlineUsers <- online
 
 	// wsConn.WriteJSON(online)
@@ -454,7 +453,7 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 
 				loginData.SentPosts = posts.SendPostsInDatabase(db)
 				loginData.AllUsers = users.GetAllUsers(db)
-				loginData.Notifications = notification.NotificationQuery(db, t.Login.LoginUsername)
+				//loginData.Notifications = notification.NotificationQuery(db, t.Login.LoginUsername)
 				currentUser = t.Login.LoginUsername
 				loginData.SuccessfulLogin = true
 				loginData.SuccessfulUsername = currentUser
