@@ -172,28 +172,10 @@ const loginValidation = (data) => {
       let data = JSON.parse(e.data);
       console.log("data when a post is clicked---->", data);
 
-      if (data.tipo === "clientnotifications") {
-        console.log('HELLLLLLLLLLLLLLLLLLLLLO');
-        console.log(document.getElementsByClassName("registered-user"));
-        console.log('HELLLLLLLLLLLLLLLLLLLLLO');
-
-
-        for (const item of document.getElementsByClassName("registered-user")) {
-          console.log('---------hdhdhdgdgd-----', item);
-          
-        }
-        console.log("<<<<<<<----------------------------------------------------------------");
-        getNotifications(data);
-        console.log("---------------------------------------------------------------->>>>>>");
-        // console.log(data);
-      }
-
       if (data.tipo === "post") {
         console.log({ data });
         DisplayPosts(data);
       }
-
-      // if(data.)
 
       if (data.tipo === "onlineUsers") {
         onlineUsersFromGo = data.onlineUsers;
@@ -203,6 +185,27 @@ const loginValidation = (data) => {
 
         console.log("first OUFG", onlineUsersFromGo);
       }
+
+      if (data.tipo === "clientnotifications") {
+        setTimeout(() => getNotifications(data), 100);
+
+        console.log("HELLLLLLLLLLLLLLLLLLLLLO");
+        // console.log(document.querySelectorAll(".registered-user")[0]);
+        console.log("HELLLLLLLLLLLLLLLLLLLLLO");
+
+        let userrg = document.querySelectorAll(".registered-user");
+        console.log("-----------------------", userrg);
+
+        for (let item of userrg) {
+          console.log("---------hdhdhdgdgd-----", item);
+        }
+        console.log("<<<<<<<----------------------------------------------------------------");
+        getNotifications(data);
+        console.log("---------------------------------------------------------------->>>>>>");
+        // console.log(data);
+      }
+
+      // if(data.)
 
       // if (data.tipo === "commentsfrompost") {
       //   console.log(data);
@@ -593,7 +596,6 @@ const populateUsers = (users) => {
       onlineUsers.appendChild(userDetails);
     }
   }
-
   loadInitialTenMessages();
 };
 
