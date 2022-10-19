@@ -152,7 +152,7 @@ loginReturn.addEventListener("click", (e) => {
 
 const loginValidation = (data) => {
   if (data.successfulLogin) {
-    console.log("NOTIFICATIONS------------------------------", data.clientnotifications);
+    //console.log("NOTIFICATIONS------------------------------", data.clientnotifications);
     loggedInUser = data.successfulusername;
     homepageUsername.innerText = loggedInUser;
     loginModal.style.display = "none";
@@ -187,9 +187,6 @@ const loginValidation = (data) => {
       }
 
       if (data.tipo === "clientnotifications") {
-
-       
-
 
         getNotifications(data);
       }
@@ -550,7 +547,7 @@ commentArrow.addEventListener("click", function () {
 let areUsersPopulated = false;
 
 const populateUsers = (users) => {
-  console.log("checking is users --->", users.notifications);
+  // console.log("checking is users --->", users.notifications);
   onlineUsers.innerHTML = "";
   console.log("USERS OBJECT--------------", users.allUsers);
 

@@ -187,7 +187,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			for _, value := range data {
 				if name == value.NotificationRecipient {
 					value.Tipo = "clientnotifications"
-	
+
 					connection.WriteJSON(value)
 	
 				}
