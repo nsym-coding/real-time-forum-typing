@@ -187,22 +187,11 @@ const loginValidation = (data) => {
       }
 
       if (data.tipo === "clientnotifications") {
-        setTimeout(() => getNotifications(data), 100);
 
-        console.log("HELLLLLLLLLLLLLLLLLLLLLO");
-        // console.log(document.querySelectorAll(".registered-user")[0]);
-        console.log("HELLLLLLLLLLLLLLLLLLLLLO");
+       
 
-        let userrg = document.querySelectorAll(".registered-user");
-        console.log("-----------------------", userrg);
 
-        for (let item of userrg) {
-          console.log("---------hdhdhdgdgd-----", item);
-        }
-        console.log("<<<<<<<----------------------------------------------------------------");
         getNotifications(data);
-        console.log("---------------------------------------------------------------->>>>>>");
-        // console.log(data);
       }
 
       // if(data.)
