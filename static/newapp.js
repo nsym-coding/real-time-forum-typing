@@ -188,6 +188,16 @@ const loginValidation = (data) => {
         getNotifications(data.notification);
       }
 
+
+      // live notification works until user div is clicked, then stops working
+
+      if (data.tipo === "live notifications") {
+        console.log("LIVE NOTIFICATIONS", data.notification);
+        let clickedNotificationDiv = document.getElementById(`${data.usertodelete}box`);
+        clickedNotificationDiv.remove();
+        getNotifications(data.notification)
+      }
+
       // if(data.)
 
       // if (data.tipo === "commentsfrompost") {
@@ -626,7 +636,6 @@ const getNotifications = (users) => {
 
         notificationDiv.classList.add("notifications");
         // console.log("checking user in func ==> ", member.id);
-        // notificationDiv.innerHTML = ""
         notificationDiv.innerHTML = user.notificationcount;
         member.appendChild(notificationDiv);
       }
@@ -724,7 +733,7 @@ function loadInitialTenMessages() {
   }
 }
 
-function Throttler(fn = () => {}, wait) {
+function Throttler(fn = () => { }, wait) {
   var time = Date.now();
   return function () {
     if (time + wait - Date.now() < 0) {
@@ -784,6 +793,7 @@ function displaySurplusMessages() {
     }
   }
 }
+
 
 chatBody.addEventListener("scroll", Throttler(displaySurplusMessages, 50));
 

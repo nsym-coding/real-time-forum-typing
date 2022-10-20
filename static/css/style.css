@@ -587,8 +587,8 @@ img {
 .notifications {
   background-color: var(--ourBlue);
   border-radius: 2vh;
-  height: 2vh;
-  width: 3vh;
+  height: 3vh;
+  width: 5vh;
   color: white;
-  padding-left: 2vh;
+  text-align: center;
 }

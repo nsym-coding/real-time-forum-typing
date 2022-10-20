@@ -267,11 +267,10 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			if !notification.CheckNotification(db, f.Chat.ChatSender, f.Chat.ChatRecipient) {
 				notification.AddFirstNotificationForUser(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
 
-				fmt.Println("*********1st****************WHO IS THIS??????******", notification.NotificationQuery(db, f.Chat.ChatRecipient))
+				// fmt.Println("*********1st****************WHO IS THIS??????******", notification.NotificationQuery(db, f.Chat.ChatRecipient))
 
 			} else {
 				notification.IncrementNotifications(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
-				fmt.Println("**********new***************WHO IS THIS??????******", notification.NotificationQuery(db, f.Chat.ChatRecipient))
 
 			}
 
@@ -282,7 +281,17 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 					f.Chat.Tipo = "lastMessage"
 					connection.WriteJSON(f.Chat)
 				}
+				//  check how many live notifications there are and send to recipient
+				if user == f.Chat.ChatRecipient {
+					var liveNotifications notificationsAtLogin
+					liveNotifications.Notifications = notification.NotificationQuery(db, f.Chat.ChatRecipient)
+					liveNotifications.Tipo = "live notifications"
+					liveNotifications.UserToDelete = f.Chat.ChatSender
+					fmt.Println("+=====+ Notifications", notification.NotificationQuery(db, f.Chat.ChatRecipient))
+					connection.WriteJSON(liveNotifications)
+				}
 			}
+
 		} else if f.Type == "requestChatHistory" {
 			if notification.RemoveNotifications(db, f.Chat.ChatRecipient, f.Chat.ChatSender) {
 				notifyAtLogin.Response = "Notification viewed and set to nil"
@@ -310,7 +319,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			// sending client specific notifications on each unique login
 
 			data := notification.NotificationQuery(db, f.whosNotifications.Username)
-			fmt.Println("notication ------- Data", data)
+			fmt.Println("notification ------- Data", data)
 			notifyAtLogin.Notifications = []notification.Notification{}
 			for _, value := range data {
 				if f.whosNotifications.Username == value.NotificationRecipient {
