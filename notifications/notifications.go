@@ -11,8 +11,7 @@ type Notification struct {
 	NotificationRecipient string `json:"notificationrecipient"`
 	NotificationCount     int    `json:"notificationcount"`
 	Tipo                  string `json:"tipo"`
-	Type               string `json:"clientspecificnotifications"`
-
+	Type                  string `json:"clientspecificnotifications"`
 }
 
 func CheckNotification(db *sql.DB, sender, recipient string) bool {
@@ -70,7 +69,7 @@ func RemoveNotifications(db *sql.DB, sender, recipient string) bool {
 }
 
 func NotificationQuery(db *sql.DB, recipient string) []Notification {
-	rows, err := db.Query(`SELECT sender, count FROM notifications WHERE recipient =?;`, recipient)
+	rows, err := db.Query(`SELECT sender, count FROM notifications WHERE recipient =? AND count > 0;`, recipient)
 	if err != nil {
 		fmt.Println("Error from CheckNotification fn()", err)
 	}

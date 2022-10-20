@@ -101,7 +101,7 @@ type whosNotifications struct {
 type notificationsAtLogin struct {
 	Notifications []notification.Notification `json:"notification"`
 	Response      string                      `json:"response"`
-	UserToDelete string     `json:"usertodelete"`
+	UserToDelete  string                      `json:"usertodelete"`
 	Tipo          string                      `json:"tipo"`
 }
 
@@ -190,7 +190,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		online.OnlineUsers = append(online.OnlineUsers, k)
 	}
 	online.AllUsers = users.GetAllUsers(db)
-	//online.Notifications = notification.NotificationQuery(db, currentUser)
+	// online.Notifications = notification.NotificationQuery(db, currentUser)
 	broadcastOnlineUsers <- online
 
 	var f T
@@ -266,8 +266,13 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 			if !notification.CheckNotification(db, f.Chat.ChatSender, f.Chat.ChatRecipient) {
 				notification.AddFirstNotificationForUser(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
+
+				fmt.Println("*********1st****************WHO IS THIS??????******", notification.NotificationQuery(db, f.Chat.ChatRecipient))
+
 			} else {
 				notification.IncrementNotifications(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
+				fmt.Println("**********new***************WHO IS THIS??????******", notification.NotificationQuery(db, f.Chat.ChatRecipient))
+
 			}
 
 			fmt.Println("THIS IS CHAT HISTORY --> ", chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))
@@ -291,7 +296,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 				wsConn.WriteJSON(chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))
 			}
 		} else if f.Type == "requestNotifications" {
-			//sending client specific notifications on each unique login
+			// sending client specific notifications on each unique login
 
 			// var data = notification.NotificationQuery(db, f.whosNotifications.Username)
 			// for _, value := range data {
@@ -302,14 +307,14 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 			// }
 
-			//sending client specific notifications on each unique login
+			// sending client specific notifications on each unique login
 
-			var data = notification.NotificationQuery(db, f.whosNotifications.Username)
+			data := notification.NotificationQuery(db, f.whosNotifications.Username)
 			fmt.Println("notication ------- Data", data)
 			notifyAtLogin.Notifications = []notification.Notification{}
 			for _, value := range data {
 				if f.whosNotifications.Username == value.NotificationRecipient {
-					//value.Tipo = "clientnotifications"
+					// value.Tipo = "clientnotifications"
 					notifyAtLogin.Notifications = append(notifyAtLogin.Notifications, value)
 					notifyAtLogin.Tipo = "clientnotifications"
 
@@ -485,7 +490,7 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 
 				loginData.SentPosts = posts.SendPostsInDatabase(db)
 				loginData.AllUsers = users.GetAllUsers(db)
-				//loginData.Notifications = notification.NotificationQuery(db, t.Login.LoginUsername)
+				// loginData.Notifications = notification.NotificationQuery(db, t.Login.LoginUsername)
 				currentUser = t.Login.LoginUsername
 				loginData.SuccessfulLogin = true
 				loginData.SuccessfulUsername = currentUser
