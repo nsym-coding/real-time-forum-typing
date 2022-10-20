@@ -105,7 +105,7 @@ body {
 
 }
 
-#onlineusers::-webkit-scrollbar{
+#onlineusers::-webkit-scrollbar {
   display: none;
 }
 
@@ -163,6 +163,7 @@ body {
   background-color: rgb(238, 49, 43);
   position: absolute;
 }
+
 .header {
   display: flex;
   justify-content: flex-end;
@@ -579,6 +580,15 @@ img {
 }
 
 
-#teamreg{
+#teamreg {
   height: 24px;
+}
+
+.notifications {
+  background-color: var(--ourBlue);
+  border-radius: 2vh;
+  height: 2vh;
+  width: 3vh;
+  color: white;
+  padding-left: 2vh;
 }

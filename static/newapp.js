@@ -187,8 +187,9 @@ const loginValidation = (data) => {
       }
 
       if (data.tipo === "clientnotifications") {
-
-        getNotifications(data);
+        console.log("HOW MANY TIMES IS THIS PRINTED")
+        console.log("notifications", data.notification);
+        getNotifications(data.notification);
       }
 
       // if(data.)
@@ -582,28 +583,63 @@ const populateUsers = (users) => {
       onlineUsers.appendChild(userDetails);
     }
   }
+  let requestNotifications = {}
+  requestNotifications.type = "requestNotifications"
+  requestNotifications.username = loggedInUser
+
+  ws.send(JSON.stringify(requestNotifications));
+
   loadInitialTenMessages();
 };
 
+// const getNotifications = (users) => {
+//   let userRg = document.getElementsByClassName("registered-user");
+//   // console.log("checking u notifications inside func -- >", users.notifications);
+//   // for (const member of users.notifications) {
+//   //   console.log("member check --> ", member);
+//   for (const member of userRg) {
+//     // for (let i = 0; i < userRg.length; i++) {
+//     console.log("member id----------->", member.id);
+//     console.log("---------", users.notificationsender);
+//     console.log(typeof users.notificationcount);
+//     if (member.id == users.notificationsender && users.notificationcount > 0) {
+//       // console.log("checking user in func ==> ", member.id);
+//       member.innerHTML += users.notificationcount;
+//     }
+//   }
+//   // }
+//   //users.allusers
+//   //users.notification
+// };
+
 const getNotifications = (users) => {
+
   let userRg = document.getElementsByClassName("registered-user");
   // console.log("checking u notifications inside func -- >", users.notifications);
   // for (const member of users.notifications) {
   //   console.log("member check --> ", member);
+  console.log("userrg.length----", userRg.length);
   for (const member of userRg) {
-    // for (let i = 0; i < userRg.length; i++) {
-    console.log("member id----------->", member.id);
-    console.log("---------", users.notificationsender);
-    console.log(typeof users.notificationcount);
-    if (member.id == users.notificationsender && users.notificationcount > 0) {
-      // console.log("checking user in func ==> ", member.id);
-      member.innerHTML += users.notificationcount;
+    for (const user of users) {
+      // for (let i = 0; i < userRg.length; i++) {
+      console.log("member id----------->", member.id);
+      console.log("---------", user.notificationsender);
+      console.log(typeof user.notificationcount);
+      if (member.id == user.notificationsender && user.notificationcount > 0) {
+        let notificationDiv = document.createElement("notificationsDiv")
+        notificationDiv.classList.add("notifications")
+        // console.log("checking user in func ==> ", member.id);
+        // notificationDiv.innerHTML = ""
+        notificationDiv.innerHTML = user.notificationcount
+        member.appendChild(notificationDiv)
+      }
     }
   }
   // }
   //users.allusers
   //users.notification
 };
+
 
 // if (areUsersPopulated) {
 
@@ -684,7 +720,7 @@ function loadInitialTenMessages() {
   }
 }
 
-function Throttler(fn = () => {}, wait) {
+function Throttler(fn = () => { }, wait) {
   var time = Date.now();
   return function () {
     if (time + wait - Date.now() < 0) {

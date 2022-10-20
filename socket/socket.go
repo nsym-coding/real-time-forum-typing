@@ -29,6 +29,7 @@ type T struct {
 	*Logout
 	*comments.CommentsFromPosts
 	*chat.Chat
+	*whosNotifications
 }
 
 type TypeChecker struct {
@@ -83,15 +84,24 @@ type formValidation struct {
 	Tipo                   string           `json:"tipo"`
 }
 type loginValidation struct {
-	InvalidUsername    bool                        `json:"invalidUsername"`
-	InvalidPassword    bool                        `json:"invalidPassword"`
-	SuccessfulLogin    bool                        `json:"successfulLogin"`
-	SuccessfulUsername string                      `json:"successfulusername"`
-	Tipo               string                      `json:"tipo"`
-	SentPosts          []posts.Posts               `json:"dbposts"`
-	AllUsers           []users.AllUsers            `json:"allUsers"`
-	OnlineUsers        []string                    `json:"onlineUsers"`
+	InvalidUsername    bool             `json:"invalidUsername"`
+	InvalidPassword    bool             `json:"invalidPassword"`
+	SuccessfulLogin    bool             `json:"successfulLogin"`
+	SuccessfulUsername string           `json:"successfulusername"`
+	Tipo               string           `json:"tipo"`
+	SentPosts          []posts.Posts    `json:"dbposts"`
+	AllUsers           []users.AllUsers `json:"allUsers"`
+	OnlineUsers        []string         `json:"onlineUsers"`
 	//Notifications      []notification.Notification `json:"notifications"`
+}
+
+type whosNotifications struct {
+	Username string
+}
+
+type notificationsAtLogin struct {
+	Notifications []notification.Notification `json:"notification"`
+	Tipo          string                      `json:"tipo"`
 }
 
 var (
@@ -104,6 +114,7 @@ var (
 	CallWS                   = false
 	online                   loginValidation
 	broadcastOnlineUsers     = make(chan loginValidation, 1)
+	notifyAtLogin            notificationsAtLogin
 )
 
 // unmarshall data based on type
@@ -138,6 +149,9 @@ func (t *T) UnmarshalForumData(data []byte) error {
 	case "requestChatHistory":
 		t.Chat = &chat.Chat{}
 		return json.Unmarshal(data, t.Chat)
+	case "requestNotifications":
+		t.whosNotifications = &whosNotifications{}
+		return json.Unmarshal(data, t.whosNotifications)
 
 	default:
 		return fmt.Errorf("unrecognized type value %q", t.Type)
@@ -167,7 +181,6 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	loggedInUsers[currentUser] = wsConn
 
-
 	fmt.Println("LOGGED IN USERS", loggedInUsers)
 
 	online.Tipo = "onlineUsers"
@@ -180,21 +193,6 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	broadcastOnlineUsers <- online
 
 	// wsConn.WriteJSON(online)
-
-		//sending client specific notifications on each unique login
-		for name, connection := range loggedInUsers {
-			var data = notification.NotificationQuery(db, name)
-			for _, value := range data {
-				if name == value.NotificationRecipient {
-					value.Tipo = "clientnotifications"
-
-					connection.WriteJSON(value)
-	
-				}
-	
-			}
-	
-		}
 
 	var f T
 	for {
@@ -288,6 +286,34 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 				fmt.Println("THIS IS CHAT HISTORY --> ", chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))
 				wsConn.WriteJSON(chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))
 			}
+		} else if f.Type == "requestNotifications" {
+			//sending client specific notifications on each unique login
+
+			// var data = notification.NotificationQuery(db, f.whosNotifications.Username)
+			// for _, value := range data {
+			// 	if f.whosNotifications.Username == value.NotificationRecipient {
+			// 		value.Tipo = "clientnotifications"
+			// 		loggedInUsers[f.whosNotifications.Username].WriteJSON(value)
+			// 	}
+
+			// }
+
+			//sending client specific notifications on each unique login
+
+			var data = notification.NotificationQuery(db, f.whosNotifications.Username)
+			fmt.Println("notication ------- Data", data)
+			notifyAtLogin.Notifications = []notification.Notification{}
+			for _, value := range data {
+				if f.whosNotifications.Username == value.NotificationRecipient {
+					//value.Tipo = "clientnotifications"
+					notifyAtLogin.Notifications = append(notifyAtLogin.Notifications, value)
+					notifyAtLogin.Tipo = "clientnotifications"
+
+				}
+			}
+			fmt.Println("notes---", notifyAtLogin.Notifications)
+			loggedInUsers[f.whosNotifications.Username].WriteJSON(notifyAtLogin)
+
 		}
 
 		log.Println("Checking what's in f ---> ", f.Chat)
