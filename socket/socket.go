@@ -92,7 +92,6 @@ type loginValidation struct {
 	SentPosts          []posts.Posts    `json:"dbposts"`
 	AllUsers           []users.AllUsers `json:"allUsers"`
 	OnlineUsers        []string         `json:"onlineUsers"`
-	//Notifications      []notification.Notification `json:"notifications"`
 }
 
 type whosNotifications struct {
@@ -101,11 +100,12 @@ type whosNotifications struct {
 
 type notificationsAtLogin struct {
 	Notifications []notification.Notification `json:"notification"`
+	Response      string                      `json:"response"`
+	UserToDelete string     `json:"usertodelete"`
 	Tipo          string                      `json:"tipo"`
 }
 
 var (
-	// clients                  = make(map[*websocket.Conn]bool)
 	loggedInUsers         = make(map[string]*websocket.Conn)
 	broadcastChannelPosts = make(chan posts.Posts, 1)
 
@@ -149,6 +149,7 @@ func (t *T) UnmarshalForumData(data []byte) error {
 	case "requestChatHistory":
 		t.Chat = &chat.Chat{}
 		return json.Unmarshal(data, t.Chat)
+
 	case "requestNotifications":
 		t.whosNotifications = &whosNotifications{}
 		return json.Unmarshal(data, t.whosNotifications)
@@ -191,8 +192,6 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	online.AllUsers = users.GetAllUsers(db)
 	//online.Notifications = notification.NotificationQuery(db, currentUser)
 	broadcastOnlineUsers <- online
-
-	// wsConn.WriteJSON(online)
 
 	var f T
 	for {
@@ -280,7 +279,12 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		} else if f.Type == "requestChatHistory" {
-			notification.RemoveNotifications(db, f.Chat.ChatRecipient, f.Chat.ChatSender)
+			if notification.RemoveNotifications(db, f.Chat.ChatRecipient, f.Chat.ChatSender) {
+				notifyAtLogin.Response = "Notification viewed and set to nil"
+				notifyAtLogin.UserToDelete = f.Chat.ChatRecipient
+				loggedInUsers[f.Chat.ChatSender].WriteJSON(notifyAtLogin)
+			}
+
 			fmt.Println("sender and recipient-------", f.Chat.ChatSender, f.Chat.ChatRecipient)
 			if chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).Exists {
 				fmt.Println("THIS IS CHAT HISTORY --> ", chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))

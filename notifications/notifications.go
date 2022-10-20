@@ -61,11 +61,12 @@ func IncrementNotifications(db *sql.DB, sender, recipient string) {
 	}
 }
 
-func RemoveNotifications(db *sql.DB, sender, recipient string) {
+func RemoveNotifications(db *sql.DB, sender, recipient string) bool {
 	if _, err := db.Exec("UPDATE notifications SET count = 0 WHERE sender = ? AND recipient = ?;", sender, recipient); err != nil {
 		fmt.Println("error removing notification to DB")
-		return
+		return false
 	}
+	return true
 }
 
 func NotificationQuery(db *sql.DB, recipient string) []Notification {

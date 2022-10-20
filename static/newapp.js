@@ -173,13 +173,11 @@ const loginValidation = (data) => {
       console.log("data when a post is clicked---->", data);
 
       if (data.tipo === "post") {
-        console.log({ data });
         DisplayPosts(data);
       }
 
       if (data.tipo === "onlineUsers") {
         onlineUsersFromGo = data.onlineUsers;
-        console.log("DATA---------", data);
 
         populateUsers(data);
 
@@ -187,8 +185,6 @@ const loginValidation = (data) => {
       }
 
       if (data.tipo === "clientnotifications") {
-        console.log("HOW MANY TIMES IS THIS PRINTED")
-        console.log("notifications", data.notification);
         getNotifications(data.notification);
       }
 
@@ -583,9 +579,9 @@ const populateUsers = (users) => {
       onlineUsers.appendChild(userDetails);
     }
   }
-  let requestNotifications = {}
-  requestNotifications.type = "requestNotifications"
-  requestNotifications.username = loggedInUser
+  let requestNotifications = {};
+  requestNotifications.type = "requestNotifications";
+  requestNotifications.username = loggedInUser;
 
   ws.send(JSON.stringify(requestNotifications));
 
@@ -613,7 +609,6 @@ const populateUsers = (users) => {
 // };
 
 const getNotifications = (users) => {
-
   let userRg = document.getElementsByClassName("registered-user");
   // console.log("checking u notifications inside func -- >", users.notifications);
   // for (const member of users.notifications) {
@@ -626,12 +621,14 @@ const getNotifications = (users) => {
       console.log("---------", user.notificationsender);
       console.log(typeof user.notificationcount);
       if (member.id == user.notificationsender && user.notificationcount > 0) {
-        let notificationDiv = document.createElement("notificationsDiv")
-        notificationDiv.classList.add("notifications")
+        let notificationDiv = document.createElement("notificationsDiv");
+        notificationDiv.id = user.notificationsender + "box";
+
+        notificationDiv.classList.add("notifications");
         // console.log("checking user in func ==> ", member.id);
         // notificationDiv.innerHTML = ""
-        notificationDiv.innerHTML = user.notificationcount
-        member.appendChild(notificationDiv)
+        notificationDiv.innerHTML = user.notificationcount;
+        member.appendChild(notificationDiv);
       }
     }
   }
@@ -639,7 +636,6 @@ const getNotifications = (users) => {
   //users.allusers
   //users.notification
 };
-
 
 // if (areUsersPopulated) {
 
@@ -669,6 +665,14 @@ function loadInitialTenMessages() {
         let data = JSON.parse(e.data);
         console.log("on message check");
         console.log(data.tipo);
+
+        if (data.response === "Notification viewed and set to nil") {
+          let clickedNotificationDiv = document.getElementById(`${data.usertodelete}box`);
+          clickedNotificationDiv.remove();
+
+          console.log("-----DB RESET------", data);
+        }
+
         if (data.tipo == "messagehistoryfromgo") {
           let loopfrom;
 
@@ -720,7 +724,7 @@ function loadInitialTenMessages() {
   }
 }
 
-function Throttler(fn = () => { }, wait) {
+function Throttler(fn = () => {}, wait) {
   var time = Date.now();
   return function () {
     if (time + wait - Date.now() < 0) {
