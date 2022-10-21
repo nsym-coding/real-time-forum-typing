@@ -30,6 +30,7 @@ type T struct {
 	*comments.CommentsFromPosts
 	*chat.Chat
 	*whosNotifications
+	*deleteNotifications
 }
 
 type TypeChecker struct {
@@ -105,6 +106,11 @@ type notificationsAtLogin struct {
 	Tipo          string                      `json:"tipo"`
 }
 
+type deleteNotifications struct {
+	NotificationSender    string `json:"sender"`
+	NotificationRecipient string `json:"recipient"`
+}
+
 var (
 	loggedInUsers         = make(map[string]*websocket.Conn)
 	broadcastChannelPosts = make(chan posts.Posts, 1)
@@ -153,7 +159,9 @@ func (t *T) UnmarshalForumData(data []byte) error {
 	case "requestNotifications":
 		t.whosNotifications = &whosNotifications{}
 		return json.Unmarshal(data, t.whosNotifications)
-
+	case "deletenotification":
+		t.deleteNotifications = &deleteNotifications{}
+		return json.Unmarshal(data, t.deleteNotifications)
 	default:
 		return fmt.Errorf("unrecognized type value %q", t.Type)
 	}
@@ -336,6 +344,10 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("notes---", notifyAtLogin.Notifications)
 			loggedInUsers[f.whosNotifications.Username].WriteJSON(notifyAtLogin)
 
+		} else if f.Type == "deletenotification" {
+			fmt.Println("DELETE ALL NOTIFICATIONS")
+			notification.RemoveNotifications(db, f.deleteNotifications.NotificationSender, f.deleteNotifications.NotificationRecipient)
+			fmt.Println(notification.SingleNotification(db, f.deleteNotifications.NotificationSender, f.deleteNotifications.NotificationRecipient))
 		}
 
 		log.Println("Checking what's in f ---> ", f.Chat)

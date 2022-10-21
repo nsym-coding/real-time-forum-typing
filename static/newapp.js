@@ -760,7 +760,12 @@ function loadInitialTenMessages() {
             } else {
               console.log("NO DIVS TO REMOVE");
             }
+            let deleteNotifications = {}
+            deleteNotifications.type = "deletenotification"
+            deleteNotifications.sender = data.livenotification.notificationsender
+            deleteNotifications.recipient = data.livenotification.notificationrecipient
             getOneNotification(data.livenotification)
+            ws.send(JSON.stringify(deleteNotifications))
           }
         }
       };
@@ -880,14 +885,17 @@ function persistentListener() {
     }
     if (data.tipo === "lastMessage") {
       if (chatModal.style.display !== "block" && data.livenotification.notificationrecipient !== document.getElementById(`chat-recipient`).innerHTML || chatModal.style.display === "none") {
-
-        console.log("YOYOYOYOYOYOYOYOYOYOYOYOYOYOYO******OYOYOYOYOYOYOYOYOYOYOYOYOYO");
         let clickedNotificationDiv = document.getElementById(`${data.livenotification.notificationsender}box`);
         if (clickedNotificationDiv !== null) {
           clickedNotificationDiv.remove();
         } else {
           console.log("NO DIVS TO REMOVE");
         }
+        let deleteNotifications = {}
+        deleteNotifications.type = "deletenotification"
+        deleteNotifications.sender = data.livenotification.notificationsender
+        deleteNotifications.recipient = data.livenotification.notificationrecipient
+        ws.send(JSON.stringify(deleteNotifications))
         getOneNotification(data.livenotification)
       }
     }
