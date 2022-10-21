@@ -194,50 +194,50 @@ const loginValidation = (data) => {
       }
 
       //populateUsers(data.allUsers);
-      // persistentListener()
 
       console.log("connection established");
     };
-    ws.onmessage = (e) => {
-      let data = JSON.parse(e.data);
-      console.log("data when a post is clicked---->", data);
+    persistentListener()
+    // ws.onmessage = (e) => {
+    // let data = JSON.parse(e.data);
+    // console.log("data when a post is clicked---->", data);
 
-      if (data.tipo === "post") {
-        DisplayPosts(data);
-      }
+    // if (data.tipo === "post") {
+    //   DisplayPosts(data);
+    // }
 
-      if (data.tipo === "onlineUsers") {
-        onlineUsersFromGo = data.onlineUsers;
+    // if (data.tipo === "onlineUsers") {
+    //   onlineUsersFromGo = data.onlineUsers;
 
-        populateUsers(data);
+    //   populateUsers(data);
 
-        console.log("first OUFG", onlineUsersFromGo);
-      }
+    //   console.log("first OUFG", onlineUsersFromGo);
+    // }
 
-      if (data.tipo === "clientnotifications") {
-        getNotifications(data.notification);
-      }
+    // if (data.tipo === "clientnotifications") {
+    //   getNotifications(data.notification);
+    // }
 
 
-      // live notification works until user div is clicked, then stops working
+    // live notification works until user div is clicked, then stops working
 
-      // if (data.tipo === "live notifications") {
-      //   console.log("LIVE NOTIFICATIONS", data.notification);
+    // if (data.tipo === "live notifications") {
+    //   console.log("LIVE NOTIFICATIONS", data.notification);
 
-      //   console.log("MESSAGE SENDER", data.usertodelete);
-      //   let clickedNotificationDiv = document.getElementById(`${data.usertodelete}box`);
-      //   if (clickedNotificationDiv !== null) {
-      //     clickedNotificationDiv.remove();
-      //   }
-      //   getNotifications(data.notification)
-      // }
+    //   console.log("MESSAGE SENDER", data.usertodelete);
+    //   let clickedNotificationDiv = document.getElementById(`${data.usertodelete}box`);
+    //   if (clickedNotificationDiv !== null) {
+    //     clickedNotificationDiv.remove();
+    //   }
+    //   getNotifications(data.notification)
+    // }
 
-      // if(data.)
+    // if(data.)
 
-      // if (data.tipo === "commentsfrompost") {
-      //   console.log(data);
-      // }
-    };
+    // if (data.tipo === "commentsfrompost") {
+    //   console.log(data);
+    // }
+    // };
   } else {
     loginError.style.display = "block";
   }
@@ -752,18 +752,23 @@ function loadInitialTenMessages() {
           chatBody.scrollTo(0, chatBody.scrollHeight);
           console.log("NOTIFICATION DATA====>", data.livenotification);
 
-
-        }
-
-        if (data.tipo === "lastnotification") {
-          console.log("YOYOYOYOYOYOYOYOYOYOYOYOYOYOYO******OYOYOYOYOYOYOYOYOYOYOYOYOYO");
-          getOneNotification(data.livenotification)
+          if (chatModal.style.display !== "block" && data.livenotification.notificationrecipient !== document.getElementById(`chat-recipient`).innerHTML || chatModal.style.display === "none") {
+            console.log("YOYOYOYOYOYOYOYOYOYOYOYOYOYOYO******OYOYOYOYOYOYOYOYOYOYOYOYOYO");
+            let clickedNotificationDiv = document.getElementById(`${data.livenotification.notificationsender}box`);
+            if (clickedNotificationDiv !== null) {
+              clickedNotificationDiv.remove();
+            } else {
+              console.log("NO DIVS TO REMOVE");
+            }
+            getOneNotification(data.livenotification)
+          }
         }
       };
       console.log("Users clicked");
       chatModal.style.display = "block";
     };
   }
+
 
   // When the user clicks on <span> (x), close the modal
   for (let i = 0; i < span.length; i++) {
@@ -854,7 +859,38 @@ function addBadgesToPosts(data, div) {
 function persistentListener() {
   // for (; ;) {
   ws.onmessage = (e) => {
-    console.log("IS WEB SOCKET WORKING");
+    // console.log("IS WEB SOCKET WORKING");
+    let data = JSON.parse(e.data);
+    console.log("data when a post is clicked---->", data);
+
+    if (data.tipo === "post") {
+      DisplayPosts(data);
+    }
+
+    if (data.tipo === "onlineUsers") {
+      onlineUsersFromGo = data.onlineUsers;
+
+      populateUsers(data);
+
+      console.log("first OUFG", onlineUsersFromGo);
+    }
+
+    if (data.tipo === "clientnotifications") {
+      getNotifications(data.notification);
+    }
+    if (data.tipo === "lastMessage") {
+      if (chatModal.style.display !== "block" && data.livenotification.notificationrecipient !== document.getElementById(`chat-recipient`).innerHTML || chatModal.style.display === "none") {
+
+        console.log("YOYOYOYOYOYOYOYOYOYOYOYOYOYOYO******OYOYOYOYOYOYOYOYOYOYOYOYOYO");
+        let clickedNotificationDiv = document.getElementById(`${data.livenotification.notificationsender}box`);
+        if (clickedNotificationDiv !== null) {
+          clickedNotificationDiv.remove();
+        } else {
+          console.log("NO DIVS TO REMOVE");
+        }
+        getOneNotification(data.livenotification)
+      }
+    }
   }
-  // }
 }
+  // }

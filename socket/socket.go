@@ -279,7 +279,9 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			for user, connection := range loggedInUsers {
 				if user == f.Chat.ChatSender || user == f.Chat.ChatRecipient {
 					f.Chat.Tipo = "lastMessage"
-
+					// f.Chat.Tipo = "lastnotification"
+					fmt.Println("<============LAST NOTIFICATION ============>")
+					f.Chat.LastNotification = notification.SingleNotification(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
 					connection.WriteJSON(f.Chat)
 
 					fmt.Println("single notification test =========>", notification.SingleNotification(db, f.Chat.ChatSender, f.Chat.ChatRecipient))
@@ -289,14 +291,6 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 					// liveNotifications.UserToDelete = f.Chat.ChatSender
 					// fmt.Println("+=====+ Notifications", notification.NotificationQuery(db, f.Chat.ChatRecipient))
 					// connection.WriteJSON(liveNotifications)
-				}
-
-				if user == f.Chat.ChatRecipient {
-					f.Chat.Tipo = "lastnotification"
-					fmt.Println("<============LAST NOTIFICATION ============>")
-					f.Chat.LastNotification = notification.SingleNotification(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
-					connection.WriteJSON(f.Chat)
-
 				}
 				//  check how many live notifications there are and send to recipient
 
