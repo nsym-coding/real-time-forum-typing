@@ -69,7 +69,7 @@ func RemoveNotifications(db *sql.DB, sender, recipient string) bool {
 }
 
 func NotificationQuery(db *sql.DB, recipient string) []Notification {
-	rows, err := db.Query(`SELECT sender, count FROM notifications WHERE recipient =? AND count > 0;`, recipient)
+	rows, err := db.Query(`SELECT sender, count FROM notifications WHERE recipient =?;`, recipient)
 	if err != nil {
 		fmt.Println("Error from CheckNotification fn()", err)
 	}
@@ -88,4 +88,20 @@ func NotificationQuery(db *sql.DB, recipient string) []Notification {
 		}
 	}
 	return notificationData
+}
+
+func SingleNotification(db *sql.DB, sender, recipient string) Notification {
+	stmt := `SELECT count FROM notifications WHERE sender=? AND recipient =?;`
+	row := db.QueryRow(stmt, sender, recipient)
+
+	var n Notification
+
+	n.NotificatonSender = sender
+	n.NotificationRecipient = recipient
+	err := row.Scan(&n.NotificationCount)
+
+	if err != nil {
+		fmt.Println("error from singleNotification", err)
+	}
+	return n
 }

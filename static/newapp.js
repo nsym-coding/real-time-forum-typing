@@ -34,6 +34,28 @@ let commentTextArea = document.getElementById("comment-input");
 // Get the button that opens the modal
 let btn = document.getElementById("myBtn");
 
+
+let commentData = {};
+let clickedPostID;
+
+let signupSwitch = document.getElementById("sign-up-button");
+let loginBox = document.querySelector(".login-box");
+let registerBox = document.querySelector(".register-box");
+let loginReturn = document.querySelector("#login-return");
+let loginButton = document.getElementById("login-button");
+let forumBody = document.getElementById("forumbody");
+let loginModal = document.querySelector(".login-modal");
+let loginForm = document.getElementById("login-form");
+let loginError = document.getElementById("login-error");
+
+let sendArrow = document.getElementById("chat-arrow");
+let chatTextArea = document.getElementById("chat-input");
+let chatContainer = document.getElementById("chat-container");
+let chatBody = document.getElementById("chat-box-body");
+let displayPostBody = document.getElementById("display-post-body");
+let chatRecipient = document.getElementById("chat-recipient");
+let sender = true;
+
 postButton.addEventListener("click", function () {
   createPostModal.style.display = "block";
 });
@@ -49,13 +71,31 @@ window.onclick = function (event) {
   }
 };
 
-let sendArrow = document.getElementById("chat-arrow");
-let chatTextArea = document.getElementById("chat-input");
-let chatContainer = document.getElementById("chat-container");
-let chatBody = document.getElementById("chat-box-body");
-let displayPostBody = document.getElementById("display-post-body");
-let chatRecipient = document.getElementById("chat-recipient");
-let sender = true;
+
+
+
+loginButton.addEventListener("click", (e) => {
+  let loginData = new FormData(loginForm);
+  let loginFormToGo = Object.fromEntries(loginData);
+  loginFormToGo["type"] = "login";
+  console.log("---", loginFormToGo);
+
+  // fetch, send login data to backend server
+
+  fetch("http://localhost:8080/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(loginFormToGo),
+  })
+    .then((resp) => resp.json())
+    .then(function (data) {
+      if (data.tipo === "loginValidation") loginValidation(data);
+
+    });
+});
+
 
 sendArrow.addEventListener("click", function () {
   let chatData = {};
@@ -127,18 +167,7 @@ for (let i = 0; i < crestcolors.length; i++) {
   });
 }
 
-let commentData = {};
-let clickedPostID;
 
-let signupSwitch = document.getElementById("sign-up-button");
-let loginBox = document.querySelector(".login-box");
-let registerBox = document.querySelector(".register-box");
-let loginReturn = document.querySelector("#login-return");
-let loginButton = document.getElementById("login-button");
-let forumBody = document.getElementById("forumbody");
-let loginModal = document.querySelector(".login-modal");
-let loginForm = document.getElementById("login-form");
-let loginError = document.getElementById("login-error");
 
 signupSwitch.addEventListener("click", (e) => {
   loginBox.style.display = "none";
@@ -158,16 +187,17 @@ const loginValidation = (data) => {
     loginModal.style.display = "none";
     forumBody.style.display = "block";
     ws = new WebSocket("ws://localhost:8080/ws");
+
     ws.onopen = () => {
       for (let i = 0; i < data.dbposts.length; i++) {
         DisplayPosts(data.dbposts[i]);
       }
 
       //populateUsers(data.allUsers);
+      // persistentListener()
 
       console.log("connection established");
     };
-
     ws.onmessage = (e) => {
       let data = JSON.parse(e.data);
       console.log("data when a post is clicked---->", data);
@@ -191,12 +221,16 @@ const loginValidation = (data) => {
 
       // live notification works until user div is clicked, then stops working
 
-      if (data.tipo === "live notifications") {
-        console.log("LIVE NOTIFICATIONS", data.notification);
-        let clickedNotificationDiv = document.getElementById(`${data.usertodelete}box`);
-        clickedNotificationDiv.remove();
-        getNotifications(data.notification)
-      }
+      // if (data.tipo === "live notifications") {
+      //   console.log("LIVE NOTIFICATIONS", data.notification);
+
+      //   console.log("MESSAGE SENDER", data.usertodelete);
+      //   let clickedNotificationDiv = document.getElementById(`${data.usertodelete}box`);
+      //   if (clickedNotificationDiv !== null) {
+      //     clickedNotificationDiv.remove();
+      //   }
+      //   getNotifications(data.notification)
+      // }
 
       // if(data.)
 
@@ -218,26 +252,7 @@ const loginValidation = (data) => {
   // };
 };
 
-loginButton.addEventListener("click", (e) => {
-  let loginData = new FormData(loginForm);
-  let loginFormToGo = Object.fromEntries(loginData);
-  loginFormToGo["type"] = "login";
-  console.log("---", loginFormToGo);
 
-  // fetch, send login data to backend server
-
-  fetch("http://localhost:8080/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(loginFormToGo),
-  })
-    .then((resp) => resp.json())
-    .then(function (data) {
-      if (data.tipo === "loginValidation") loginValidation(data);
-    });
-});
 
 // dummy post info being sent to server
 let objData = {};
@@ -630,6 +645,7 @@ const getNotifications = (users) => {
       console.log("member id----------->", member.id);
       console.log("---------", user.notificationsender);
       console.log(typeof user.notificationcount);
+
       if (member.id == user.notificationsender && user.notificationcount > 0) {
         let notificationDiv = document.createElement("notificationsDiv");
         notificationDiv.id = user.notificationsender + "box";
@@ -641,10 +657,23 @@ const getNotifications = (users) => {
       }
     }
   }
+
   // }
   //users.allusers
   //users.notification
 };
+function getOneNotification(data) {
+  if (data.notificationrecipient === loggedInUser) {
+
+    let notifSenderDiv = document.getElementById(`${data.notificationsender}`)
+    console.log("Sanchos Div", notifSenderDiv);
+    let notificationDiv = document.createElement("notificationsDiv");
+    notificationDiv.id = data.notificationsender + "box";
+    notificationDiv.classList.add("notifications");
+    notificationDiv.innerHTML = data.notificationcount;
+    notifSenderDiv.appendChild(notificationDiv);
+  }
+}
 
 // if (areUsersPopulated) {
 
@@ -672,12 +701,15 @@ function loadInitialTenMessages() {
 
       ws.onmessage = (e) => {
         let data = JSON.parse(e.data);
-        console.log("on message check");
         console.log(data.tipo);
 
         if (data.response === "Notification viewed and set to nil") {
           let clickedNotificationDiv = document.getElementById(`${data.usertodelete}box`);
-          clickedNotificationDiv.remove();
+          if (clickedNotificationDiv !== null) {
+            clickedNotificationDiv.remove();
+          } else {
+            console.log("NO DIVS TO REMOVE");
+          }
 
           console.log("-----DB RESET------", data);
         }
@@ -718,6 +750,14 @@ function loadInitialTenMessages() {
           }
           chatContainer.appendChild(newChatBubble);
           chatBody.scrollTo(0, chatBody.scrollHeight);
+          console.log("NOTIFICATION DATA====>", data.livenotification);
+
+
+        }
+
+        if (data.tipo === "lastnotification") {
+          console.log("YOYOYOYOYOYOYOYOYOYOYOYOYOYOYO******OYOYOYOYOYOYOYOYOYOYOYOYOYO");
+          getOneNotification(data.livenotification)
         }
       };
       console.log("Users clicked");
@@ -808,4 +848,13 @@ function addBadgesToPosts(data, div) {
       div.innerHTML += `<img src="/css/img/${arrayOfBadges[i]}.png" style="width: 2vw;"></img>`;
     }
   }
+}
+
+
+function persistentListener() {
+  // for (; ;) {
+  ws.onmessage = (e) => {
+    console.log("IS WEB SOCKET WORKING");
+  }
+  // }
 }

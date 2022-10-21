@@ -4,14 +4,16 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	notification "real-time-forum/notifications"
 )
 
 type Chat struct {
-	ChatSender    string `json:"chatsender"`
-	ChatRecipient string `json:"chatrecipient"`
-	ChatMessage   string `json:"message"`
-	Date          string `json:"chatDate"`
-	Tipo          string `json:"tipo"`
+	ChatSender       string                    `json:"chatsender"`
+	ChatRecipient    string                    `json:"chatrecipient"`
+	ChatMessage      string                    `json:"message"`
+	Date             string                    `json:"chatDate"`
+	LastNotification notification.Notification `json:"livenotification"`
+	Tipo             string                    `json:"tipo"`
 }
 
 type ChatHistory struct {
