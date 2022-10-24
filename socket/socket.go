@@ -233,7 +233,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 			posts.StorePosts(db, f.Posts.Username, f.Posts.PostTitle, f.Posts.PostContent, f.Posts.Categories)
 			// posts.GetCommentData(db, 1)
-			fmt.Println("this is the post content       ", f.PostContent)
+			fmt.Println("this is the post title", f.PostContent)
 
 			// STORE POSTS IN DATABASE
 			broadcastChannelPosts <- posts.SendLastPostInDatabase(db)
