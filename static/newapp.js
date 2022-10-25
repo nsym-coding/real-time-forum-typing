@@ -62,8 +62,7 @@ postButton.addEventListener("click", function () {
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function (event) {
     for (let i = 0; i < modal.length; i++) {
-        // console.log("modal -> ", modal[i]);
-        // console.log("evt -> ", event.target);
+ 
         if (event.target == modal[i]) {
             modal[i].style.display = "none";
         }
@@ -74,7 +73,7 @@ loginButton.addEventListener("click", (e) => {
     let loginData = new FormData(loginForm);
     let loginFormToGo = Object.fromEntries(loginData);
     loginFormToGo["type"] = "login";
-    console.log("---", loginFormToGo);
+   
 
     // fetch, send login data to backend server
 
@@ -173,7 +172,6 @@ loginReturn.addEventListener("click", (e) => {
 
 const loginValidation = (data) => {
     if (data.successfulLogin) {
-        //console.log("NOTIFICATIONS------------------------------", data.clientnotifications);
         loggedInUser = data.successfulusername;
         homepageUsername.innerText = loggedInUser;
         loginModal.style.display = "none";
@@ -190,57 +188,11 @@ const loginValidation = (data) => {
             console.log("connection established");
         };
         persistentListener();
-        // ws.onmessage = (e) => {
-        // let data = JSON.parse(e.data);
-        // console.log("data when a post is clicked---->", data);
-
-        // if (data.tipo === "post") {
-        //   DisplayPosts(data);
-        // }
-
-        // if (data.tipo === "onlineUsers") {
-        //   onlineUsersFromGo = data.onlineUsers;
-
-        //   populateUsers(data);
-
-        //   console.log("first OUFG", onlineUsersFromGo);
-        // }
-
-        // if (data.tipo === "clientnotifications") {
-        //   getNotifications(data.notification);
-        // }
-
-        // live notification works until user div is clicked, then stops working
-
-        // if (data.tipo === "live notifications") {
-        //   console.log("LIVE NOTIFICATIONS", data.notification);
-
-        //   console.log("MESSAGE SENDER", data.usertodelete);
-        //   let clickedNotificationDiv = document.getElementById(`${data.usertodelete}box`);
-        //   if (clickedNotificationDiv !== null) {
-        //     clickedNotificationDiv.remove();
-        //   }
-        //   getNotifications(data.notification)
-        // }
-
-        // if(data.)
-
-        // if (data.tipo === "commentsfrompost") {
-        //   console.log(data);
-        // }
-        // };
+       
     } else {
         loginError.style.display = "block";
     }
-    // ws.onclose = () => {
-    //   // window.location.reload();
-    //   console.log("ONCLOSE")
-    //   objData = {};
-    //   objData["type"] = "Logout";
-    //   objData["logoutUsername"] = loggedInUser;
-    //   console.log(objData["logoutUsername"]);
-    //   ws.send(JSON.stringify(objData));
-    // };
+
 };
 
 // dummy post info being sent to server
@@ -261,19 +213,7 @@ submitPostButton.addEventListener("click", function (e) {
     // message sent to server
     ws.send(JSON.stringify(objData));
     persistentListener()
-    // ws.onmessage = (e) => {
-    //     let data = JSON.parse(e.data);
-    //     // console.log("data when a post is clicked", data);
-    //     if (data.tipo === "post") {
-    //         console.log({ data });
-    //         DisplayPosts(data);
-    //         console.log(
-    //             "***************************** 1 - displayposts *****************************"
-    //         );
-    //     }
-    // };
-    // if (data.tipo === "post") {
-    // }
+    
 
     for (let i = 0; i < crests.length; i++) {
         crests[i].alt = "none";
@@ -295,16 +235,15 @@ let emailError = document.getElementById("email-error");
 let passwordError = document.getElementById("password-error");
 
 const registrationValidation = (data) => {
-    console.log("check data -> ", data);
+
     if (data.successfulRegistration) {
-        console.log("CHECKING LOOP");
+      
         registerBox.style.display = "none";
         loginBox.style.display = "block";
         signupSwitch.style.display = "none";
         successfulRegistrationMessage.style.display = "block";
     } else {
-        // switch case for errors, validated from back end.
-        // console.log(data.usernameLength);
+
 
         if (data.usernameLength || data.usernameSpace) {
             usernameError.innerText = "";
@@ -334,18 +273,18 @@ const registrationValidation = (data) => {
             passwordError.style.display = "block";
         }
         if (data.ageEmpty) {
-            console.log("age empty");
+       
 
             ageError.style.display = "block";
         }
 
         if (data.firstnameEmpty) {
-            console.log("first name empty");
+         
             firstnameError.style.display = "block";
         }
 
         if (data.lastnameEmpty) {
-            console.log("last name empty");
+  
 
             lastnameError.style.display = "block";
         }
@@ -362,7 +301,7 @@ registerBtn.addEventListener("click", function (e) {
     let signupData = new FormData(signUpForm);
     let signUpFormToGo = Object.fromEntries(signupData);
 
-    console.log("signup", signUpFormToGo);
+
     signUpFormToGo.type = "signup";
 
     fetch("http://localhost:8080/login", {
@@ -388,11 +327,11 @@ logoutButton.onclick = () => {
     objData = {};
     objData["type"] = "logout";
     objData["logoutUsername"] = loggedInUser;
-    console.log(objData["logoutUsername"]);
+
     ws.send(JSON.stringify(objData));
-    // ws.close()
+
     ws.onmessage = (e) => {
-        // let commentData = JSON.parse(e.data);
+
         let logoutData = JSON.parse(e.data);
         if (logoutData.logoutClicked) {
             ws.close();
@@ -406,13 +345,12 @@ const DisplayPosts = (data) => {
     let postTitle = document.createElement("div");
 
     postTitle.className = "post-title-class";
-    // let postContent = document.createElement("div");
 
-    //postContent.className = "post-content-class";
 
     let postFooter = document.createElement("div");
     postFooter.className = "post-footer";
     postDivs.className = "post-class ";
+
     // this will eventually hold the id given by go from the database (data.id)
     postDivs.id = data.postid;
     postTitle.innerText = data.title;
@@ -422,7 +360,7 @@ const DisplayPosts = (data) => {
         }, Comments: ${1 + 13}`;
     let badgesDiv = document.createElement("div");
     badgesDiv.style.marginLeft = "0.5vh";
-    //   ${data.categories}
+
     addBadgesToPosts(data.categories, badgesDiv);
     postFooter.style.display = "flex";
     postFooter.style.fontSize = "small";
@@ -431,7 +369,6 @@ const DisplayPosts = (data) => {
     postFooter.appendChild(badgesDiv);
 
     postDivs.appendChild(postTitle);
-    //postDivs.appendChild(postContent);
     postDivs.appendChild(postFooter);
 
     posts.appendChild(postDivs);
@@ -443,7 +380,7 @@ const DisplayPosts = (data) => {
         clickedPostID = postDivs.id;
         getCommentsForPosts["clickedPostID"] = clickedPostID;
         getCommentsForPosts["type"] = "getcommentsfrompost";
-        console.log("comments for posts object", getCommentsForPosts);
+        // console.log("comments for posts object", getCommentsForPosts);
         ws.send(JSON.stringify(getCommentsForPosts));
 
         let displayPostTitle = document.querySelector(".display-post-title");
@@ -462,34 +399,36 @@ const DisplayPosts = (data) => {
         // displayPostBody.scrollTo(0, displayPostBody.scrollHeight);
         commentContainer.innerHTML = "";
 
+        persistentListener()
+
         // data coming through for comments
-        ws.onmessage = (e) => {
-            let commentData = JSON.parse(e.data);
+        // ws.onmessage = (e) => {
+        //     let commentData = JSON.parse(e.data);
 
-            if (commentData.tipo == "allComments") {
-                console.log("ALL COMMENTS DISPLAYED");
-                for (let i = 0; i < commentData.comments.length; i++) {
-                    let commentDiv = document.createElement("div");
-                    commentDiv.style.marginBottom = "1vh";
-                    commentDiv.id = `comment${commentData.comments[i].commentId}`;
-                    commentDiv.innerText = `${commentData.comments[i].commentcontent} \n ${commentData.comments[i].user}, ${commentData.comments[i].commenttime}`;
-                    commentContainer.appendChild(commentDiv);
-                }
-            }
+        //     if (commentData.tipo == "allComments") {
+        //        console.log("ALL COMMENTS DISPLAYED");
+        //         for (let i = 0; i < commentData.comments.length; i++) {
+        //             let commentDiv = document.createElement("div");
+        //             commentDiv.style.marginBottom = "1vh";
+        //             commentDiv.id = `comment${commentData.comments[i].commentId}`;
+        //             commentDiv.innerText = `${commentData.comments[i].commentcontent} \n ${commentData.comments[i].user}, ${commentData.comments[i].commenttime}`;
+        //             commentContainer.appendChild(commentDiv);
+        //         }
+        //     }
 
-            if (commentData.tipo == "lastComment") {
-                console.log("This is the last coment", commentData);
-                let commentDiv = document.createElement("div");
-                commentDiv.style.marginBottom = "1vh";
-                commentDiv.id = `comment${commentData.commentid}`;
-                commentDiv.innerText = `${commentData.commentcontent} \n ${commentData.user}, ${commentData.commenttime}`;
-                commentContainer.appendChild(commentDiv);
-            }
-            // console.log("is this comment data?", commentData);
-        };
+        //     if (commentData.tipo == "lastComment") {
+        //         console.log("This is the last coment", commentData);
+        //         let commentDiv = document.createElement("div");
+        //         commentDiv.style.marginBottom = "1vh";
+        //         commentDiv.id = `comment${commentData.commentid}`;
+        //         commentDiv.innerText = `${commentData.commentcontent} \n ${commentData.user}, ${commentData.commenttime}`;
+        //         commentContainer.appendChild(commentDiv);
+        //     }
+        //     // console.log("is this comment data?", commentData);
+        // };
 
-        console.log("commentdata---", commentData);
-        console.log(commentData.type);
+        // console.log("commentdata---", commentData);
+        // console.log(commentData.type);
 
         // commentData.forEach((comment) => {
 
@@ -517,52 +456,8 @@ commentArrow.addEventListener("click", function () {
 
     ws.send(JSON.stringify(commentData));
     commentTextArea.value = "";
-    //
-    // ws.onmessage = (e) => {
-    //     let lastComment = JSON.parse(e.data);
-    //     console.log("This is the last coment", lastComment);
-    //     if (lastComment.tipo === "lastcomment") {
-    //         let commentDiv = document.createElement("div");
-    //         commentDiv.style.marginBottom = "1vh";
-    //         commentDiv.id = `comment${lastComment.commentId}`;
-    //         commentDiv.innerText = `${lastComment.commentcontent} \n ${lastComment.user}, ${lastComment.commenttime}`;
-    //         commentContainer.appendChild(commentDiv);
-    //     }
-    //     // console.log("is this comment data?", commentData);
-    // };
+
 });
-
-// const colouredCategories = (data) => {
-//   console.log("cat before split -> ", data);
-
-//   let crestArr = data.split(",");
-//   console.log("cat after split --> ", crestArr);
-
-//   let masterCrestList = document.createElement("div");
-//   for (let i = 0; i < crestArr.length; i++) {
-//     //let crestList = document.createElement("p");
-//     let clubName = document.createTextNode(`${crestArr[i]}`);
-
-//     // crestList.insertAdjacentText("afterend", `#${crestArr[i]}`);
-//     //clubName.style.color = `${colorSwitch[crestArr[i]]}`;
-//     console.log("crest list before append --> ", clubName);
-//     masterCrestList.append(clubName);
-//   }
-//   return masterCrestList;
-// };
-
-// const getSelectedTeams = () => {
-//   let masterCrestList = document.createElement("p");
-//   for (let i = 0; i < crests.length; i++) {
-//     let crestList = document.createElement("p");
-//     if (crests[i].alt !== "none") {
-//       crestList.innerText += `#${crests[i].id},`;
-//       crestList.style.color = `${crests[i].alt}`;
-//       masterCrestList.append(crestList[i]);
-//     }
-//   }
-//   return masterCrestList;x
-// };
 
 let areUsersPopulated = false;
 
@@ -611,25 +506,6 @@ const populateUsers = (users) => {
     loadInitialTenMessages();
 };
 
-// const getNotifications = (users) => {
-//   let userRg = document.getElementsByClassName("registered-user");
-//   // console.log("checking u notifications inside func -- >", users.notifications);
-//   // for (const member of users.notifications) {
-//   //   console.log("member check --> ", member);
-//   for (const member of userRg) {
-//     // for (let i = 0; i < userRg.length; i++) {
-//     console.log("member id----------->", member.id);
-//     console.log("---------", users.notificationsender);
-//     console.log(typeof users.notificationcount);
-//     if (member.id == users.notificationsender && users.notificationcount > 0) {
-//       // console.log("checking user in func ==> ", member.id);
-//       member.innerHTML += users.notificationcount;
-//     }
-//   }
-//   // }
-//   //users.allusers
-//   //users.notification
-// };
 
 const getNotifications = (users) => {
     let userRg = document.getElementsByClassName("registered-user");
@@ -660,9 +536,7 @@ const getNotifications = (users) => {
         }
     }
 
-    // }
-    //users.allusers
-    //users.notification
+  
 };
 function getOneNotification(data) {
     if (data.notificationrecipient === loggedInUser) {
@@ -678,12 +552,6 @@ function getOneNotification(data) {
     }
 }
 
-// if (areUsersPopulated) {
-
-//     let userRg = document.getElementsByClassName("registered-user");
-//     console.log(userRg);
-// }
-// Get the <span> element that closes the modal
 let span = document.getElementsByClassName("close");
 let surplusMessages = [];
 let loadedTenMessages = false;
@@ -702,80 +570,6 @@ function loadInitialTenMessages() {
             requestChatData["type"] = "requestChatHistory";
             ws.send(JSON.stringify(requestChatData));
 
-            // ws.onmessage = (e) => {
-            //     let data = JSON.parse(e.data);
-            //     console.log(data.tipo);
-
-            // if (data.response === "Notification viewed and set to nil") {
-            //     let clickedNotificationDiv = document.getElementById(
-            //         `${data.usertodelete}box`
-            //     );
-            //     if (clickedNotificationDiv !== null) {
-            //         clickedNotificationDiv.remove();
-            //     } else {
-            //         console.log("NO DIVS TO REMOVE");
-            //     }
-
-            //     console.log("-----DB RESET------", data);
-            // }
-
-            // if (data.tipo == "messagehistoryfromgo") {
-            //     let loopfrom;
-
-            //     if (data.chathistory.length >= 10) {
-            //         loopfrom = data.chathistory.length - 10;
-
-            //         surplusMessages = data.chathistory.slice(
-            //             0,
-            //             data.chathistory.length - 10
-            //         );
-            //         // console.log('preslice', data.chathistory);
-            //         // console.log('surplus', surplusMessages);
-            //         loadedTenMessages = true;
-            //     } else {
-            //         loopfrom = 0;
-            //     }
-
-            //     for (let i = loopfrom; i < data.chathistory.length; i++) {
-            //         let newChatBubble = document.createElement("div");
-            //         newChatBubble.innerText = data.chathistory[i].message;
-            //         if (data.chathistory[i].chatsender == loggedInUser) {
-            //             newChatBubble.id = "chat-message-sender";
-            //         } else {
-            //             newChatBubble.id = "chat-message-recipient";
-            //         }
-            //         chatContainer.appendChild(newChatBubble);
-            //         chatBody.scrollTo(0, chatBody.scrollHeight);
-            //     }
-            // }
-            //if (data.tipo == "lastMessage") {
-            //   let newChatBubble = document.createElement("div");
-            //   newChatBubble.innerText = data.message;
-            //   if (data.chatsender == loggedInUser) {
-            //     newChatBubble.id = "chat-message-sender";
-            //   } else {
-            //     newChatBubble.id = "chat-message-recipient";
-            //   }
-            //   chatContainer.appendChild(newChatBubble);
-            //   chatBody.scrollTo(0, chatBody.scrollHeight);
-            //   console.log("NOTIFICATION DATA====>", data.livenotification);
-            //   if (chatModal.style.display !== "block" && data.livenotification.notificationrecipient !== document.getElementById(`chat-recipient`).innerHTML || chatModal.style.display === "none") {
-            //     console.log("YOYOYOYOYOYOYOYOYOYOYOYOYOYOYO******OYOYOYOYOYOYOYOYOYOYOYOYOYO");
-            //     let clickedNotificationDiv = document.getElementById(`${data.livenotification.notificationsender}box`);
-            //     if (clickedNotificationDiv !== null) {
-            //       clickedNotificationDiv.remove();
-            //     } else {
-            //       console.log("NO DIVS TO REMOVE");
-            //     }
-            //     let deleteNotifications = {}
-            //     deleteNotifications.type = "deletenotification"
-            //     deleteNotifications.sender = data.livenotification.notificationsender
-            //     deleteNotifications.recipient = data.livenotification.notificationrecipient
-            //     getOneNotification(data.livenotification)
-            //     ws.send(JSON.stringify(deleteNotifications))
-            //   }
-            //}
-            //};
             persistentListener();
             console.log("Users clicked");
             chatModal.style.display = "block";
@@ -823,9 +617,7 @@ function displaySurplusMessages() {
                     newChatBubble,
                     chatContainer.children[0]
                 );
-                // chatBody.scrollTop += 50;
-                //chatBody.scrollBy(0, 100);
-                //console.log("CS--------------------", chatBody.scrollTop);
+               
                 console.log(surplusMessages[i].message);
                 console.log(surplusMessages.length);
             }
@@ -887,7 +679,26 @@ function persistentListener() {
     ws.onmessage = (e) => {
         // console.log("IS WEB SOCKET WORKING");
         let data = JSON.parse(e.data);
-        console.log("data when a post is clicked---->", data);
+
+        if (data.tipo == "allComments") {
+          console.log("ALL COMMENTS DISPLAYED");
+           for (let i = 0; i < data.comments.length; i++) {
+               let commentDiv = document.createElement("div");
+               commentDiv.style.marginBottom = "1vh";
+               commentDiv.id = `comment${data.comments[i].commentId}`;
+               commentDiv.innerText = `${data.comments[i].commentcontent} \n ${data.comments[i].user}, ${data.comments[i].commenttime}`;
+               commentContainer.appendChild(commentDiv);
+           }
+       }
+
+       if (data.tipo == "lastComment") {
+           console.log("This is the last coment", data);
+           let commentDiv = document.createElement("div");
+           commentDiv.style.marginBottom = "1vh";
+           commentDiv.id = `comment${data.commentid}`;
+           commentDiv.innerText = `${data.commentcontent} \n ${data.user}, ${data.commenttime}`;
+           commentContainer.appendChild(commentDiv);
+       }
 
 
         if (data.response === "Notification viewed and set to nil") {
@@ -913,8 +724,7 @@ function persistentListener() {
                     0,
                     data.chathistory.length - 10
                 );
-                // console.log('preslice', data.chathistory);
-                // console.log('surplus', surplusMessages);
+               
                 loadedTenMessages = true;
             } else {
                 loopfrom = 0;
@@ -932,22 +742,6 @@ function persistentListener() {
                 chatBody.scrollTo(0, chatBody.scrollHeight);
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         if (data.tipo === "post") {
