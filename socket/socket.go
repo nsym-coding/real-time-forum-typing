@@ -328,7 +328,6 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 			// }
 
-			
 			// sending client specific notifications on each unique login
 			data := notification.NotificationQuery(db, f.whosNotifications.Username)
 			fmt.Println("notification ------- Data", data)
@@ -347,7 +346,6 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		} else if f.Type == "deletenotification" {
 			fmt.Println("DELETE ALL NOTIFICATIONS")
 			notification.RemoveNotifications(db, f.deleteNotifications.NotificationSender, f.deleteNotifications.NotificationRecipient)
-			fmt.Println(notification.SingleNotification(db, f.deleteNotifications.NotificationSender, f.deleteNotifications.NotificationRecipient))
 		}
 
 		log.Println("Checking what's in f ---> ", f.Chat)
