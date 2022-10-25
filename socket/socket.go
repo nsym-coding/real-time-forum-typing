@@ -328,8 +328,8 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 			// }
 
+			
 			// sending client specific notifications on each unique login
-
 			data := notification.NotificationQuery(db, f.whosNotifications.Username)
 			fmt.Println("notification ------- Data", data)
 			notifyAtLogin.Notifications = []notification.Notification{}
