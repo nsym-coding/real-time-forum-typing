@@ -93,6 +93,7 @@ type loginValidation struct {
 	SentPosts          []posts.Posts    `json:"dbposts"`
 	AllUsers           []users.AllUsers `json:"allUsers"`
 	OnlineUsers        []string         `json:"onlineUsers"`
+	UsersWithChat      []chat.Chat      `json:"userswithchat"`
 }
 
 type whosNotifications struct {
@@ -193,8 +194,14 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("LOGGED IN USERS", loggedInUsers)
 
 	online.Tipo = "onlineUsers"
+
 	online.OnlineUsers = []string{}
 	for k := range loggedInUsers {
+		if k == currentUser {
+			online.UsersWithChat = chat.GetLatestChat(db, chat.GetChat(db, k))
+			online.UsersWithChat = append(online.UsersWithChat, chat.Chat{ChatSender: "yonas"})
+
+		}
 		online.OnlineUsers = append(online.OnlineUsers, k)
 	}
 	online.AllUsers = users.GetAllUsers(db)
@@ -219,6 +226,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			online.Tipo = "onlineUsers"
 
 			for k := range loggedInUsers {
+
 				online.OnlineUsers = append(online.OnlineUsers, k)
 			}
 			broadcastOnlineUsers <- online
@@ -508,10 +516,11 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 
 			} else {
 
+				currentUser = t.Login.LoginUsername
 				loginData.SentPosts = posts.SendPostsInDatabase(db)
 				loginData.AllUsers = users.GetAllUsers(db)
+				loginData.UsersWithChat = chat.GetLatestChat(db, chat.GetChat(db, users.GetUserName(db, currentUser)))
 				// loginData.Notifications = notification.NotificationQuery(db, t.Login.LoginUsername)
-				currentUser = t.Login.LoginUsername
 				loginData.SuccessfulLogin = true
 				loginData.SuccessfulUsername = users.GetUserName(db, currentUser)
 				toSend, _ := json.Marshal(loginData)
