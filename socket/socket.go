@@ -276,10 +276,8 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 				notification.AddFirstNotificationForUser(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
 
 				// fmt.Println("*********1st****************WHO IS THIS??????******", notification.NotificationQuery(db, f.Chat.ChatRecipient))
-
 			} else {
 				notification.IncrementNotifications(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
-
 			}
 
 			fmt.Println("THIS IS CHAT HISTORY --> ", chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))
@@ -301,7 +299,6 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 					// connection.WriteJSON(liveNotifications)
 				}
 				//  check how many live notifications there are and send to recipient
-
 			}
 
 		} else if f.Type == "requestChatHistory" {
@@ -496,13 +493,13 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 
 		loginData.Tipo = "loginValidation"
 
-		if !users.UserExists(db, t.Login.LoginUsername) {
+		if !users.UserExists(db, t.Login.LoginUsername) && !users.EmailExists(db, t.Login.LoginUsername) {
 			fmt.Println("Checking f.login.loginusername --> ", t.Login.LoginUsername)
 			loginData.InvalidUsername = true
 			toSend, _ := json.Marshal(loginData)
 			w.Write(toSend)
 
-		} else if users.UserExists(db, t.Login.LoginUsername) {
+		} else if users.UserExists(db, t.Login.LoginUsername) || users.EmailExists(db, t.Login.LoginUsername) {
 			fmt.Println("user exists")
 			if !users.CorrectPassword(db, t.Login.LoginUsername, t.Login.LoginPassword) {
 				loginData.InvalidPassword = true
@@ -516,7 +513,7 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 				// loginData.Notifications = notification.NotificationQuery(db, t.Login.LoginUsername)
 				currentUser = t.Login.LoginUsername
 				loginData.SuccessfulLogin = true
-				loginData.SuccessfulUsername = currentUser
+				loginData.SuccessfulUsername = users.GetUserName(db, currentUser)
 				toSend, _ := json.Marshal(loginData)
 
 				w.Write(toSend)
