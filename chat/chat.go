@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+
 	notification "real-time-forum/notifications"
 )
 
@@ -11,6 +12,7 @@ type Chat struct {
 	ChatSender       string                    `json:"chatsender"`
 	ChatRecipient    string                    `json:"chatrecipient"`
 	ChatMessage      string                    `json:"message"`
+	MessageID        int                       `json:"messageID"`
 	Date             string                    `json:"chatDate"`
 	LastNotification notification.Notification `json:"livenotification"`
 	Tipo             string                    `json:"tipo"`
@@ -126,4 +128,42 @@ func GetAllMessageHistoryFromChat(db *sql.DB, chatID int) ChatHistory {
 		}
 	}
 	return messagedata
+}
+
+func GetChat(db *sql.DB, user string) []int {
+	// check if chat already exists
+	rows, err := db.Query("SELECT chatID FROM chats WHERE user1 = ? OR user2 = ?", user, user)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	var chatsID []int
+	defer rows.Close()
+	for rows.Next() {
+		var uIDs int
+		err2 := rows.Scan(&uIDs)
+		chatsID = append(chatsID, uIDs)
+		if err2 != nil {
+			fmt.Println("chatID doesn't exist-----------")
+		}
+	}
+	return chatsID
+}
+
+func GetLatestChat(db *sql.DB, chatID []int) []Chat {
+	var latestChat []Chat
+	for i := 0; i < len(chatID); i++ {
+
+		// check latest chat
+		userStmt := "SELECT sender, recipient, max(messageID) FROM messages WHERE chatID = ?;"
+		rowU := db.QueryRow(userStmt, chatID[i])
+
+		var c Chat
+		error := rowU.Scan(&c.ChatSender, &c.ChatRecipient, &c.MessageID)
+		if error != sql.ErrNoRows {
+			fmt.Println("username already exists, err:", error)
+			latestChat = append(latestChat, c)
+		}
+	}
+	return latestChat
 }

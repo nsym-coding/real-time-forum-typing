@@ -14,7 +14,6 @@ func CreateDB() {
 	var db *sql.DB
 	db, err := sql.Open("sqlite3", dbName)
 	if err != nil {
-
 		log.Fatal(err)
 	}
 
@@ -71,4 +70,5 @@ func CreateDB() {
 		count integer);`)
 	fmt.Println("err6", err6)
 
+	// fmt.Println(chat.GetLatestChat(db, []int{2, 5, 6}))
 }
