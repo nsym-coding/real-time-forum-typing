@@ -34,20 +34,18 @@ let commentTextArea = document.getElementById("comment-input");
 // Get the button that opens the modal
 let btn = document.getElementById("myBtn");
 
-postButton.addEventListener("click", function () {
-    createPostModal.style.display = "block";
-});
+let commentData = {};
+let clickedPostID;
 
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function (event) {
-    for (let i = 0; i < modal.length; i++) {
-        // console.log("modal -> ", modal[i]);
-        // console.log("evt -> ", event.target);
-        if (event.target == modal[i]) {
-            modal[i].style.display = "none";
-        }
-    }
-};
+let signupSwitch = document.getElementById("sign-up-button");
+let loginBox = document.querySelector(".login-box");
+let registerBox = document.querySelector(".register-box");
+let loginReturn = document.querySelector("#login-return");
+let loginButton = document.getElementById("login-button");
+let forumBody = document.getElementById("forumbody");
+let loginModal = document.querySelector(".login-modal");
+let loginForm = document.getElementById("login-form");
+let loginError = document.getElementById("login-error");
 
 let sendArrow = document.getElementById("chat-arrow");
 let chatTextArea = document.getElementById("chat-input");
@@ -56,6 +54,39 @@ let chatBody = document.getElementById("chat-box-body");
 let displayPostBody = document.getElementById("display-post-body");
 let chatRecipient = document.getElementById("chat-recipient");
 let sender = true;
+
+postButton.addEventListener("click", function () {
+    createPostModal.style.display = "block";
+});
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function (event) {
+    for (let i = 0; i < modal.length; i++) {
+        if (event.target == modal[i]) {
+            modal[i].style.display = "none";
+        }
+    }
+};
+
+loginButton.addEventListener("click", (e) => {
+    let loginData = new FormData(loginForm);
+    let loginFormToGo = Object.fromEntries(loginData);
+    loginFormToGo["type"] = "login";
+
+    // fetch, send login data to backend server
+
+    fetch("http://localhost:8080/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loginFormToGo),
+    })
+        .then((resp) => resp.json())
+        .then(function (data) {
+            if (data.tipo === "loginValidation") loginValidation(data);
+        });
+});
 
 sendArrow.addEventListener("click", function () {
     let chatData = {};
@@ -100,20 +131,19 @@ const colorSwitch = {
     liverpool: "red",
     "man-city": "skyblue",
     arsenal: "red",
-    "aston-villa":"lightgrey",
-    "afc-bournemouth":"red",
-    brentford:"red",
-    brighton:"blue",
-    "crystal-palace":"blue",
-    everton:"blue",
-    fulham:"lightgrey",
-    leeds:"lightgrey",
-    leicester:"lightgrey",
-    "nottingham-forest":"lightgrey",
-    "west-ham":"lightgrey",
-    southampton:"red",
-    wolverhampton:"lightgrey",
-
+    "aston-villa": "lightgrey",
+    "afc-bournemouth": "red",
+    brentford: "red",
+    brighton: "blue",
+    "crystal-palace": "blue",
+    everton: "blue",
+    fulham: "lightgrey",
+    leeds: "lightgrey",
+    leicester: "lightgrey",
+    "nottingham-forest": "lightgrey",
+    "west-ham": "lightgrey",
+    southampton: "red",
+    wolverhampton: "lightgrey",
 };
 
 for (let i = 0; i < crestcolors.length; i++) {
@@ -128,19 +158,6 @@ for (let i = 0; i < crestcolors.length; i++) {
     });
 }
 
-let commentData = {};
-let clickedPostID;
-
-let signupSwitch = document.getElementById("sign-up-button");
-let loginBox = document.querySelector(".login-box");
-let registerBox = document.querySelector(".register-box");
-let loginReturn = document.querySelector("#login-return");
-let loginButton = document.getElementById("login-button");
-let forumBody = document.getElementById("forumbody");
-let loginModal = document.querySelector(".login-modal");
-let loginForm = document.getElementById("login-form");
-let loginError = document.getElementById("login-error");
-
 signupSwitch.addEventListener("click", (e) => {
     loginBox.style.display = "none";
     registerBox.style.display = "block";
@@ -152,77 +169,37 @@ loginReturn.addEventListener("click", (e) => {
 });
 
 const loginValidation = (data) => {
+    console.log('Data from fetch', data);
+
     if (data.successfulLogin) {
         loggedInUser = data.successfulusername;
         homepageUsername.innerText = loggedInUser;
         loginModal.style.display = "none";
         forumBody.style.display = "block";
         ws = new WebSocket("ws://localhost:8080/ws");
-        ws.onopen = () => {
+
+        ws.onopen = (e) => {
             for (let i = 0; i < data.dbposts.length; i++) {
                 DisplayPosts(data.dbposts[i]);
             }
 
             //populateUsers(data.allUsers);
-
             console.log("connection established");
         };
 
-        ws.onmessage = (e) => {
-            let data = JSON.parse(e.data);
-            // console.log("data when a post is clicked", data);
-            if (data.tipo === "post") {
-                console.log({ data });
-                DisplayPosts(data);
-            }
+        // ws.onmessage = (e) => {
+        //     let data = JSON.parse(e.data)
+        //     if (data.tipo === "clientnotifications") {
+        //         console.log("NOTIFICATIONS ON LOGIN");
+        //         getNotifications(data.notification);
+        //     }
+        // }
 
-            if (data.tipo === "onlineUsers") {
-                onlineUsersFromGo = data.onlineUsers;
-                console.log("DATA---------", data);
-
-                populateUsers(data);
-
-                console.log("first OUFG", onlineUsersFromGo);
-            }
-
-            // if (data.tipo === "commentsfrompost") {
-            //   console.log(data);
-            // }
-        };
+        persistentListener();
     } else {
         loginError.style.display = "block";
     }
-    // ws.onclose = () => {
-    //   // window.location.reload();
-    //   console.log("ONCLOSE")
-    //   objData = {};
-    //   objData["type"] = "Logout";
-    //   objData["logoutUsername"] = loggedInUser;
-    //   console.log(objData["logoutUsername"]);
-    //   ws.send(JSON.stringify(objData));
-    // };
 };
-
-loginButton.addEventListener("click", (e) => {
-    let loginData = new FormData(loginForm);
-    let loginFormToGo = Object.fromEntries(loginData);
-    loginFormToGo["type"] = "login";
-    console.log("---", loginFormToGo);
-
-    // fetch, send login data to backend server
-
-    fetch("http://localhost:8080/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(loginFormToGo),
-    })
-        .then((resp) => resp.json())
-        .then(function (data) {
-            if (data.tipo === "loginValidation") loginValidation(data);
-        });
-});
 
 // dummy post info being sent to server
 let objData = {};
@@ -241,16 +218,7 @@ submitPostButton.addEventListener("click", function (e) {
 
     // message sent to server
     ws.send(JSON.stringify(objData));
-    ws.onmessage = (e) => {
-        let data = JSON.parse(e.data);
-        // console.log("data when a post is clicked", data);
-        if (data.tipo === "post") {
-            console.log({ data });
-            DisplayPosts(data);
-        }
-    };
-    // if (data.tipo === "post") {
-    // }
+    persistentListener();
 
     for (let i = 0; i < crests.length; i++) {
         crests[i].alt = "none";
@@ -258,9 +226,7 @@ submitPostButton.addEventListener("click", function (e) {
     }
 });
 
-let successfulRegistrationMessage = document.getElementById(
-    "registered-login-success"
-);
+let successfulRegistrationMessage = document.getElementById("registered-login-success");
 
 let registrationErrors = document.querySelectorAll(".registration-errors");
 
@@ -272,17 +238,12 @@ let emailError = document.getElementById("email-error");
 let passwordError = document.getElementById("password-error");
 
 const registrationValidation = (data) => {
-    console.log("check data -> ", data);
     if (data.successfulRegistration) {
-        console.log("CHECKING LOOP");
         registerBox.style.display = "none";
         loginBox.style.display = "block";
         signupSwitch.style.display = "none";
         successfulRegistrationMessage.style.display = "block";
     } else {
-        // switch case for errors, validated from back end.
-        // console.log(data.usernameLength);
-
         if (data.usernameLength || data.usernameSpace) {
             usernameError.innerText = "";
             usernameError.innerText = "min 5 characters, no spaces";
@@ -311,19 +272,14 @@ const registrationValidation = (data) => {
             passwordError.style.display = "block";
         }
         if (data.ageEmpty) {
-            console.log("age empty");
-
             ageError.style.display = "block";
         }
 
         if (data.firstnameEmpty) {
-            console.log("first name empty");
             firstnameError.style.display = "block";
         }
 
         if (data.lastnameEmpty) {
-            console.log("last name empty");
-
             lastnameError.style.display = "block";
         }
     }
@@ -339,7 +295,6 @@ registerBtn.addEventListener("click", function (e) {
     let signupData = new FormData(signUpForm);
     let signUpFormToGo = Object.fromEntries(signupData);
 
-    console.log("signup", signUpFormToGo);
     signUpFormToGo.type = "signup";
 
     fetch("http://localhost:8080/login", {
@@ -365,11 +320,10 @@ logoutButton.onclick = () => {
     objData = {};
     objData["type"] = "logout";
     objData["logoutUsername"] = loggedInUser;
-    console.log(objData["logoutUsername"]);
+
     ws.send(JSON.stringify(objData));
-    // ws.close()
+
     ws.onmessage = (e) => {
-        // let commentData = JSON.parse(e.data);
         let logoutData = JSON.parse(e.data);
         if (logoutData.logoutClicked) {
             ws.close();
@@ -383,24 +337,20 @@ const DisplayPosts = (data) => {
     let postTitle = document.createElement("div");
 
     postTitle.className = "post-title-class";
-    // let postContent = document.createElement("div");
-
-    //postContent.className = "post-content-class";
 
     let postFooter = document.createElement("div");
     postFooter.className = "post-footer";
     postDivs.className = "post-class ";
+
     // this will eventually hold the id given by go from the database (data.id)
     postDivs.id = data.postid;
     postTitle.innerText = data.title;
     // postContent.innerText = data.postcontent;
     postTitle.style.borderBottom = "0.2vh solid black";
-    postFooter.innerText = `Created by ${data.username},   Date: ${
-        data.posttime
-    }, Comments: ${1 + 13}`;
+    postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime}, Comments: ${1 + 13}`;
     let badgesDiv = document.createElement("div");
     badgesDiv.style.marginLeft = "0.5vh";
-    //   ${data.categories}
+
     addBadgesToPosts(data.categories, badgesDiv);
     postFooter.style.display = "flex";
     postFooter.style.fontSize = "small";
@@ -409,7 +359,6 @@ const DisplayPosts = (data) => {
     postFooter.appendChild(badgesDiv);
 
     postDivs.appendChild(postTitle);
-    //postDivs.appendChild(postContent);
     postDivs.appendChild(postFooter);
 
     posts.appendChild(postDivs);
@@ -421,13 +370,11 @@ const DisplayPosts = (data) => {
         clickedPostID = postDivs.id;
         getCommentsForPosts["clickedPostID"] = clickedPostID;
         getCommentsForPosts["type"] = "getcommentsfrompost";
-        console.log("comments for posts object", getCommentsForPosts);
+        // console.log("comments for posts object", getCommentsForPosts);
         ws.send(JSON.stringify(getCommentsForPosts));
 
         let displayPostTitle = document.querySelector(".display-post-title");
-        let displayPostContent = document.querySelector(
-            ".display-post-content"
-        );
+        let displayPostContent = document.querySelector(".display-post-content");
         let postUsername = document.querySelector(".post-username");
         let postDate = document.querySelector(".post-date");
         displayPostTitle.innerText = data.title;
@@ -440,40 +387,7 @@ const DisplayPosts = (data) => {
         // displayPostBody.scrollTo(0, displayPostBody.scrollHeight);
         commentContainer.innerHTML = "";
 
-        // data coming through for comments
-        ws.onmessage = (e) => {
-            let commentData = JSON.parse(e.data);
-
-            if (commentData.tipo == "allComments") {
-                console.log("ALL COMMENTS DISPLAYED");
-                for (let i = 0; i < commentData.comments.length; i++) {
-                    let commentDiv = document.createElement("div");
-                    commentDiv.style.marginBottom = "1vh";
-                    commentDiv.id = `comment${commentData.comments[i].commentId}`;
-                    commentDiv.innerText = `${commentData.comments[i].commentcontent} \n ${commentData.comments[i].user}, ${commentData.comments[i].commenttime}`;
-                    commentContainer.appendChild(commentDiv);
-                }
-            }
-
-            if (commentData.tipo == "lastComment") {
-                console.log("This is the last coment", commentData);
-                let commentDiv = document.createElement("div");
-                commentDiv.style.marginBottom = "1vh";
-                commentDiv.id = `comment${commentData.commentid}`;
-                commentDiv.innerText = `${commentData.commentcontent} \n ${commentData.user}, ${commentData.commenttime}`;
-                commentContainer.appendChild(commentDiv);
-            }
-            // console.log("is this comment data?", commentData);
-        };
-
-        console.log("commentdata---", commentData);
-        console.log(commentData.type);
-
-        // commentData.forEach((comment) => {
-
-        // });
-
-        // comment data in the modal needs to be cleared as we are using one modal.
+        persistentListener();
     });
 };
 
@@ -495,56 +409,12 @@ commentArrow.addEventListener("click", function () {
 
     ws.send(JSON.stringify(commentData));
     commentTextArea.value = "";
-    //
-    // ws.onmessage = (e) => {
-    //     let lastComment = JSON.parse(e.data);
-    //     console.log("This is the last coment", lastComment);
-    //     if (lastComment.tipo === "lastcomment") {
-    //         let commentDiv = document.createElement("div");
-    //         commentDiv.style.marginBottom = "1vh";
-    //         commentDiv.id = `comment${lastComment.commentId}`;
-    //         commentDiv.innerText = `${lastComment.commentcontent} \n ${lastComment.user}, ${lastComment.commenttime}`;
-    //         commentContainer.appendChild(commentDiv);
-    //     }
-    //     // console.log("is this comment data?", commentData);
-    // };
 });
-
-// const colouredCategories = (data) => {
-//   console.log("cat before split -> ", data);
-
-//   let crestArr = data.split(",");
-//   console.log("cat after split --> ", crestArr);
-
-//   let masterCrestList = document.createElement("div");
-//   for (let i = 0; i < crestArr.length; i++) {
-//     //let crestList = document.createElement("p");
-//     let clubName = document.createTextNode(`${crestArr[i]}`);
-
-//     // crestList.insertAdjacentText("afterend", `#${crestArr[i]}`);
-//     //clubName.style.color = `${colorSwitch[crestArr[i]]}`;
-//     console.log("crest list before append --> ", clubName);
-//     masterCrestList.append(clubName);
-//   }
-//   return masterCrestList;
-// };
-
-// const getSelectedTeams = () => {
-//   let masterCrestList = document.createElement("p");
-//   for (let i = 0; i < crests.length; i++) {
-//     let crestList = document.createElement("p");
-//     if (crests[i].alt !== "none") {
-//       crestList.innerText += `#${crests[i].id},`;
-//       crestList.style.color = `${crests[i].alt}`;
-//       masterCrestList.append(crestList[i]);
-//     }
-//   }
-//   return masterCrestList;
-// };
 
 let areUsersPopulated = false;
 
 const populateUsers = (users) => {
+    // console.log("checking is users --->", users.notifications);
     onlineUsers.innerHTML = "";
     console.log("USERS OBJECT--------------", users.allUsers);
 
@@ -579,15 +449,54 @@ const populateUsers = (users) => {
             onlineUsers.appendChild(userDetails);
         }
     }
+    let requestNotifications = {};
+    requestNotifications.type = "requestNotifications";
+    requestNotifications.username = loggedInUser;
+
+    ws.send(JSON.stringify(requestNotifications));
+
     loadInitialTenMessages();
 };
 
-// if (areUsersPopulated) {
+const getNotifications = (users) => {
+    let userRg = document.getElementsByClassName("registered-user");
+    // console.log("checking u notifications inside func -- >", users.notifications);
+    // for (const member of users.notifications) {
+    //   console.log("member check --> ", member);
+    console.log("userrg.length----", userRg.length);
+    for (const member of userRg) {
+        for (const user of users) {
+            if (member.id == user.notificationsender && user.notificationcount > 0) {
+                let notificationDiv = document.createElement("notificationsDiv");
+                notificationDiv.id = user.notificationsender + "box";
 
-//     let userRg = document.getElementsByClassName("registered-user");
-//     console.log(userRg);
-// }
-// Get the <span> element that closes the modal
+                notificationDiv.classList.add("notifications");
+                // console.log("checking user in func ==> ", member.id);
+                notificationDiv.innerHTML = user.notificationcount;
+                member.appendChild(notificationDiv);
+            }
+        }
+    }
+};
+
+function getOneNotification(data) {
+    if (document.getElementById(`${data.notificationsender}box`) !== null) {
+        document.getElementById(`${data.notificationsender}box`).remove();
+        console.log("REMOVING EXTRA DIVS");
+    }
+
+    if (data.notificationrecipient === loggedInUser) {
+        let notifSenderDiv = document.getElementById(`${data.notificationsender}`);
+        console.log("Sanchos Div", notifSenderDiv);
+
+        let notificationDiv = document.createElement("notificationsDiv");
+        notificationDiv.id = data.notificationsender + "box";
+        notificationDiv.classList.add("notifications");
+        notificationDiv.innerHTML = data.notificationcount;
+        notifSenderDiv.appendChild(notificationDiv);
+    }
+}
+
 let span = document.getElementsByClassName("close");
 let surplusMessages = [];
 let loadedTenMessages = false;
@@ -596,8 +505,10 @@ let loadedTenMessages = false;
 
 function loadInitialTenMessages() {
     let userRg = document.getElementsByClassName("registered-user");
+
     for (let i = 0; i < userRg.length; i++) {
         userRg[i].onclick = function () {
+
             chatContainer.innerHTML = "";
             chatRecipient.innerText = userRg[i].id;
             let requestChatData = {};
@@ -606,51 +517,7 @@ function loadInitialTenMessages() {
             requestChatData["type"] = "requestChatHistory";
             ws.send(JSON.stringify(requestChatData));
 
-            ws.onmessage = (e) => {
-                let data = JSON.parse(e.data);
-                console.log("on message check");
-                console.log(data.tipo);
-                if (data.tipo == "messagehistoryfromgo") {
-                    let loopfrom;
-
-                    if (data.chathistory.length >= 10) {
-                        loopfrom = data.chathistory.length - 10;
-
-                        surplusMessages = data.chathistory.slice(
-                            0,
-                            data.chathistory.length - 10
-                        );
-                        // console.log('preslice', data.chathistory);
-                        // console.log('surplus', surplusMessages);
-                        loadedTenMessages = true;
-                    } else {
-                        loopfrom = 0;
-                    }
-
-                    for (let i = loopfrom; i < data.chathistory.length; i++) {
-                        let newChatBubble = document.createElement("div");
-                        newChatBubble.innerText = data.chathistory[i].message;
-                        if (data.chathistory[i].chatsender == loggedInUser) {
-                            newChatBubble.id = "chat-message-sender";
-                        } else {
-                            newChatBubble.id = "chat-message-recipient";
-                        }
-                        chatContainer.appendChild(newChatBubble);
-                        chatBody.scrollTo(0, chatBody.scrollHeight);
-                    }
-                }
-                if (data.tipo == "lastMessage") {
-                    let newChatBubble = document.createElement("div");
-                    newChatBubble.innerText = data.message;
-                    if (data.chatsender == loggedInUser) {
-                        newChatBubble.id = "chat-message-sender";
-                    } else {
-                        newChatBubble.id = "chat-message-recipient";
-                    }
-                    chatContainer.appendChild(newChatBubble);
-                    chatBody.scrollTo(0, chatBody.scrollHeight);
-                }
-            };
+            persistentListener();
             console.log("Users clicked");
             chatModal.style.display = "block";
         };
@@ -664,7 +531,7 @@ function loadInitialTenMessages() {
     }
 }
 
-function Throttler(fn = () => {}, wait) {
+function Throttler(fn = () => { }, wait) {
     var time = Date.now();
     return function () {
         if (time + wait - Date.now() < 0) {
@@ -681,11 +548,7 @@ function displaySurplusMessages() {
         if (surplusMessages.length > 10) {
             console.log("CS--------------------", chatBody.scrollTop);
 
-            for (
-                let i = surplusMessages.length - 1;
-                i > surplusMessages.length - 10;
-                i--
-            ) {
+            for (let i = surplusMessages.length - 1; i > surplusMessages.length - 10; i--) {
                 let newChatBubble = document.createElement("div");
                 newChatBubble.innerText = surplusMessages[i].message;
                 if (surplusMessages[i].chatsender == loggedInUser) {
@@ -693,26 +556,15 @@ function displaySurplusMessages() {
                 } else {
                     newChatBubble.id = "chat-message-recipient";
                 }
-                chatContainer.insertBefore(
-                    newChatBubble,
-                    chatContainer.children[0]
-                );
-                // chatBody.scrollTop += 50;
-                //chatBody.scrollBy(0, 100);
-                //console.log("CS--------------------", chatBody.scrollTop);
+                chatContainer.insertBefore(newChatBubble, chatContainer.children[0]);
+
                 console.log(surplusMessages[i].message);
                 console.log(surplusMessages.length);
             }
 
-            console.log(
-                "10+ messages left",
-                surplusMessages.slice(0, surplusMessages.length - 10)
-            );
+            console.log("10+ messages left", surplusMessages.slice(0, surplusMessages.length - 10));
 
-            surplusMessages = surplusMessages.slice(
-                0,
-                surplusMessages.length - 10
-            );
+            surplusMessages = surplusMessages.slice(0, surplusMessages.length - 10);
         } else {
             //chatBody.scrollTop += 50;
             for (let j = surplusMessages.length - 1; j >= 0; j--) {
@@ -723,10 +575,7 @@ function displaySurplusMessages() {
                 } else {
                     newChatBubble.id = "chat-message-recipient";
                 }
-                chatContainer.insertBefore(
-                    newChatBubble,
-                    chatContainer.children[0]
-                );
+                chatContainer.insertBefore(newChatBubble, chatContainer.children[0]);
                 // chatBody.scrollTop += 50;
                 //chatBody.scrollBy(0, 100);
                 //console.log("CS--------------------", chatBody.scrollTop);
@@ -754,4 +603,121 @@ function addBadgesToPosts(data, div) {
             div.innerHTML += `<img src="/css/img/${arrayOfBadges[i]}.png" style="width: 2vw;"></img>`;
         }
     }
+}
+
+let firstTimeNotifications = true
+
+function persistentListener() {
+    // for (; ;) {
+    ws.onmessage = (e) => {
+        // console.log("IS WEB SOCKET WORKING");
+        let data = JSON.parse(e.data);
+
+        if (data.tipo == "allComments") {
+            console.log("ALL COMMENTS DISPLAYED");
+            for (let i = 0; i < data.comments.length; i++) {
+                let commentDiv = document.createElement("div");
+                commentDiv.style.marginBottom = "1vh";
+                commentDiv.id = `comment${data.comments[i].commentId}`;
+                commentDiv.innerText = `${data.comments[i].commentcontent} \n ${data.comments[i].user}, ${data.comments[i].commenttime}`;
+                commentContainer.appendChild(commentDiv);
+            }
+        }
+
+        if (data.tipo == "lastComment") {
+            console.log("This is the last coment", data);
+            let commentDiv = document.createElement("div");
+            commentDiv.style.marginBottom = "1vh";
+            commentDiv.id = `comment${data.commentid}`;
+            commentDiv.innerText = `${data.commentcontent} \n ${data.user}, ${data.commenttime}`;
+            commentContainer.appendChild(commentDiv);
+        }
+
+        if (data.response === "Notification viewed and set to nil") {
+            let clickedNotificationDiv = document.getElementById(`${data.usertodelete}box`);
+
+
+            if (clickedNotificationDiv !== null) {
+                clickedNotificationDiv.remove();
+                console.log('REMOVED THE NOTIFICATION DIV');
+            } else {
+                console.log("NO DIVS TO REMOVE");
+            }
+
+            console.log("-----DB RESET------", data);
+        }
+
+        if (data.tipo == "messagehistoryfromgo") {
+            let loopfrom;
+
+            if (data.chathistory.length >= 10) {
+                loopfrom = data.chathistory.length - 10;
+
+                surplusMessages = data.chathistory.slice(0, data.chathistory.length - 10);
+
+                loadedTenMessages = true;
+            } else {
+                loopfrom = 0;
+            }
+
+            for (let i = loopfrom; i < data.chathistory.length; i++) {
+                let newChatBubble = document.createElement("div");
+                newChatBubble.innerText = data.chathistory[i].message;
+                if (data.chathistory[i].chatsender == loggedInUser) {
+                    newChatBubble.id = "chat-message-sender";
+                } else {
+                    newChatBubble.id = "chat-message-recipient";
+                }
+                chatContainer.appendChild(newChatBubble);
+                chatBody.scrollTo(0, chatBody.scrollHeight);
+            }
+        }
+        if (data.tipo === "clientnotifications" && firstTimeNotifications) {
+            console.log("NOTIFICATIONS ON LOGIN");
+            getNotifications(data.notification);
+            firstTimeNotifications = false
+        }
+        if (data.tipo === "post") {
+            DisplayPosts(data);
+            console.log("***************************** 2 - displayposts *****************************");
+        }
+
+        if (data.tipo === "onlineUsers") {
+            onlineUsersFromGo = data.onlineUsers;
+
+            populateUsers(data);
+
+            console.log("first OUFG", onlineUsersFromGo);
+        }
+
+
+        if (data.tipo === "lastMessage") {
+            console.log("HELLLLLLLLLLLO WORLD!!!!!!!!!!=--------------->");
+            let newChatBubble = document.createElement("div");
+            newChatBubble.innerText = data.message;
+            if (data.chatsender == loggedInUser) {
+                newChatBubble.id = "chat-message-sender";
+            } else {
+                newChatBubble.id = "chat-message-recipient";
+            }
+
+            chatContainer.appendChild(newChatBubble);
+            chatBody.scrollTo(0, chatBody.scrollHeight);
+            console.log("NOTIFICATION DATA====>", data.livenotification);
+
+            if (chatModal.style.display === "block" && data.livenotification.notificationsender == chatRecipient.innerHTML) {
+                console.log("notifsender", data.livenotification.notificationsender);
+                console.log("recipient's modal's open");
+
+                let deleteNotifications = {};
+                deleteNotifications.type = "deletenotification";
+                deleteNotifications.sender = data.livenotification.notificationsender;
+                deleteNotifications.recipient = data.livenotification.notificationrecipient;
+                ws.send(JSON.stringify(deleteNotifications));
+            } else {
+                getOneNotification(data.livenotification);
+            }
+
+        }
+    };
 }

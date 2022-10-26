@@ -12,6 +12,7 @@ import (
 
 	"real-time-forum/chat"
 	"real-time-forum/comments"
+	notification "real-time-forum/notifications"
 	"real-time-forum/posts"
 	"real-time-forum/users"
 
@@ -28,6 +29,8 @@ type T struct {
 	*Logout
 	*comments.CommentsFromPosts
 	*chat.Chat
+	*whosNotifications
+	*deleteNotifications
 }
 
 type TypeChecker struct {
@@ -79,8 +82,7 @@ type formValidation struct {
 	SuccessfulRegistration bool             `json:"successfulRegistration"`
 	AllUserAfterNewReg     []users.AllUsers `json:"allUserAfterNewReg"`
 	OnlineUsers            []string         `json:"onlineUsers"`
-
-	Tipo string `json:"tipo"`
+	Tipo                   string           `json:"tipo"`
 }
 type loginValidation struct {
 	InvalidUsername    bool             `json:"invalidUsername"`
@@ -93,8 +95,23 @@ type loginValidation struct {
 	OnlineUsers        []string         `json:"onlineUsers"`
 }
 
+type whosNotifications struct {
+	Username string
+}
+
+type notificationsAtLogin struct {
+	Notifications []notification.Notification `json:"notification"`
+	Response      string                      `json:"response"`
+	UserToDelete  string                      `json:"usertodelete"`
+	Tipo          string                      `json:"tipo"`
+}
+
+type deleteNotifications struct {
+	NotificationSender    string `json:"sender"`
+	NotificationRecipient string `json:"recipient"`
+}
+
 var (
-	// clients                  = make(map[*websocket.Conn]bool)
 	loggedInUsers         = make(map[string]*websocket.Conn)
 	broadcastChannelPosts = make(chan posts.Posts, 1)
 
@@ -103,6 +120,7 @@ var (
 	CallWS                   = false
 	online                   loginValidation
 	broadcastOnlineUsers     = make(chan loginValidation, 1)
+	notifyAtLogin            notificationsAtLogin
 )
 
 // unmarshall data based on type
@@ -138,6 +156,12 @@ func (t *T) UnmarshalForumData(data []byte) error {
 		t.Chat = &chat.Chat{}
 		return json.Unmarshal(data, t.Chat)
 
+	case "requestNotifications":
+		t.whosNotifications = &whosNotifications{}
+		return json.Unmarshal(data, t.whosNotifications)
+	case "deletenotification":
+		t.deleteNotifications = &deleteNotifications{}
+		return json.Unmarshal(data, t.deleteNotifications)
 	default:
 		return fmt.Errorf("unrecognized type value %q", t.Type)
 	}
@@ -165,6 +189,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	}
 
 	loggedInUsers[currentUser] = wsConn
+
 	fmt.Println("LOGGED IN USERS", loggedInUsers)
 
 	online.Tipo = "onlineUsers"
@@ -173,10 +198,8 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		online.OnlineUsers = append(online.OnlineUsers, k)
 	}
 	online.AllUsers = users.GetAllUsers(db)
-
+	// online.Notifications = notification.NotificationQuery(db, currentUser)
 	broadcastOnlineUsers <- online
-
-	// wsConn.WriteJSON(online)
 
 	var f T
 	for {
@@ -210,7 +233,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 			posts.StorePosts(db, f.Posts.Username, f.Posts.PostTitle, f.Posts.PostContent, f.Posts.Categories)
 			// posts.GetCommentData(db, 1)
-			fmt.Println("this is the post content       ", f.PostContent)
+			fmt.Println("this is the post title", f.PostContent)
 
 			// STORE POSTS IN DATABASE
 			broadcastChannelPosts <- posts.SendLastPostInDatabase(db)
@@ -248,20 +271,81 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("THIS IS THE CHAT ID", chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID)
 			// then store messages using chat id
 			chat.StoreMessages(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID, f.Chat.ChatMessage, f.Chat.ChatSender, f.Chat.ChatRecipient)
+
+			if !notification.CheckNotification(db, f.Chat.ChatSender, f.Chat.ChatRecipient) {
+				notification.AddFirstNotificationForUser(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
+
+				// fmt.Println("*********1st****************WHO IS THIS??????******", notification.NotificationQuery(db, f.Chat.ChatRecipient))
+
+			} else {
+				notification.IncrementNotifications(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
+
+			}
+
 			fmt.Println("THIS IS CHAT HISTORY --> ", chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))
 			fmt.Println("From JS-->", f.Chat.ChatMessage, f.Chat.ChatSender)
 			for user, connection := range loggedInUsers {
 				if user == f.Chat.ChatSender || user == f.Chat.ChatRecipient {
 					f.Chat.Tipo = "lastMessage"
+					// f.Chat.Tipo = "lastnotification"
+					fmt.Println("<============LAST NOTIFICATION ============>")
+					f.Chat.LastNotification = notification.SingleNotification(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
 					connection.WriteJSON(f.Chat)
+
+					fmt.Println("single notification test =========>", notification.SingleNotification(db, f.Chat.ChatSender, f.Chat.ChatRecipient))
+					// var liveNotifications notificationsAtLogin
+					// liveNotifications.Notifications = notification.NotificationQuery(db, f.Chat.ChatRecipient)
+					// liveNotifications.Tipo = "live notifications"
+					// liveNotifications.UserToDelete = f.Chat.ChatSender
+					// fmt.Println("+=====+ Notifications", notification.NotificationQuery(db, f.Chat.ChatRecipient))
+					// connection.WriteJSON(liveNotifications)
 				}
+				//  check how many live notifications there are and send to recipient
+
 			}
+
 		} else if f.Type == "requestChatHistory" {
+			if notification.RemoveNotifications(db, f.Chat.ChatRecipient, f.Chat.ChatSender) {
+				notifyAtLogin.Response = "Notification viewed and set to nil"
+				notifyAtLogin.UserToDelete = f.Chat.ChatRecipient
+				loggedInUsers[f.Chat.ChatSender].WriteJSON(notifyAtLogin)
+			}
+
 			fmt.Println("sender and recipient-------", f.Chat.ChatSender, f.Chat.ChatRecipient)
 			if chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).Exists {
 				fmt.Println("THIS IS CHAT HISTORY --> ", chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))
 				wsConn.WriteJSON(chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))
 			}
+		} else if f.Type == "requestNotifications" {
+			// sending client specific notifications on each unique login
+
+			// var data = notification.NotificationQuery(db, f.whosNotifications.Username)
+			// for _, value := range data {
+			// 	if f.whosNotifications.Username == value.NotificationRecipient {
+			// 		value.Tipo = "clientnotifications"
+			// 		loggedInUsers[f.whosNotifications.Username].WriteJSON(value)
+			// 	}
+
+			// }
+
+			// sending client specific notifications on each unique login
+			data := notification.NotificationQuery(db, f.whosNotifications.Username)
+			fmt.Println("notification ------- Data", data)
+			notifyAtLogin.Notifications = []notification.Notification{}
+			for _, value := range data {
+				if f.whosNotifications.Username == value.NotificationRecipient {
+					// value.Tipo = "clientnotifications"
+					notifyAtLogin.Notifications = append(notifyAtLogin.Notifications, value)
+					notifyAtLogin.Tipo = "clientnotifications"
+
+				}
+			}
+			fmt.Println("notes---", notifyAtLogin.Notifications)
+			loggedInUsers[f.whosNotifications.Username].WriteJSON(notifyAtLogin)
+
+		} else if f.Type == "deletenotification" {
+			fmt.Println("DELETE ALL NOTIFICATIONS")
+			notification.RemoveNotifications(db, f.deleteNotifications.NotificationSender, f.deleteNotifications.NotificationRecipient)
 		}
 
 		log.Println("Checking what's in f ---> ", f.Chat)
@@ -429,7 +513,7 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 
 				loginData.SentPosts = posts.SendPostsInDatabase(db)
 				loginData.AllUsers = users.GetAllUsers(db)
-
+				// loginData.Notifications = notification.NotificationQuery(db, t.Login.LoginUsername)
 				currentUser = t.Login.LoginUsername
 				loginData.SuccessfulLogin = true
 				loginData.SuccessfulUsername = currentUser

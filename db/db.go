@@ -68,7 +68,7 @@ func CreateDB() {
 		notificationID integer PRIMARY KEY AUTOINCREMENT, 
 	    sender text REFERENCES messages(sender), 
 		recipient text REFERENCES messages(recipient),
-		notifications integer);`)
+		count integer);`)
 	fmt.Println("err6", err6)
 
 }
