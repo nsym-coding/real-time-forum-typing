@@ -188,7 +188,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		loggedInUsers[currentUser].Close()
 	}
 
-	loggedInUsers[currentUser] = wsConn
+	loggedInUsers[users.GetUserName(db, currentUser)] = wsConn
 
 	fmt.Println("LOGGED IN USERS", loggedInUsers)
 
