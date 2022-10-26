@@ -422,13 +422,118 @@ const populateUsers = (users) => {
   // console.log("checking is users --->", users.notifications);
   onlineUsers.innerHTML = "";
   console.log("USERS OBJECT--------------", users.userswithchat);
+
+  sortingUsersWithChat(users);
+  sortingChatlessUsers(users);
+
+  console.log("online from Go", onlineUsersFromGo);
+  //   for (let usersWithBadge of users.allUsers) {
+  //     if (usersWithBadge.user != loggedInUser) {
+  //       console.log("usersWithBadge-----user-------", usersWithBadge.user);
+  //       console.log("usersWithBadge------team------", usersWithBadge.team);
+
+  //       userDetails = document.createElement("div");
+  //       let username = document.createElement("div");
+  //       imageDiv = document.createElement("div");
+  //       img = document.createElement("img");
+  //       let onlineIcon = document.createElement("div");
+
+  //       img.src = `/css/img/${usersWithBadge.team}.png`;
+  //       img.style.width = "2vw";
+  //       imageDiv.appendChild(onlineIcon);
+  //       userDetails.id = `${usersWithBadge.user}`;
+
+  //       userDetails.className = "registered-user";
+
+  //       if (onlineUsersFromGo.includes(usersWithBadge.user)) {
+  //         onlineIcon.className = "online-icon-class";
+  //       } else {
+  //         onlineIcon.className = "offline-icon-class";
+  //       }
+  //       username.innerText = `${usersWithBadge.user}`;
+  //       imageDiv.append(img);
+  //       userDetails.appendChild(username);
+  //       userDetails.appendChild(imageDiv);
+  //       onlineUsers.appendChild(userDetails);
+  //     }
+  //   }
+  let requestNotifications = {};
+  requestNotifications.type = "requestNotifications";
+  requestNotifications.username = loggedInUser;
+
+  ws.send(JSON.stringify(requestNotifications));
+
+  loadInitialTenMessages();
+};
+
+//sorting chatUsers
+const sortingUsersWithChat = (users) => {
   console.log(
     "CHECKING SORT FUNCTION --->",
     users.userswithchat.sort((a, b) => b.messageID - a.messageID)
   );
 
-  console.log("online from Go", onlineUsersFromGo);
+  for (let chatUser of users.userswithchat) {
+    for (let usersWithBadge of users.allUsers) {
+      if (
+        usersWithBadge.user != loggedInUser &&
+        (chatUser.chatsender === usersWithBadge.user ||
+          chatUser.chatrecipient === usersWithBadge.user)
+      ) {
+        console.log("usersWithBadge-----user-------", usersWithBadge.user);
+        console.log("usersWithBadge------team------", usersWithBadge.team);
+
+        userDetails = document.createElement("div");
+        let username = document.createElement("div");
+        imageDiv = document.createElement("div");
+        img = document.createElement("img");
+        let onlineIcon = document.createElement("div");
+
+        img.src = `/css/img/${usersWithBadge.team}.png`;
+        img.style.width = "2vw";
+        imageDiv.appendChild(onlineIcon);
+        userDetails.id = `${usersWithBadge.user}`;
+
+        userDetails.className = "registered-user";
+
+        if (onlineUsersFromGo.includes(usersWithBadge.user)) {
+          onlineIcon.className = "online-icon-class";
+        } else {
+          onlineIcon.className = "offline-icon-class";
+        }
+        username.innerText = `${usersWithBadge.user}`;
+        imageDiv.append(img);
+        userDetails.appendChild(username);
+        userDetails.appendChild(imageDiv);
+        onlineUsers.appendChild(userDetails);
+      }
+    }
+  }
+};
+
+const sortingChatlessUsers = (users) => {
+  for (let j = 0; j < users.userswithchat.length; j++) {
+    for (let i = 0; i < users.allUsers.length; i++) {
+      if (
+        users.allUsers[i].user !== loggedInUser &&
+        (users.allUsers[i].user === users.userswithchat[j].chatsender ||
+          users.allUsers[i].user === users.userswithchat[j].chatrecipient)
+      ) {
+        console.log("checking 3 --> ", users.allUsers[i].user);
+        users.allUsers.splice(i, 1);
+      }
+    }
+  }
+
+  users.allUsers.sort((a, b) => a.user > b.user);
+
+  console.log("checking all users", users.allUsers);
+
+  console.log("checking is users removed -> ", users.allUsers);
+
   for (let usersWithBadge of users.allUsers) {
+    // console.log("chatsender -> ", chatUser.chatsender);
+    // console.log("chatrecipinet -> ", chatUser.chatrecipient);
     if (usersWithBadge.user != loggedInUser) {
       console.log("usersWithBadge-----user-------", usersWithBadge.user);
       console.log("usersWithBadge------team------", usersWithBadge.team);
@@ -458,17 +563,7 @@ const populateUsers = (users) => {
       onlineUsers.appendChild(userDetails);
     }
   }
-  let requestNotifications = {};
-  requestNotifications.type = "requestNotifications";
-  requestNotifications.username = loggedInUser;
-
-  ws.send(JSON.stringify(requestNotifications));
-
-  loadInitialTenMessages();
 };
-
-//sorting chatUsers
-//srtin
 
 const getNotifications = (users) => {
   let userRg = document.getElementsByClassName("registered-user");
