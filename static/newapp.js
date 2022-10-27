@@ -226,9 +226,7 @@ submitPostButton.addEventListener("click", function (e) {
   }
 });
 
-let successfulRegistrationMessage = document.getElementById(
-  "registered-login-success"
-);
+let successfulRegistrationMessage = document.getElementById("registered-login-success");
 
 let registrationErrors = document.querySelectorAll(".registration-errors");
 
@@ -349,9 +347,7 @@ const DisplayPosts = (data) => {
   postTitle.innerText = data.title;
   // postContent.innerText = data.postcontent;
   postTitle.style.borderBottom = "0.2vh solid black";
-  postFooter.innerText = `Created by ${data.username},   Date: ${
-    data.posttime
-  }, Comments: ${1 + 13}`;
+  postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime}, Comments: ${1 + 13}`;
   let badgesDiv = document.createElement("div");
   badgesDiv.style.marginLeft = "0.5vh";
 
@@ -477,8 +473,7 @@ const sortingUsersWithChat = (users) => {
     for (let usersWithBadge of users.allUsers) {
       if (
         usersWithBadge.user != loggedInUser &&
-        (chatUser.chatsender === usersWithBadge.user ||
-          chatUser.chatrecipient === usersWithBadge.user)
+        (chatUser.chatsender === usersWithBadge.user || chatUser.chatrecipient === usersWithBadge.user)
       ) {
         console.log("usersWithBadge-----user-------", usersWithBadge.user);
         console.log("usersWithBadge------team------", usersWithBadge.team);
@@ -512,13 +507,12 @@ const sortingUsersWithChat = (users) => {
 };
 
 const sortingChatlessUsers = (users) => {
-  console.log('pre---->', users);
+  console.log("pre---->", users);
   for (let j = 0; j < users.userswithchat.length; j++) {
     for (let i = 0; i < users.allUsers.length; i++) {
       if (
         users.allUsers[i].user !== loggedInUser &&
-        (users.allUsers[i].user === users.userswithchat[j].chatsender ||
-          users.allUsers[i].user === users.userswithchat[j].chatrecipient)
+        (users.allUsers[i].user === users.userswithchat[j].chatsender || users.allUsers[i].user === users.userswithchat[j].chatrecipient)
       ) {
         console.log("checking 3 --> ", users.allUsers[i].user);
         users.allUsers.splice(i, 1);
@@ -526,14 +520,11 @@ const sortingChatlessUsers = (users) => {
     }
   }
 
-
   // const letters = ["d","a", "c", "z"]
   // console.log('letters--->', letters.sort())
   // console.log('letters--->', letters.sort().reverse())
 
-
-   users.allUsers.sort((a,b)=>a.user.localeCompare(b.user));
-
+  users.allUsers.sort((a, b) => a.user.localeCompare(b.user));
 
   for (let usersWithBadge of users.allUsers) {
     // console.log("chatsender -> ", chatUser.chatsender);
@@ -658,11 +649,7 @@ function displaySurplusMessages() {
     if (surplusMessages.length > 10) {
       console.log("CS--------------------", chatBody.scrollTop);
 
-      for (
-        let i = surplusMessages.length - 1;
-        i > surplusMessages.length - 10;
-        i--
-      ) {
+      for (let i = surplusMessages.length - 1; i > surplusMessages.length - 10; i--) {
         let newChatBubble = document.createElement("div");
         newChatBubble.innerText = surplusMessages[i].message;
         if (surplusMessages[i].chatsender == loggedInUser) {
@@ -676,10 +663,7 @@ function displaySurplusMessages() {
         console.log(surplusMessages.length);
       }
 
-      console.log(
-        "10+ messages left",
-        surplusMessages.slice(0, surplusMessages.length - 10)
-      );
+      console.log("10+ messages left", surplusMessages.slice(0, surplusMessages.length - 10));
 
       surplusMessages = surplusMessages.slice(0, surplusMessages.length - 10);
     } else {
@@ -724,6 +708,18 @@ function addBadgesToPosts(data, div) {
 
 let firstTimeNotifications = true;
 
+const changeOnlineStatus = (data) => {
+  let userRg = document.getElementsByClassName("registered-user");
+
+  for (const item of userRg) {
+    if (data.onlineUsers.includes(item.id)) {
+      item.className = "online-icon-class";
+    } else {
+      item.className = "offline-icon-class";
+    }
+  }
+};
+
 function persistentListener() {
   // for (; ;) {
   ws.onmessage = (e) => {
@@ -751,9 +747,7 @@ function persistentListener() {
     }
 
     if (data.response === "Notification viewed and set to nil") {
-      let clickedNotificationDiv = document.getElementById(
-        `${data.usertodelete}box`
-      );
+      let clickedNotificationDiv = document.getElementById(`${data.usertodelete}box`);
 
       if (clickedNotificationDiv !== null) {
         clickedNotificationDiv.remove();
@@ -771,10 +765,7 @@ function persistentListener() {
       if (data.chathistory.length >= 10) {
         loopfrom = data.chathistory.length - 10;
 
-        surplusMessages = data.chathistory.slice(
-          0,
-          data.chathistory.length - 10
-        );
+        surplusMessages = data.chathistory.slice(0, data.chathistory.length - 10);
 
         loadedTenMessages = true;
       } else {
@@ -800,22 +791,28 @@ function persistentListener() {
     }
     if (data.tipo === "post") {
       DisplayPosts(data);
-      console.log(
-        "***************************** 2 - displayposts *****************************"
-      );
+      console.log("***************************** 2 - displayposts *****************************");
     }
 
     if (data.tipo === "onlineUsers" && data.popusercheck == loggedInUser) {
-
+      console.log("DATA ON LOGIN------", data);
       onlineUsersFromGo = data.onlineUsers;
 
       populateUsers(data);
+    }
 
-      console.log("first OUFG", onlineUsersFromGo);
+    if (data.tipo === "onlineUsers" && data.popusercheck == "") {
+      changeOnlineStatus(data);
+      
+    }
+
+    if (data.tipo === "loggedOutUser") {
+      console.log("LOGGED OUT USER", data.onlineUsers);
+
+      console.log("second online users from go", onlineUsersFromGo);
     }
 
     if (data.tipo === "lastMessage") {
-      console.log("HELLLLLLLLLLLO WORLD!!!!!!!!!!=--------------->");
       let newChatBubble = document.createElement("div");
       newChatBubble.innerText = data.message;
       if (data.chatsender == loggedInUser) {
@@ -828,18 +825,14 @@ function persistentListener() {
       chatBody.scrollTo(0, chatBody.scrollHeight);
       console.log("NOTIFICATION DATA====>", data.livenotification);
 
-      if (
-        chatModal.style.display === "block" &&
-        data.livenotification.notificationsender == chatRecipient.innerHTML
-      ) {
+      if (chatModal.style.display === "block" && data.livenotification.notificationsender == chatRecipient.innerHTML) {
         console.log("notifsender", data.livenotification.notificationsender);
         console.log("recipient's modal's open");
 
         let deleteNotifications = {};
         deleteNotifications.type = "deletenotification";
         deleteNotifications.sender = data.livenotification.notificationsender;
-        deleteNotifications.recipient =
-          data.livenotification.notificationrecipient;
+        deleteNotifications.recipient = data.livenotification.notificationrecipient;
         ws.send(JSON.stringify(deleteNotifications));
       } else {
         getOneNotification(data.livenotification);

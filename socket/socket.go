@@ -94,7 +94,7 @@ type loginValidation struct {
 	AllUsers           []users.AllUsers `json:"allUsers"`
 	OnlineUsers        []string         `json:"onlineUsers"`
 	UsersWithChat      []chat.Chat      `json:"userswithchat"`
-	PopUserCheck      string     `json:"popusercheck"`
+	PopUserCheck       string           `json:"popusercheck"`
 }
 
 type whosNotifications struct {
@@ -202,13 +202,21 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		if k == currentUser {
 			online.UsersWithChat = chat.GetLatestChat(db, chat.GetChat(db, k))
 			online.UsersWithChat = append(online.UsersWithChat, chat.Chat{ChatSender: "yonas"})
-			online.PopUserCheck= currentUser
+			online.PopUserCheck = currentUser
+			online.OnlineUsers = append(online.OnlineUsers, k)
+			online.AllUsers = users.GetAllUsers(db)
+			loggedInUsers[k].WriteJSON(online)
 
 		}
-		online.OnlineUsers = append(online.OnlineUsers, k)
+
+	
 	}
+
+
 	online.AllUsers = users.GetAllUsers(db)
+
 	// online.Notifications = notification.NotificationQuery(db, currentUser)
+	online.PopUserCheck = ""
 	broadcastOnlineUsers <- online
 
 	var f T
@@ -226,7 +234,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			}
 			fmt.Println("users left in array", loggedInUsers)
 			online.OnlineUsers = []string{}
-			online.Tipo = "onlineUsers"
+			online.Tipo = "loggedOutUser"
 
 			for k := range loggedInUsers {
 
