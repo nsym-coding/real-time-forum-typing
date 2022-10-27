@@ -94,6 +94,7 @@ type loginValidation struct {
 	AllUsers           []users.AllUsers `json:"allUsers"`
 	OnlineUsers        []string         `json:"onlineUsers"`
 	UsersWithChat      []chat.Chat      `json:"userswithchat"`
+	PopUserCheck      string     `json:"popusercheck"`
 }
 
 type whosNotifications struct {
@@ -196,10 +197,12 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	online.Tipo = "onlineUsers"
 
 	online.OnlineUsers = []string{}
+
 	for k := range loggedInUsers {
 		if k == currentUser {
 			online.UsersWithChat = chat.GetLatestChat(db, chat.GetChat(db, k))
 			online.UsersWithChat = append(online.UsersWithChat, chat.Chat{ChatSender: "yonas"})
+			online.PopUserCheck= currentUser
 
 		}
 		online.OnlineUsers = append(online.OnlineUsers, k)

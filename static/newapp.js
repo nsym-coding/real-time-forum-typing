@@ -512,6 +512,7 @@ const sortingUsersWithChat = (users) => {
 };
 
 const sortingChatlessUsers = (users) => {
+  console.log('pre---->', users);
   for (let j = 0; j < users.userswithchat.length; j++) {
     for (let i = 0; i < users.allUsers.length; i++) {
       if (
@@ -525,11 +526,14 @@ const sortingChatlessUsers = (users) => {
     }
   }
 
-  users.allUsers.sort((a, b) => a.user > b.user);
 
-  console.log("checking all users", users.allUsers);
+  // const letters = ["d","a", "c", "z"]
+  // console.log('letters--->', letters.sort())
+  // console.log('letters--->', letters.sort().reverse())
 
-  console.log("checking is users removed -> ", users.allUsers);
+
+   users.allUsers.sort((a,b)=>a.user.localeCompare(b.user));
+
 
   for (let usersWithBadge of users.allUsers) {
     // console.log("chatsender -> ", chatUser.chatsender);
@@ -801,7 +805,8 @@ function persistentListener() {
       );
     }
 
-    if (data.tipo === "onlineUsers") {
+    if (data.tipo === "onlineUsers" && data.popusercheck == loggedInUser) {
+
       onlineUsersFromGo = data.onlineUsers;
 
       populateUsers(data);
