@@ -469,6 +469,8 @@ const sortingUsersWithChat = (users) => {
     users.userswithchat.sort((a, b) => b.messageID - a.messageID)
   );
 
+  console.log("sorting data from last message", users);
+
   for (let chatUser of users.userswithchat) {
     for (let usersWithBadge of users.allUsers) {
       if (
@@ -608,10 +610,10 @@ let loadedTenMessages = false;
 function loadInitialTenMessages() {
   let userRg = document.getElementsByClassName("registered-user");
 
-  for (let i = 0; i < userRg.length; i++) {
-    userRg[i].onclick = function () {
+  for (const user of userRg) {
+    user.onclick = function () {
       chatContainer.innerHTML = "";
-      chatRecipient.innerText = userRg[i].id;
+      chatRecipient.innerText = user.id;
       let requestChatData = {};
       requestChatData["chatsender"] = loggedInUser;
       requestChatData["chatrecipient"] = chatRecipient.innerText;
@@ -619,7 +621,7 @@ function loadInitialTenMessages() {
       ws.send(JSON.stringify(requestChatData));
 
       persistentListener();
-      console.log("Users clicked");
+      console.log("Users clicked", user.id);
       chatModal.style.display = "block";
     };
   }
@@ -814,6 +816,37 @@ function persistentListener() {
     }
 
     if (data.tipo === "lastMessage") {
+
+      let userDivs = document.getElementsByClassName("registered-user")
+      let arrayFromUserDivs = Array.from(userDivs)
+
+      console.log("CHAT SENDER AND LOGGED IN USER", data.chatsender, loggedInUser);
+      if (data.chatsender === loggedInUser) {
+        for (const user of userDivs) {
+          console.log("user id from user div and chat recipient", user.id, data.chatrecipient);
+          if (user.id === data.chatrecipient) {
+            array_move(arrayFromUserDivs, arrayFromUserDivs.indexOf(user), 0)
+          }
+        }
+
+        onlineUsers.innerHTML = ""
+        for (const div of arrayFromUserDivs) {
+
+          onlineUsers.appendChild(div)
+        }
+      } else {
+        for (const user of arrayFromUserDivs) {
+          if (user.id === data.chatsender) {
+            array_move(arrayFromUserDivs, arrayFromUserDivs.indexOf(user), 0)
+          }
+        }
+        onlineUsers.innerHTML = ""
+        for (const div of arrayFromUserDivs) {
+          onlineUsers.appendChild(div)
+        }
+      }
+
+
       let newChatBubble = document.createElement("div");
       newChatBubble.innerText = data.message;
       if (data.chatsender == loggedInUser) {
@@ -841,3 +874,18 @@ function persistentListener() {
     }
   };
 }
+
+
+function array_move(arr, old_index, new_index) {
+  if (new_index >= arr.length) {
+    var k = new_index - arr.length + 1;
+    while (k--) {
+      arr.push(undefined);
+    }
+  }
+  arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+  return arr; // for testing
+};
+
+// returns [2, 1, 3]
+// console.log(array_move([1, 2, 3], 1, 0));   

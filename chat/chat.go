@@ -6,6 +6,7 @@ import (
 	"log"
 
 	notification "real-time-forum/notifications"
+	"real-time-forum/users"
 )
 
 type Chat struct {
@@ -16,6 +17,8 @@ type Chat struct {
 	Date             string                    `json:"chatDate"`
 	LastNotification notification.Notification `json:"livenotification"`
 	Tipo             string                    `json:"tipo"`
+	UsersWithChat    []Chat                    `json:"userswithchat"`
+	AllUsers         []users.AllUsers          `json:"allUsers"`
 }
 
 type ChatHistory struct {

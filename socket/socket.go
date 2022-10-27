@@ -309,6 +309,8 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 					// f.Chat.Tipo = "lastnotification"
 					fmt.Println("<============LAST NOTIFICATION ============>")
 					f.Chat.LastNotification = notification.SingleNotification(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
+					f.Chat.UsersWithChat = chat.GetLatestChat(db, chat.GetChat(db, currentUser))
+					f.Chat.AllUsers = users.GetAllUsers(db)
 					connection.WriteJSON(f.Chat)
 
 					fmt.Println("single notification test =========>", notification.SingleNotification(db, f.Chat.ChatSender, f.Chat.ChatRecipient))
