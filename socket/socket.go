@@ -113,6 +113,11 @@ type deleteNotifications struct {
 	NotificationRecipient string `json:"recipient"`
 }
 
+type updateOnlineUsers struct {
+	UpdatedOnlineUsers []string `json:"UpdatedOnlineUsers"`
+	Tipo               string   `json:"tipo"`
+}
+
 var (
 	loggedInUsers         = make(map[string]*websocket.Conn)
 	broadcastChannelPosts = make(chan posts.Posts, 1)
@@ -121,7 +126,7 @@ var (
 	currentUser              = ""
 	CallWS                   = false
 	online                   loginValidation
-	broadcastOnlineUsers     = make(chan loginValidation, 1)
+	broadcastOnlineUsers     = make(chan updateOnlineUsers, 1)
 	notifyAtLogin            notificationsAtLogin
 )
 
@@ -198,26 +203,21 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	online.OnlineUsers = []string{}
 
+	var o updateOnlineUsers
 	for k := range loggedInUsers {
 		if k == currentUser {
 			online.UsersWithChat = chat.GetLatestChat(db, chat.GetChat(db, k))
-			online.UsersWithChat = append(online.UsersWithChat, chat.Chat{ChatSender: "yonas"})
 			online.PopUserCheck = currentUser
 			online.OnlineUsers = append(online.OnlineUsers, k)
 			online.AllUsers = users.GetAllUsers(db)
 			loggedInUsers[k].WriteJSON(online)
-
 		}
-
-	
+		o.UpdatedOnlineUsers = append(o.UpdatedOnlineUsers, k)
 	}
 
-
-	online.AllUsers = users.GetAllUsers(db)
-
+	o.Tipo = "updatedOnlineUsers"
 	// online.Notifications = notification.NotificationQuery(db, currentUser)
-	online.PopUserCheck = ""
-	broadcastOnlineUsers <- online
+	broadcastOnlineUsers <- o
 
 	var f T
 	for {
@@ -234,13 +234,15 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			}
 			fmt.Println("users left in array", loggedInUsers)
 			online.OnlineUsers = []string{}
+			o.UpdatedOnlineUsers = []string{}
 			online.Tipo = "loggedOutUser"
 
 			for k := range loggedInUsers {
-
 				online.OnlineUsers = append(online.OnlineUsers, k)
+				o.UpdatedOnlineUsers = append(o.UpdatedOnlineUsers, k)
 			}
-			broadcastOnlineUsers <- online
+
+			broadcastOnlineUsers <- o
 
 			// wsConn.WriteJSON(online)
 			return

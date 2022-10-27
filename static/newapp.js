@@ -482,7 +482,7 @@ const sortingUsersWithChat = (users) => {
         let username = document.createElement("div");
         imageDiv = document.createElement("div");
         img = document.createElement("img");
-        let onlineIcon = document.createElement("div");
+        let onlineIcon = document.createElement("online-icon");
 
         img.src = `/css/img/${usersWithBadge.team}.png`;
         img.style.width = "2vw";
@@ -632,7 +632,7 @@ function loadInitialTenMessages() {
   }
 }
 
-function Throttler(fn = () => {}, wait) {
+function Throttler(fn = () => { }, wait) {
   var time = Date.now();
   return function () {
     if (time + wait - Date.now() < 0) {
@@ -710,12 +710,12 @@ let firstTimeNotifications = true;
 
 const changeOnlineStatus = (data) => {
   let userRg = document.getElementsByClassName("registered-user");
-
+  console.log("updated online users", data.UpdatedOnlineUsers);
   for (const item of userRg) {
-    if (data.onlineUsers.includes(item.id)) {
-      item.className = "online-icon-class";
+    if (data.UpdatedOnlineUsers.includes(item.id)) {
+      item.getElementsByTagName("online-icon")[0].className = "online-icon-class"
     } else {
-      item.className = "offline-icon-class";
+      item.getElementsByTagName("online-icon")[0].className = "offline-icon-class"
     }
   }
 };
@@ -801,9 +801,10 @@ function persistentListener() {
       populateUsers(data);
     }
 
-    if (data.tipo === "onlineUsers" && data.popusercheck == "") {
+    if (data.tipo === "updatedOnlineUsers") {
+      // console.log("UPDATED ONLINE USERS", data);
       changeOnlineStatus(data);
-      
+
     }
 
     if (data.tipo === "loggedOutUser") {
