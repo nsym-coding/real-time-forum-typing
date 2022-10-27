@@ -818,32 +818,12 @@ function persistentListener() {
     if (data.tipo === "lastMessage") {
 
       let userDivs = document.getElementsByClassName("registered-user")
-      let arrayFromUserDivs = Array.from(userDivs)
 
-      console.log("CHAT SENDER AND LOGGED IN USER", data.chatsender, loggedInUser);
+      // move user div to the top if sender or recipient
       if (data.chatsender === loggedInUser) {
-        for (const user of userDivs) {
-          console.log("user id from user div and chat recipient", user.id, data.chatrecipient);
-          if (user.id === data.chatrecipient) {
-            array_move(arrayFromUserDivs, arrayFromUserDivs.indexOf(user), 0)
-          }
-        }
-
-        onlineUsers.innerHTML = ""
-        for (const div of arrayFromUserDivs) {
-
-          onlineUsers.appendChild(div)
-        }
+        onlineUsers.insertBefore(userDivs.namedItem(data.chatrecipient), userDivs[0])
       } else {
-        for (const user of arrayFromUserDivs) {
-          if (user.id === data.chatsender) {
-            array_move(arrayFromUserDivs, arrayFromUserDivs.indexOf(user), 0)
-          }
-        }
-        onlineUsers.innerHTML = ""
-        for (const div of arrayFromUserDivs) {
-          onlineUsers.appendChild(div)
-        }
+        onlineUsers.insertBefore(userDivs.namedItem(data.chatsender), userDivs[0])
       }
 
 
