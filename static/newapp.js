@@ -837,8 +837,13 @@ function persistentListener() {
       data.tipo === "messagehistoryfromgo" &&
       data.chathistory === null
     ) {
+      chatBody.removeEventListener(
+        "scroll",
+        Throttler(displaySurplusMessages, 50)
+      );
       chatContainer.innerHTML = "";
       console.log("data check --> ", data);
+      chatBody.s;
     }
     if (data.tipo === "clientnotifications" && firstTimeNotifications) {
       console.log("NOTIFICATIONS ON LOGIN");
