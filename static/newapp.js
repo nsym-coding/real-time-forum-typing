@@ -68,7 +68,7 @@ window.onclick = function (event) {
         chatContainer.innerHTML = "";
         chatBody.removeEventListener(
           "scroll",
-          Throttler(displaySurplusMessages, 200)
+          Throttler(displaySurplusMessages, 50)
         );
       }
     }
@@ -647,7 +647,7 @@ function loadInitialTenMessages() {
         chatContainer.innerHTML = "";
         chatBody.removeEventListener(
           "scroll",
-          Throttler(displaySurplusMessages, 200)
+          Throttler(displaySurplusMessages, 50)
         );
       }
     };
@@ -793,7 +793,7 @@ function persistentListener() {
       console.log("-----DB RESET------", data);
     }
 
-    if (data.tipo == "messagehistoryfromgo" && data.chathistory !== null) {
+    if (data.tipo === "messagehistoryfromgo" && data.chathistory !== null) {
       console.log("data check --> ", data);
       chatContainer.innerHTML = "";
       let loopfrom;
@@ -809,12 +809,7 @@ function persistentListener() {
         loadedTenMessages = true;
         chatBody.addEventListener(
           "scroll",
-          Throttler(displaySurplusMessages, 200)
-        );
-      } else if (data.chathistory.length === 0) {
-        chatBody.removeEventListener(
-          "scroll",
-          Throttler(displaySurplusMessages, 200)
+          Throttler(displaySurplusMessages, 50)
         );
       } else {
         loopfrom = 0;
@@ -831,7 +826,10 @@ function persistentListener() {
         chatContainer.appendChild(newChatBubble);
         chatBody.scrollTo(0, chatBody.scrollHeight);
       }
-    } else {
+    } else if (
+      data.tipo === "messagehistoryfromgo" &&
+      data.chathistory === null
+    ) {
       chatContainer.innerHTML = "";
       console.log("data check --> ", data);
     }
@@ -866,6 +864,7 @@ function persistentListener() {
     }
 
     if (data.tipo === "lastMessage") {
+      console.log("last message ==> ", data);
       let userDivs = document.getElementsByClassName("registered-user");
 
       // move user div to the top if sender or recipient
