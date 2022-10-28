@@ -7,14 +7,14 @@ import (
 )
 
 type Posts struct {
-	PostID      int    `json:"postid"`
-	PostTitle   string `json:"title"`
-	PostContent string `json:"postcontent"`
-	Date        string `json:"posttime"`
-	Tipo        string `json:"tipo"`
-	Categories  string `json:"categories"`
-	Username    string `json:"username"`
-	Comments 	[]comments.Comments `json:"comments"`
+	PostID      int                 `json:"postid"`
+	PostTitle   string              `json:"title"`
+	PostContent string              `json:"postcontent"`
+	Date        string              `json:"posttime"`
+	Tipo        string              `json:"tipo"`
+	Categories  string              `json:"categories"`
+	Username    string              `json:"username"`
+	Comments    []comments.Comments `json:"comments"`
 }
 
 func StorePosts(db *sql.DB, username string, title string, content string, categories string) {
@@ -44,7 +44,7 @@ func SendPostsInDatabase(db *sql.DB) []Posts {
 		var p Posts
 		// fmt.Println(&p.PostID)
 		err2 := rows.Scan(&p.PostID, &p.PostTitle, &p.PostContent, &p.Username, &p.Categories, &p.Date)
-
+		p.Comments = comments.DisplayAllComments(db, p.PostID)
 		postdata = append(postdata, p)
 		if err2 != nil {
 			fmt.Println(err2)
@@ -79,25 +79,25 @@ func SendLastPostInDatabase(db *sql.DB) Posts {
 //SELECT * FROM Table ORDER BY ID DESC LIMIT 1
 
 func GetCommentData(db *sql.DB, postID int) Posts {
-    rows, err := db.Query(`SELECT commentID, commentText, comments.creationDate as cmntDate, posts.username
+	rows, err := db.Query(`SELECT commentID, commentText, comments.creationDate as cmntDate, posts.username
     FROM comments
     INNER JOIN posts ON posts.postID = comments.postID
     WHERE comments.postID = ?;`, postID)
-    if err != nil {
-        fmt.Println(err)
-    }
-    post := Posts{}
-    defer rows.Close()
-    for rows.Next() {
-       // var c Posts
+	if err != nil {
+		fmt.Println(err)
+	}
+	post := Posts{}
+	defer rows.Close()
+	for rows.Next() {
+		// var c Posts
 		var comments comments.Comments
-        err2 := rows.Scan(&comments.CommentID, &comments.CommentContent, &comments.Date, &comments.User)
-    
-        post.Comments = append(post.Comments, comments)
-        if err2 != nil {
-            fmt.Println(err2)
-        }
-    }
-    fmt.Println("comments for post", post.Comments)
-    return post
+		err2 := rows.Scan(&comments.CommentID, &comments.CommentContent, &comments.Date, &comments.User)
+
+		post.Comments = append(post.Comments, comments)
+		if err2 != nil {
+			fmt.Println(err2)
+		}
+	}
+	fmt.Println("comments for post", post.Comments)
+	return post
 }

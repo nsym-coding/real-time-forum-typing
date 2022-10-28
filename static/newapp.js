@@ -342,6 +342,7 @@ logoutButton.onclick = () => {
 };
 
 const DisplayPosts = (data) => {
+  console.log("post data on login ---> ", data);
   let postDivs = document.createElement("div");
   let postTitle = document.createElement("div");
 
@@ -356,9 +357,7 @@ const DisplayPosts = (data) => {
   postTitle.innerText = data.title;
   // postContent.innerText = data.postcontent;
   postTitle.style.borderBottom = "0.2vh solid black";
-  postFooter.innerText = `Created by ${data.username},   Date: ${
-    data.posttime
-  }, Comments: ${1 + 13}`;
+  postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime}, Comments: ${data.comments.length}`;
   let badgesDiv = document.createElement("div");
   badgesDiv.style.marginLeft = "0.5vh";
 
