@@ -68,7 +68,7 @@ window.onclick = function (event) {
         chatContainer.innerHTML = "";
         chatBody.removeEventListener(
           "scroll",
-          Throttler(displaySurplusMessages, 1200)
+          Throttler(displaySurplusMessages, 200)
         );
       }
     }
@@ -654,7 +654,7 @@ function loadInitialTenMessages() {
         chatContainer.innerHTML = "";
         chatBody.removeEventListener(
           "scroll",
-          Throttler(displaySurplusMessages, 1200)
+          Throttler(displaySurplusMessages, 200)
         );
       }
     };
@@ -672,9 +672,13 @@ function Throttler(fn = () => {}, wait) {
 }
 
 function displaySurplusMessages() {
+  // console.log("surplus sender", surplusMessages[0].chatsender);
+  // console.log("surplus recipient", surplusMessages[0].chatrecipient);
+
   if (
-    surplusMessages[0].chatsender === chatRecipient.innerText ||
-    surplusMessages[0].chatrecipient === chatRecipient.innerText
+    surplusMessages.length > 0 &&
+    (surplusMessages[0].chatsender === chatRecipient.innerText ||
+      surplusMessages[0].chatrecipient === chatRecipient.innerText)
   ) {
     console.log("domrect", chatBody.getBoundingClientRect().y);
     if (loadedTenMessages && chatBody.scrollTop < 100) {
@@ -821,7 +825,7 @@ function persistentListener() {
         loadedTenMessages = true;
         chatBody.addEventListener(
           "scroll",
-          Throttler(displaySurplusMessages, 1200)
+          Throttler(displaySurplusMessages, 200)
         );
       } else {
         loopfrom = 0;
@@ -844,7 +848,7 @@ function persistentListener() {
     ) {
       chatBody.removeEventListener(
         "scroll",
-        Throttler(displaySurplusMessages, 1200)
+        Throttler(displaySurplusMessages, 200)
       );
       chatContainer.innerHTML = "";
       console.log("data check --> ", data);
