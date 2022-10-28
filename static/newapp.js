@@ -357,7 +357,14 @@ const DisplayPosts = (data) => {
   postTitle.innerText = data.title;
   // postContent.innerText = data.postcontent;
   postTitle.style.borderBottom = "0.2vh solid black";
-  postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime}, Comments: ${data.comments.length}`;
+  if (data.comments !== null) {
+    postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime}, Comments: ${data.comments.length}`;
+  } else {
+    postFooter.innerText = `Created by ${data.username},   Date: ${
+      data.posttime
+    }, Comments: ${14}`;
+  }
+
   let badgesDiv = document.createElement("div");
   badgesDiv.style.marginLeft = "0.5vh";
 
