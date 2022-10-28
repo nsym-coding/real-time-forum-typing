@@ -349,9 +349,8 @@ const DisplayPosts = (data) => {
   postTitle.innerText = data.title;
   // postContent.innerText = data.postcontent;
   postTitle.style.borderBottom = "0.2vh solid black";
-  postFooter.innerText = `Created by ${data.username},   Date: ${
-    data.posttime
-  }, Comments: ${1 + 13}`;
+  postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime
+    }, Comments: ${1 + 13}`;
   let badgesDiv = document.createElement("div");
   badgesDiv.style.marginLeft = "0.5vh";
 
@@ -619,6 +618,7 @@ function loadInitialTenMessages() {
 
   for (const user of userRg) {
     user.onclick = function () {
+
       chatContainer.innerHTML = "";
       chatRecipient.innerText = user.id;
       let requestChatData = {};
@@ -641,7 +641,7 @@ function loadInitialTenMessages() {
   }
 }
 
-function Throttler(fn = () => {}, wait) {
+function Throttler(fn = () => { }, wait) {
   var time = Date.now();
   return function () {
     if (time + wait - Date.now() < 0) {
@@ -706,8 +706,11 @@ function displaySurplusMessages() {
     }
   }
 }
+chatBody.addEventListener("scroll", Throttler(displaySurplusMessages, 2750));
 
-chatBody.addEventListener("scroll", Throttler(displaySurplusMessages, 50));
+// chatBody.addEventListener("scroll", Throttler(displaySurplusMessages, 50));
+
+
 
 function addBadgesToPosts(data, div) {
   // split the string
