@@ -226,7 +226,9 @@ submitPostButton.addEventListener("click", function (e) {
   }
 });
 
-let successfulRegistrationMessage = document.getElementById("registered-login-success");
+let successfulRegistrationMessage = document.getElementById(
+  "registered-login-success"
+);
 
 let registrationErrors = document.querySelectorAll(".registration-errors");
 
@@ -347,7 +349,9 @@ const DisplayPosts = (data) => {
   postTitle.innerText = data.title;
   // postContent.innerText = data.postcontent;
   postTitle.style.borderBottom = "0.2vh solid black";
-  postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime}, Comments: ${1 + 13}`;
+  postFooter.innerText = `Created by ${data.username},   Date: ${
+    data.posttime
+  }, Comments: ${1 + 13}`;
   let badgesDiv = document.createElement("div");
   badgesDiv.style.marginLeft = "0.5vh";
 
@@ -464,45 +468,45 @@ const populateUsers = (users) => {
 
 //sorting chatUsers
 const sortingUsersWithChat = (users) => {
-  console.log(
-    "CHECKING SORT FUNCTION --->",
-    users.userswithchat.sort((a, b) => b.messageID - a.messageID)
-  );
+  if (users.userswithchat !== null) {
+    users.userswithchat.sort((a, b) => b.messageID - a.messageID);
 
-  console.log("sorting data from last message", users);
+    console.log("sorting data from last message", users);
 
-  for (let chatUser of users.userswithchat) {
-    for (let usersWithBadge of users.allUsers) {
-      if (
-        usersWithBadge.user != loggedInUser &&
-        (chatUser.chatsender === usersWithBadge.user || chatUser.chatrecipient === usersWithBadge.user)
-      ) {
-        console.log("usersWithBadge-----user-------", usersWithBadge.user);
-        console.log("usersWithBadge------team------", usersWithBadge.team);
+    for (let chatUser of users.userswithchat) {
+      for (let usersWithBadge of users.allUsers) {
+        if (
+          usersWithBadge.user != loggedInUser &&
+          (chatUser.chatsender === usersWithBadge.user ||
+            chatUser.chatrecipient === usersWithBadge.user)
+        ) {
+          console.log("usersWithBadge-----user-------", usersWithBadge.user);
+          console.log("usersWithBadge------team------", usersWithBadge.team);
 
-        userDetails = document.createElement("div");
-        let username = document.createElement("div");
-        imageDiv = document.createElement("div");
-        img = document.createElement("img");
-        let onlineIcon = document.createElement("online-icon");
+          userDetails = document.createElement("div");
+          let username = document.createElement("div");
+          imageDiv = document.createElement("div");
+          img = document.createElement("img");
+          let onlineIcon = document.createElement("online-icon");
 
-        img.src = `/css/img/${usersWithBadge.team}.png`;
-        img.style.width = "2vw";
-        imageDiv.appendChild(onlineIcon);
-        userDetails.id = `${usersWithBadge.user}`;
+          img.src = `/css/img/${usersWithBadge.team}.png`;
+          img.style.width = "2vw";
+          imageDiv.appendChild(onlineIcon);
+          userDetails.id = `${usersWithBadge.user}`;
 
-        userDetails.className = "registered-user";
+          userDetails.className = "registered-user";
 
-        if (onlineUsersFromGo.includes(usersWithBadge.user)) {
-          onlineIcon.className = "online-icon-class";
-        } else {
-          onlineIcon.className = "offline-icon-class";
+          if (onlineUsersFromGo.includes(usersWithBadge.user)) {
+            onlineIcon.className = "online-icon-class";
+          } else {
+            onlineIcon.className = "offline-icon-class";
+          }
+          username.innerText = `${usersWithBadge.user}`;
+          imageDiv.append(img);
+          userDetails.appendChild(username);
+          userDetails.appendChild(imageDiv);
+          onlineUsers.appendChild(userDetails);
         }
-        username.innerText = `${usersWithBadge.user}`;
-        imageDiv.append(img);
-        userDetails.appendChild(username);
-        userDetails.appendChild(imageDiv);
-        onlineUsers.appendChild(userDetails);
       }
     }
   }
@@ -510,14 +514,17 @@ const sortingUsersWithChat = (users) => {
 
 const sortingChatlessUsers = (users) => {
   console.log("pre---->", users);
-  for (let j = 0; j < users.userswithchat.length; j++) {
-    for (let i = 0; i < users.allUsers.length; i++) {
-      if (
-        users.allUsers[i].user !== loggedInUser &&
-        (users.allUsers[i].user === users.userswithchat[j].chatsender || users.allUsers[i].user === users.userswithchat[j].chatrecipient)
-      ) {
-        console.log("checking 3 --> ", users.allUsers[i].user);
-        users.allUsers.splice(i, 1);
+  if (users.userswithchat !== null) {
+    for (let j = 0; j < users.userswithchat.length; j++) {
+      for (let i = 0; i < users.allUsers.length; i++) {
+        if (
+          users.allUsers[i].user !== loggedInUser &&
+          (users.allUsers[i].user === users.userswithchat[j].chatsender ||
+            users.allUsers[i].user === users.userswithchat[j].chatrecipient)
+        ) {
+          console.log("checking 3 --> ", users.allUsers[i].user);
+          users.allUsers.splice(i, 1);
+        }
       }
     }
   }
@@ -539,7 +546,7 @@ const sortingChatlessUsers = (users) => {
       let username = document.createElement("div");
       imageDiv = document.createElement("div");
       img = document.createElement("img");
-      let onlineIcon = document.createElement("div");
+      let onlineIcon = document.createElement("online-icon");
 
       img.src = `/css/img/${usersWithBadge.team}.png`;
       img.style.width = "2vw";
@@ -634,7 +641,7 @@ function loadInitialTenMessages() {
   }
 }
 
-function Throttler(fn = () => { }, wait) {
+function Throttler(fn = () => {}, wait) {
   var time = Date.now();
   return function () {
     if (time + wait - Date.now() < 0) {
@@ -651,7 +658,11 @@ function displaySurplusMessages() {
     if (surplusMessages.length > 10) {
       console.log("CS--------------------", chatBody.scrollTop);
 
-      for (let i = surplusMessages.length - 1; i > surplusMessages.length - 10; i--) {
+      for (
+        let i = surplusMessages.length - 1;
+        i > surplusMessages.length - 10;
+        i--
+      ) {
         let newChatBubble = document.createElement("div");
         newChatBubble.innerText = surplusMessages[i].message;
         if (surplusMessages[i].chatsender == loggedInUser) {
@@ -665,7 +676,10 @@ function displaySurplusMessages() {
         console.log(surplusMessages.length);
       }
 
-      console.log("10+ messages left", surplusMessages.slice(0, surplusMessages.length - 10));
+      console.log(
+        "10+ messages left",
+        surplusMessages.slice(0, surplusMessages.length - 10)
+      );
 
       surplusMessages = surplusMessages.slice(0, surplusMessages.length - 10);
     } else {
@@ -715,9 +729,11 @@ const changeOnlineStatus = (data) => {
   console.log("updated online users", data.UpdatedOnlineUsers);
   for (const item of userRg) {
     if (data.UpdatedOnlineUsers.includes(item.id)) {
-      item.getElementsByTagName("online-icon")[0].className = "online-icon-class"
+      item.getElementsByTagName("online-icon")[0].className =
+        "online-icon-class";
     } else {
-      item.getElementsByTagName("online-icon")[0].className = "offline-icon-class"
+      item.getElementsByTagName("online-icon")[0].className =
+        "offline-icon-class";
     }
   }
 };
@@ -749,7 +765,9 @@ function persistentListener() {
     }
 
     if (data.response === "Notification viewed and set to nil") {
-      let clickedNotificationDiv = document.getElementById(`${data.usertodelete}box`);
+      let clickedNotificationDiv = document.getElementById(
+        `${data.usertodelete}box`
+      );
 
       if (clickedNotificationDiv !== null) {
         clickedNotificationDiv.remove();
@@ -767,7 +785,10 @@ function persistentListener() {
       if (data.chathistory.length >= 10) {
         loopfrom = data.chathistory.length - 10;
 
-        surplusMessages = data.chathistory.slice(0, data.chathistory.length - 10);
+        surplusMessages = data.chathistory.slice(
+          0,
+          data.chathistory.length - 10
+        );
 
         loadedTenMessages = true;
       } else {
@@ -793,7 +814,9 @@ function persistentListener() {
     }
     if (data.tipo === "post") {
       DisplayPosts(data);
-      console.log("***************************** 2 - displayposts *****************************");
+      console.log(
+        "***************************** 2 - displayposts *****************************"
+      );
     }
 
     if (data.tipo === "onlineUsers" && data.popusercheck == loggedInUser) {
@@ -806,7 +829,6 @@ function persistentListener() {
     if (data.tipo === "updatedOnlineUsers") {
       // console.log("UPDATED ONLINE USERS", data);
       changeOnlineStatus(data);
-
     }
 
     if (data.tipo === "loggedOutUser") {
@@ -816,16 +838,20 @@ function persistentListener() {
     }
 
     if (data.tipo === "lastMessage") {
-
-      let userDivs = document.getElementsByClassName("registered-user")
+      let userDivs = document.getElementsByClassName("registered-user");
 
       // move user div to the top if sender or recipient
       if (data.chatsender === loggedInUser) {
-        onlineUsers.insertBefore(userDivs.namedItem(data.chatrecipient), userDivs[0])
+        onlineUsers.insertBefore(
+          userDivs.namedItem(data.chatrecipient),
+          userDivs[0]
+        );
       } else {
-        onlineUsers.insertBefore(userDivs.namedItem(data.chatsender), userDivs[0])
+        onlineUsers.insertBefore(
+          userDivs.namedItem(data.chatsender),
+          userDivs[0]
+        );
       }
-
 
       let newChatBubble = document.createElement("div");
       newChatBubble.innerText = data.message;
@@ -839,14 +865,18 @@ function persistentListener() {
       chatBody.scrollTo(0, chatBody.scrollHeight);
       console.log("NOTIFICATION DATA====>", data.livenotification);
 
-      if (chatModal.style.display === "block" && data.livenotification.notificationsender == chatRecipient.innerHTML) {
+      if (
+        chatModal.style.display === "block" &&
+        data.livenotification.notificationsender == chatRecipient.innerHTML
+      ) {
         console.log("notifsender", data.livenotification.notificationsender);
         console.log("recipient's modal's open");
 
         let deleteNotifications = {};
         deleteNotifications.type = "deletenotification";
         deleteNotifications.sender = data.livenotification.notificationsender;
-        deleteNotifications.recipient = data.livenotification.notificationrecipient;
+        deleteNotifications.recipient =
+          data.livenotification.notificationrecipient;
         ws.send(JSON.stringify(deleteNotifications));
       } else {
         getOneNotification(data.livenotification);
@@ -854,7 +884,6 @@ function persistentListener() {
     }
   };
 }
-
 
 function array_move(arr, old_index, new_index) {
   if (new_index >= arr.length) {
@@ -865,7 +894,7 @@ function array_move(arr, old_index, new_index) {
   }
   arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
   return arr; // for testing
-};
+}
 
 // returns [2, 1, 3]
-// console.log(array_move([1, 2, 3], 1, 0));   
+// console.log(array_move([1, 2, 3], 1, 0));
