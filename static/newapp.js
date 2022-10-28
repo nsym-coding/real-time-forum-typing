@@ -64,6 +64,13 @@ window.onclick = function (event) {
   for (let i = 0; i < modal.length; i++) {
     if (event.target == modal[i]) {
       modal[i].style.display = "none";
+      if (modal[i].id === "my-chat-modal") {
+        chatContainer.innerHTML = "";
+        chatBody.removeEventListener(
+          "scroll",
+          Throttler(displaySurplusMessages, 200)
+        );
+      }
     }
   }
 };
@@ -349,8 +356,9 @@ const DisplayPosts = (data) => {
   postTitle.innerText = data.title;
   // postContent.innerText = data.postcontent;
   postTitle.style.borderBottom = "0.2vh solid black";
-  postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime
-    }, Comments: ${1 + 13}`;
+  postFooter.innerText = `Created by ${data.username},   Date: ${
+    data.posttime
+  }, Comments: ${1 + 13}`;
   let badgesDiv = document.createElement("div");
   badgesDiv.style.marginLeft = "0.5vh";
 
@@ -618,7 +626,6 @@ function loadInitialTenMessages() {
 
   for (const user of userRg) {
     user.onclick = function () {
-
       chatContainer.innerHTML = "";
       chatRecipient.innerText = user.id;
       let requestChatData = {};
@@ -637,11 +644,18 @@ function loadInitialTenMessages() {
   for (let i = 0; i < span.length; i++) {
     span[i].onclick = function () {
       modal[i].style.display = "none";
+      if (modal[i].id === "my-chat-modal") {
+        chatContainer.innerHTML = "";
+        chatBody.removeEventListener(
+          "scroll",
+          Throttler(displaySurplusMessages, 200)
+        );
+      }
     };
   }
 }
 
-function Throttler(fn = () => { }, wait) {
+function Throttler(fn = () => {}, wait) {
   var time = Date.now();
   return function () {
     if (time + wait - Date.now() < 0) {
@@ -706,11 +720,9 @@ function displaySurplusMessages() {
     }
   }
 }
-chatBody.addEventListener("scroll", Throttler(displaySurplusMessages, 2750));
-
 // chatBody.addEventListener("scroll", Throttler(displaySurplusMessages, 50));
 
-
+// chatBody.addEventListener("scroll", Throttler(displaySurplusMessages, 50));
 
 function addBadgesToPosts(data, div) {
   // split the string
@@ -782,7 +794,9 @@ function persistentListener() {
       console.log("-----DB RESET------", data);
     }
 
-    if (data.tipo == "messagehistoryfromgo") {
+    if (data.tipo == "messagehistoryfromgo" && data.chathistory !== null) {
+      console.log("data check --> ", data);
+      chatContainer.innerHTML = "";
       let loopfrom;
 
       if (data.chathistory.length >= 10) {
@@ -794,6 +808,15 @@ function persistentListener() {
         );
 
         loadedTenMessages = true;
+        chatBody.addEventListener(
+          "scroll",
+          Throttler(displaySurplusMessages, 200)
+        );
+      } else if (data.chathistory.length === 0) {
+        chatBody.removeEventListener(
+          "scroll",
+          Throttler(displaySurplusMessages, 200)
+        );
       } else {
         loopfrom = 0;
       }
@@ -809,6 +832,9 @@ function persistentListener() {
         chatContainer.appendChild(newChatBubble);
         chatBody.scrollTo(0, chatBody.scrollHeight);
       }
+    } else {
+      chatContainer.innerHTML = "";
+      console.log("data check --> ", data);
     }
     if (data.tipo === "clientnotifications" && firstTimeNotifications) {
       console.log("NOTIFICATIONS ON LOGIN");
