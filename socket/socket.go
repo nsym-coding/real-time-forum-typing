@@ -114,10 +114,9 @@ type deleteNotifications struct {
 }
 
 type updateOnlineUsers struct {
-	UpdatedOnlineUsers []string `json:"UpdatedOnlineUsers"`
-	Tipo               string   `json:"tipo"`
+	UpdatedOnlineUsers []string         `json:"UpdatedOnlineUsers"`
+	Tipo               string           `json:"tipo"`
 	AllUsers           []users.AllUsers `json:"updateAllUsers"`
-
 }
 
 var (
@@ -208,18 +207,18 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	var o updateOnlineUsers
 	for k := range loggedInUsers {
 
-			online.UsersWithChat = chat.GetLatestChat(db, chat.GetChat(db, k))
-			online.PopUserCheck = currentUser
-			online.OnlineUsers = append(online.OnlineUsers, k) 
-			online.AllUsers = users.GetAllUsers(db)
-			loggedInUsers[k].WriteJSON(online)
-		
+		online.UsersWithChat = chat.GetLatestChat(db, chat.GetChat(db, k))
+		online.PopUserCheck = currentUser
+		online.OnlineUsers = append(online.OnlineUsers, k)
+		online.AllUsers = users.GetAllUsers(db)
+		loggedInUsers[k].WriteJSON(online)
+
 		o.UpdatedOnlineUsers = append(o.UpdatedOnlineUsers, k)
 	}
 
-	o.AllUsers =  users.GetAllUsers(db)
+	o.AllUsers = users.GetAllUsers(db)
 	o.Tipo = "updatedOnlineUsers"
-	
+
 	broadcastOnlineUsers <- o
 
 	var f T
@@ -310,19 +309,14 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 				if user == f.Chat.ChatSender || user == f.Chat.ChatRecipient {
 					f.Chat.Tipo = "lastMessage"
 					// f.Chat.Tipo = "lastnotification"
-					fmt.Println("<============LAST NOTIFICATION ============>")
+
 					f.Chat.LastNotification = notification.SingleNotification(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
 					f.Chat.UsersWithChat = chat.GetLatestChat(db, chat.GetChat(db, currentUser))
 					f.Chat.AllUsers = users.GetAllUsers(db)
 					connection.WriteJSON(f.Chat)
 
 					fmt.Println("single notification test =========>", notification.SingleNotification(db, f.Chat.ChatSender, f.Chat.ChatRecipient))
-					// var liveNotifications notificationsAtLogin
-					// liveNotifications.Notifications = notification.NotificationQuery(db, f.Chat.ChatRecipient)
-					// liveNotifications.Tipo = "live notifications"
-					// liveNotifications.UserToDelete = f.Chat.ChatSender
-					// fmt.Println("+=====+ Notifications", notification.NotificationQuery(db, f.Chat.ChatRecipient))
-					// connection.WriteJSON(liveNotifications)
+
 				}
 				//  check how many live notifications there are and send to recipient
 			}
@@ -344,20 +338,9 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 			}
 		} else if f.Type == "requestNotifications" {
-			// sending client specific notifications on each unique login
 
-			// var data = notification.NotificationQuery(db, f.whosNotifications.Username)
-			// for _, value := range data {
-			// 	if f.whosNotifications.Username == value.NotificationRecipient {
-			// 		value.Tipo = "clientnotifications"
-			// 		loggedInUsers[f.whosNotifications.Username].WriteJSON(value)
-			// 	}
-
-			// }
-
-			// sending client specific notifications on each unique login
 			data := notification.NotificationQuery(db, f.whosNotifications.Username)
-			fmt.Println("notification ------- Data", data)
+			// fmt.Println("notification ------- Data", data)
 			notifyAtLogin.Notifications = []notification.Notification{}
 			for _, value := range data {
 				if f.whosNotifications.Username == value.NotificationRecipient {
@@ -367,15 +350,15 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 				}
 			}
-			fmt.Println("notes---", notifyAtLogin.Notifications)
+			// fmt.Println("notes---", notifyAtLogin.Notifications)
 			loggedInUsers[f.whosNotifications.Username].WriteJSON(notifyAtLogin)
 
 		} else if f.Type == "deletenotification" {
-			fmt.Println("DELETE ALL NOTIFICATIONS")
+			// fmt.Println("DELETE ALL NOTIFICATIONS")
 			notification.RemoveNotifications(db, f.deleteNotifications.NotificationSender, f.deleteNotifications.NotificationRecipient)
 		}
 
-		log.Println("Checking what's in f ---> ", f.Chat)
+		// log.Println("Checking what's in f ---> ", f.Chat)
 	}
 }
 
@@ -387,7 +370,7 @@ func broadcastToAllClients() {
 				for _, user := range loggedInUsers {
 
 					user.WriteJSON(post)
-					fmt.Printf("Value %v was read.\n", post)
+					// fmt.Printf("Value %v was read.\n", post)
 				}
 			}
 		case comment, ok := <-broadcastChannelComments:
