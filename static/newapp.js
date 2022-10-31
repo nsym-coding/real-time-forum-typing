@@ -525,6 +525,37 @@ const sortingUsersWithChat = (users) => {
   }
 };
 
+
+const UpdateAllWithNewUser = (data)=>{
+  
+  userDetails = document.createElement("div");
+  let username = document.createElement("div");
+  imageDiv = document.createElement("div");
+  img = document.createElement("img");
+  let onlineIcon = document.createElement("online-icon");
+
+  img.src = `/css/img/${usersWithBadge.team}.png`;
+  img.style.width = "2vw";
+  imageDiv.appendChild(onlineIcon);
+  userDetails.id = `${usersWithBadge.user}`;
+
+  userDetails.className = "registered-user";
+
+  if (onlineUsersFromGo.includes(usersWithBadge.user)) {
+    onlineIcon.className = "online-icon-class";
+  } else {
+    onlineIcon.className = "offline-icon-class";
+  }
+  username.innerText = `${usersWithBadge.user}`;
+  imageDiv.append(img);
+  userDetails.appendChild(username);
+  userDetails.appendChild(imageDiv);
+  onlineUsers.appendChild(userDetails);
+}
+
+let chatlessArray = []
+
+
 const sortingChatlessUsers = (users) => {
   console.log("pre---->", users);
   if (users.userswithchat !== null) {
@@ -542,11 +573,13 @@ const sortingChatlessUsers = (users) => {
     }
   }
 
+
   // const letters = ["d","a", "c", "z"]
   // console.log('letters--->', letters.sort())
   // console.log('letters--->', letters.sort().reverse())
 
   users.allUsers.sort((a, b) => a.user.localeCompare(b.user));
+  chatlessArray = users.allUsers
 
   for (let usersWithBadge of users.allUsers) {
     // console.log("chatsender -> ", chatUser.chatsender);
@@ -866,7 +899,7 @@ function persistentListener() {
       );
     }
 
-    if (data.tipo === "onlineUsers" && data.popusercheck == loggedInUser) {
+    if (data.tipo === "onlineUsers" ) {
       console.log("DATA ON LOGIN------", data);
       onlineUsersFromGo = data.onlineUsers;
 
@@ -874,9 +907,12 @@ function persistentListener() {
     }
 
     if (data.tipo === "updatedOnlineUsers") {
-      // console.log("UPDATED ONLINE USERS", data);
+      //deal with new users and add them to userrg
       changeOnlineStatus(data);
     }
+
+
+
 
     if (data.tipo === "loggedOutUser") {
       console.log("LOGGED OUT USER", data.onlineUsers);

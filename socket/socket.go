@@ -116,6 +116,8 @@ type deleteNotifications struct {
 type updateOnlineUsers struct {
 	UpdatedOnlineUsers []string `json:"UpdatedOnlineUsers"`
 	Tipo               string   `json:"tipo"`
+	AllUsers           []users.AllUsers `json:"updateAllUsers"`
+
 }
 
 var (
@@ -205,18 +207,19 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	var o updateOnlineUsers
 	for k := range loggedInUsers {
-		if k == currentUser {
+
 			online.UsersWithChat = chat.GetLatestChat(db, chat.GetChat(db, k))
 			online.PopUserCheck = currentUser
-			online.OnlineUsers = append(online.OnlineUsers, k)
+			online.OnlineUsers = append(online.OnlineUsers, k) 
 			online.AllUsers = users.GetAllUsers(db)
 			loggedInUsers[k].WriteJSON(online)
-		}
+		
 		o.UpdatedOnlineUsers = append(o.UpdatedOnlineUsers, k)
 	}
 
+	o.AllUsers =  users.GetAllUsers(db)
 	o.Tipo = "updatedOnlineUsers"
-	// online.Notifications = notification.NotificationQuery(db, currentUser)
+	
 	broadcastOnlineUsers <- o
 
 	var f T
