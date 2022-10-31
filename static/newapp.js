@@ -357,13 +357,8 @@ const DisplayPosts = (data) => {
   postTitle.innerText = data.title;
   // postContent.innerText = data.postcontent;
   postTitle.style.borderBottom = "0.2vh solid black";
-  if (data.comments !== null) {
-    postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime}, Comments: ${data.comments.length}`;
-  } else {
-    postFooter.innerText = `Created by ${data.username},   Date: ${
-      data.posttime
-    }, Comments: ${14}`;
-  }
+    postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime}`;
+  
 
   let badgesDiv = document.createElement("div");
   badgesDiv.style.marginLeft = "0.5vh";
@@ -378,7 +373,7 @@ const DisplayPosts = (data) => {
   postDivs.appendChild(postTitle);
   postDivs.appendChild(postFooter);
 
-  posts.appendChild(postDivs);
+  posts.prepend(postDivs);
 
   let getCommentsForPosts = {};
 
@@ -525,6 +520,37 @@ const sortingUsersWithChat = (users) => {
   }
 };
 
+
+const UpdateAllWithNewUser = (data)=>{
+  
+  userDetails = document.createElement("div");
+  let username = document.createElement("div");
+  imageDiv = document.createElement("div");
+  img = document.createElement("img");
+  let onlineIcon = document.createElement("online-icon");
+
+  img.src = `/css/img/${usersWithBadge.team}.png`;
+  img.style.width = "2vw";
+  imageDiv.appendChild(onlineIcon);
+  userDetails.id = `${usersWithBadge.user}`;
+
+  userDetails.className = "registered-user";
+
+  if (onlineUsersFromGo.includes(usersWithBadge.user)) {
+    onlineIcon.className = "online-icon-class";
+  } else {
+    onlineIcon.className = "offline-icon-class";
+  }
+  username.innerText = `${usersWithBadge.user}`;
+  imageDiv.append(img);
+  userDetails.appendChild(username);
+  userDetails.appendChild(imageDiv);
+  onlineUsers.appendChild(userDetails);
+}
+
+let chatlessArray = []
+
+
 const sortingChatlessUsers = (users) => {
   console.log("pre---->", users);
   if (users.userswithchat !== null) {
@@ -542,11 +568,13 @@ const sortingChatlessUsers = (users) => {
     }
   }
 
+
   // const letters = ["d","a", "c", "z"]
   // console.log('letters--->', letters.sort())
   // console.log('letters--->', letters.sort().reverse())
 
   users.allUsers.sort((a, b) => a.user.localeCompare(b.user));
+  chatlessArray = users.allUsers
 
   for (let usersWithBadge of users.allUsers) {
     // console.log("chatsender -> ", chatUser.chatsender);
@@ -691,12 +719,29 @@ function displaySurplusMessages() {
           i > surplusMessages.length - 10;
           i--
         ) {
+
+
+
           let newChatBubble = document.createElement("div");
           newChatBubble.innerText = surplusMessages[i].message;
+                let dateDiv =  document.createElement("div");
+        dateDiv.style.fontSize = "xx-small"
+
+
           if (surplusMessages[i].chatsender == loggedInUser) {
+            dateDiv.innerHTML = `${surplusMessages[i].chatDate}, ${surplusMessages[i].chatsender}`
+
             newChatBubble.id = "chat-message-sender";
+
+
+            newChatBubble.appendChild(dateDiv)
+
           } else {
+            dateDiv.innerHTML = `${surplusMessages[i].chatDate},${surplusMessages[i].chatsender}`
+
             newChatBubble.id = "chat-message-recipient";
+            newChatBubble.appendChild(dateDiv)
+
           }
           chatContainer.insertBefore(newChatBubble, chatContainer.children[0]);
 
@@ -715,15 +760,29 @@ function displaySurplusMessages() {
         for (let j = surplusMessages.length - 1; j >= 0; j--) {
           let newChatBubble = document.createElement("div");
           newChatBubble.innerText = surplusMessages[j].message;
+          let dateDiv =  document.createElement("div");
+          dateDiv.style.fontSize = "xx-small"
+
+
+
+
           if (surplusMessages[j].chatsender == loggedInUser) {
+            dateDiv.innerHTML = `${surplusMessages[j].chatDate}, ${surplusMessages[j].chatsender}`
+
             newChatBubble.id = "chat-message-sender";
+            newChatBubble.appendChild(dateDiv)
+
+
           } else {
-            newChatBubble.id = "chat-message-recipient";
+            dateDiv.innerHTML = `${surplusMessages[j].chatDate},${surplusMessages[j].chatsender}`
+
+            newChatBubble.id = "chat-message-recipient"
+            newChatBubble.appendChild(dateDiv)
+
+            ;
           }
           chatContainer.insertBefore(newChatBubble, chatContainer.children[0]);
-          // chatBody.scrollTop += 50;
-          //chatBody.scrollBy(0, 100);
-          //console.log("CS--------------------", chatBody.scrollTop);
+       
           console.log("Cheight  ----- > ", chatBody.scrollHeight);
           console.log(surplusMessages[j].message);
         }
@@ -735,9 +794,7 @@ function displaySurplusMessages() {
     }
   }
 }
-// chatBody.addEventListener("scroll", Throttler(displaySurplusMessages, 50));
 
-// chatBody.addEventListener("scroll", Throttler(displaySurplusMessages, 50));
 
 function addBadgesToPosts(data, div) {
   // split the string
@@ -775,6 +832,7 @@ function persistentListener() {
     let data = JSON.parse(e.data);
 
     if (data.tipo == "allComments") {
+
       console.log("ALL COMMENTS DISPLAYED");
       for (let i = 0; i < data.comments.length; i++) {
         let commentDiv = document.createElement("div");
@@ -833,13 +891,23 @@ function persistentListener() {
 
       for (let i = loopfrom; i < data.chathistory.length; i++) {
         let newChatBubble = document.createElement("div");
+        let dateDiv =  document.createElement("div");
+        dateDiv.style.fontSize = "xx-small"
         newChatBubble.innerText = data.chathistory[i].message;
+        
         if (data.chathistory[i].chatsender == loggedInUser) {
+          dateDiv.innerHTML = `${data.chathistory[i].chatDate}, ${data.chathistory[i].chatsender}`
           newChatBubble.id = "chat-message-sender";
+          newChatBubble.appendChild(dateDiv)
         } else {
+          dateDiv.innerHTML = `${data.chathistory[i].chatDate},${data.chathistory[i].chatsender}`
+
           newChatBubble.id = "chat-message-recipient";
+          newChatBubble.appendChild(dateDiv)
+
         }
         chatContainer.appendChild(newChatBubble);
+
         chatBody.scrollTo(0, chatBody.scrollHeight);
       }
     } else if (
@@ -848,7 +916,7 @@ function persistentListener() {
     ) {
       chatBody.removeEventListener(
         "scroll",
-        Throttler(displaySurplusMessages, 200)
+        Throttler(displaySurplSurplusMessages, 200)
       );
       chatContainer.innerHTML = "";
       console.log("data check --> ", data);
@@ -866,7 +934,7 @@ function persistentListener() {
       );
     }
 
-    if (data.tipo === "onlineUsers" && data.popusercheck == loggedInUser) {
+    if (data.tipo === "onlineUsers" ) {
       console.log("DATA ON LOGIN------", data);
       onlineUsersFromGo = data.onlineUsers;
 
@@ -874,9 +942,12 @@ function persistentListener() {
     }
 
     if (data.tipo === "updatedOnlineUsers") {
-      // console.log("UPDATED ONLINE USERS", data);
+      //deal with new users and add them to userrg
       changeOnlineStatus(data);
     }
+
+
+
 
     if (data.tipo === "loggedOutUser") {
       console.log("LOGGED OUT USER", data.onlineUsers);
@@ -901,12 +972,36 @@ function persistentListener() {
         );
       }
 
+
+          /*
+       The toDateString() method returns the date portion of a date object. ...
+The toLocaleTimeString() method returns the time portion of a date object.
+23 Aug 2020
+*/
+
+
+
       let newChatBubble = document.createElement("div");
       newChatBubble.innerText = data.message;
+      let dateDiv =  document.createElement("div");
+      dateDiv.style.fontSize = "xx-small"
+
+      console.log('SURPLUSDATA----------', data);
+
       if (data.chatsender == loggedInUser) {
+        // dateDiv.innerHTML = `${data.chatDate}, ${data.chatsender}`
+
+        dateDiv.innerHTML = `${new Date().toLocaleTimeString("en-GB", {hour:"numeric", minute:"numeric"}).replace(",", "")} ${new Date().toLocaleDateString().replace(",", "")} ${data.chatsender}`
+
+
         newChatBubble.id = "chat-message-sender";
+        newChatBubble.appendChild(dateDiv)
       } else {
+        dateDiv.innerHTML = `${data.chatDate}, ${data.chatsender}`
+
         newChatBubble.id = "chat-message-recipient";
+        newChatBubble.appendChild(dateDiv)
+
       }
 
       chatContainer.appendChild(newChatBubble);

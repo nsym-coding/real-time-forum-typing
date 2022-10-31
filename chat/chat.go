@@ -122,7 +122,7 @@ func GetAllMessageHistoryFromChat(db *sql.DB, chatID int) ChatHistory {
 	defer rows.Close()
 	for rows.Next() {
 		var m Chat
-		// fmt.Println(&p.PostID)
+
 		err2 := rows.Scan(&m.ChatMessage, &m.ChatSender, &m.ChatRecipient, &m.Date)
 		// m.Tipo = "messagehistoryfromgo"
 		messagedata.ChatHist = append(messagedata.ChatHist, m)
@@ -170,3 +170,5 @@ func GetLatestChat(db *sql.DB, chatID []int) []Chat {
 	}
 	return latestChat
 }
+
+
