@@ -754,9 +754,7 @@ function displaySurplusMessages() {
             newChatBubble.id = "chat-message-recipient";
           }
           chatContainer.insertBefore(newChatBubble, chatContainer.children[0]);
-          // chatBody.scrollTop += 50;
-          //chatBody.scrollBy(0, 100);
-          //console.log("CS--------------------", chatBody.scrollTop);
+       
           console.log("Cheight  ----- > ", chatBody.scrollHeight);
           console.log(surplusMessages[j].message);
         }
@@ -768,9 +766,7 @@ function displaySurplusMessages() {
     }
   }
 }
-// chatBody.addEventListener("scroll", Throttler(displaySurplusMessages, 50));
 
-// chatBody.addEventListener("scroll", Throttler(displaySurplusMessages, 50));
 
 function addBadgesToPosts(data, div) {
   // split the string
@@ -808,6 +804,7 @@ function persistentListener() {
     let data = JSON.parse(e.data);
 
     if (data.tipo == "allComments") {
+
       console.log("ALL COMMENTS DISPLAYED");
       for (let i = 0; i < data.comments.length; i++) {
         let commentDiv = document.createElement("div");
@@ -866,13 +863,20 @@ function persistentListener() {
 
       for (let i = loopfrom; i < data.chathistory.length; i++) {
         let newChatBubble = document.createElement("div");
+        let dateDiv =  document.createElement("div");
+        dateDiv.style.fontSize = "xx-small"
+        dateDiv.innerHTML = data.chathistory[i].chatDate
         newChatBubble.innerText = data.chathistory[i].message;
         if (data.chathistory[i].chatsender == loggedInUser) {
           newChatBubble.id = "chat-message-sender";
+          newChatBubble.appendChild(dateDiv)
         } else {
           newChatBubble.id = "chat-message-recipient";
+          newChatBubble.appendChild(dateDiv)
+
         }
         chatContainer.appendChild(newChatBubble);
+
         chatBody.scrollTo(0, chatBody.scrollHeight);
       }
     } else if (
