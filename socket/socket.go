@@ -93,6 +93,8 @@ type loginValidation struct {
 	SentPosts          []posts.Posts    `json:"dbposts"`
 	AllUsers           []users.AllUsers `json:"allUsers"`
 	OnlineUsers        []string         `json:"onlineUsers"`
+	UsersWithChat      []chat.Chat      `json:"userswithchat"`
+	PopUserCheck       string           `json:"popusercheck"`
 }
 
 type whosNotifications struct {
@@ -111,6 +113,11 @@ type deleteNotifications struct {
 	NotificationRecipient string `json:"recipient"`
 }
 
+type updateOnlineUsers struct {
+	UpdatedOnlineUsers []string `json:"UpdatedOnlineUsers"`
+	Tipo               string   `json:"tipo"`
+}
+
 var (
 	loggedInUsers         = make(map[string]*websocket.Conn)
 	broadcastChannelPosts = make(chan posts.Posts, 1)
@@ -119,7 +126,7 @@ var (
 	currentUser              = ""
 	CallWS                   = false
 	online                   loginValidation
-	broadcastOnlineUsers     = make(chan loginValidation, 1)
+	broadcastOnlineUsers     = make(chan updateOnlineUsers, 1)
 	notifyAtLogin            notificationsAtLogin
 )
 
@@ -188,18 +195,29 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		loggedInUsers[currentUser].Close()
 	}
 
-	loggedInUsers[currentUser] = wsConn
+	loggedInUsers[users.GetUserName(db, currentUser)] = wsConn
 
 	fmt.Println("LOGGED IN USERS", loggedInUsers)
 
 	online.Tipo = "onlineUsers"
+
 	online.OnlineUsers = []string{}
+
+	var o updateOnlineUsers
 	for k := range loggedInUsers {
-		online.OnlineUsers = append(online.OnlineUsers, k)
+		if k == currentUser {
+			online.UsersWithChat = chat.GetLatestChat(db, chat.GetChat(db, k))
+			online.PopUserCheck = currentUser
+			online.OnlineUsers = append(online.OnlineUsers, k)
+			online.AllUsers = users.GetAllUsers(db)
+			loggedInUsers[k].WriteJSON(online)
+		}
+		o.UpdatedOnlineUsers = append(o.UpdatedOnlineUsers, k)
 	}
-	online.AllUsers = users.GetAllUsers(db)
+
+	o.Tipo = "updatedOnlineUsers"
 	// online.Notifications = notification.NotificationQuery(db, currentUser)
-	broadcastOnlineUsers <- online
+	broadcastOnlineUsers <- o
 
 	var f T
 	for {
@@ -216,12 +234,15 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			}
 			fmt.Println("users left in array", loggedInUsers)
 			online.OnlineUsers = []string{}
-			online.Tipo = "onlineUsers"
+			o.UpdatedOnlineUsers = []string{}
+			online.Tipo = "loggedOutUser"
 
 			for k := range loggedInUsers {
 				online.OnlineUsers = append(online.OnlineUsers, k)
+				o.UpdatedOnlineUsers = append(o.UpdatedOnlineUsers, k)
 			}
-			broadcastOnlineUsers <- online
+
+			broadcastOnlineUsers <- o
 
 			// wsConn.WriteJSON(online)
 			return
@@ -276,10 +297,8 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 				notification.AddFirstNotificationForUser(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
 
 				// fmt.Println("*********1st****************WHO IS THIS??????******", notification.NotificationQuery(db, f.Chat.ChatRecipient))
-
 			} else {
 				notification.IncrementNotifications(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
-
 			}
 
 			fmt.Println("THIS IS CHAT HISTORY --> ", chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))
@@ -290,6 +309,8 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 					// f.Chat.Tipo = "lastnotification"
 					fmt.Println("<============LAST NOTIFICATION ============>")
 					f.Chat.LastNotification = notification.SingleNotification(db, f.Chat.ChatSender, f.Chat.ChatRecipient)
+					f.Chat.UsersWithChat = chat.GetLatestChat(db, chat.GetChat(db, currentUser))
+					f.Chat.AllUsers = users.GetAllUsers(db)
 					connection.WriteJSON(f.Chat)
 
 					fmt.Println("single notification test =========>", notification.SingleNotification(db, f.Chat.ChatSender, f.Chat.ChatRecipient))
@@ -301,7 +322,6 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 					// connection.WriteJSON(liveNotifications)
 				}
 				//  check how many live notifications there are and send to recipient
-
 			}
 
 		} else if f.Type == "requestChatHistory" {
@@ -315,6 +335,10 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			if chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).Exists {
 				fmt.Println("THIS IS CHAT HISTORY --> ", chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))
 				wsConn.WriteJSON(chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))
+			} else if !chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).Exists {
+
+				wsConn.WriteJSON(chat.GetAllMessageHistoryFromChat(db, chat.ChatHistoryValidation(db, f.Chat.ChatSender, f.Chat.ChatRecipient).ChatID))
+
 			}
 		} else if f.Type == "requestNotifications" {
 			// sending client specific notifications on each unique login
@@ -496,13 +520,13 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 
 		loginData.Tipo = "loginValidation"
 
-		if !users.UserExists(db, t.Login.LoginUsername) {
+		if !users.UserExists(db, t.Login.LoginUsername) && !users.EmailExists(db, t.Login.LoginUsername) {
 			fmt.Println("Checking f.login.loginusername --> ", t.Login.LoginUsername)
 			loginData.InvalidUsername = true
 			toSend, _ := json.Marshal(loginData)
 			w.Write(toSend)
 
-		} else if users.UserExists(db, t.Login.LoginUsername) {
+		} else if users.UserExists(db, t.Login.LoginUsername) || users.EmailExists(db, t.Login.LoginUsername) {
 			fmt.Println("user exists")
 			if !users.CorrectPassword(db, t.Login.LoginUsername, t.Login.LoginPassword) {
 				loginData.InvalidPassword = true
@@ -511,12 +535,13 @@ func GetLoginData(w http.ResponseWriter, r *http.Request) {
 
 			} else {
 
+				currentUser = t.Login.LoginUsername
 				loginData.SentPosts = posts.SendPostsInDatabase(db)
 				loginData.AllUsers = users.GetAllUsers(db)
+				loginData.UsersWithChat = chat.GetLatestChat(db, chat.GetChat(db, users.GetUserName(db, currentUser)))
 				// loginData.Notifications = notification.NotificationQuery(db, t.Login.LoginUsername)
-				currentUser = t.Login.LoginUsername
 				loginData.SuccessfulLogin = true
-				loginData.SuccessfulUsername = currentUser
+				loginData.SuccessfulUsername = users.GetUserName(db, currentUser)
 				toSend, _ := json.Marshal(loginData)
 
 				w.Write(toSend)

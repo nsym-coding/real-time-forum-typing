@@ -62,8 +62,8 @@ func EmailExists(db *sql.DB, email string) bool {
 
 func CorrectPassword(db *sql.DB, username, password string) bool {
 	// get user from db
-	userStmt := "SELECT hash from users WHERE username = ?"
-	rowU := db.QueryRow(userStmt, username)
+	userStmt := "SELECT hash from users WHERE username = ? OR email = ?"
+	rowU := db.QueryRow(userStmt, username, username)
 	var hash string
 	err := rowU.Scan(&hash)
 	if err != nil {
@@ -149,3 +149,18 @@ func GetAllUsers(db *sql.DB) []AllUsers {
 
 	return usernameBadges
 }
+
+func GetUserName(db *sql.DB, email string) string {
+	// check if username already exists
+	userStmt := "SELECT username FROM users WHERE email = ?"
+	rowU := db.QueryRow(userStmt, email)
+	var uIDs string
+	error := rowU.Scan(&uIDs)
+	if error != sql.ErrNoRows {
+		fmt.Println("username already exists, err:", error)
+		// intUID, _ := strconv.Atoi(uIDs)
+		return uIDs
+	}
+	return email
+}
+
