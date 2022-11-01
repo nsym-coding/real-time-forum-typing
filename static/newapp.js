@@ -825,36 +825,48 @@ const changeOnlineStatus = (data) => {
   }
 };
 
+
+function newUserDiv(data, userDiv, whereToInsert) {
+
+  // const userAfterNewUserDiv = document.getElementById(userAfterNewUser)
+  let newUserDiv = document.createElement("div")
+  let username = document.createElement("div");
+  let imageDiv = document.createElement("div");
+  let img = document.createElement("img");
+  let onlineIcon = document.createElement("online-icon");
+  newUserDiv.className = "registered-user"
+  newUserDiv.classList.add("userWithoutChat")
+  img.src = `/css/img/${data.GetLastUserFromDatabase.team}.png`;
+  img.style.width = "2vw";
+  imageDiv.appendChild(onlineIcon);
+  newUserDiv.id = `${data.GetLastUserFromDatabase.user}`;
+  username.innerText = `${data.GetLastUserFromDatabase.user}`;
+  imageDiv.append(img);
+  newUserDiv.appendChild(username);
+  newUserDiv.appendChild(imageDiv);
+  if (whereToInsert === "insertBefore") {
+    onlineUsers.insertBefore(newUserDiv, userDiv)
+  } else {
+    userDiv.after(newUserDiv)
+  }
+  newUserDiv.onclick = function () {
+    chatContainer.innerHTML = "";
+    chatRecipient.innerText = newUserDiv.id;
+    let requestChatData = {};
+    requestChatData["chatsender"] = loggedInUser;
+    requestChatData["chatrecipient"] = chatRecipient.innerText;
+    requestChatData["type"] = "requestChatHistory";
+    ws.send(JSON.stringify(requestChatData));
+    chatModal.style.display = "block";
+
+  }
+}
+
 function addNewRegUserDiv(data) {
-  console.log("potential new user and chatless", data);
 
-  // let usersWithoutChatDivs = document.getElementsByClassName("userWithoutChat")
-  // userDetails = document.createElement("div");
-  // let username = document.createElement("div");
-  // imageDiv = document.createElement("div");
-  // img = document.createElement("img");
-  // let onlineIcon = document.createElement("online-icon");
-
-  // img.src = `/css/img/${usersWithBadge.team}.png`;
-  // img.style.width = "2vw";
-  // imageDiv.appendChild(onlineIcon);
-  // userDetails.id = `${usersWithBadge.user}`;
-
-  // userDetails.className = "registered-user";
-  // userDetails.classList.add("userWithoutChat")
-
-  // if (onlineUsersFromGo.includes(usersWithBadge.user)) {
-  //   onlineIcon.className = "online-icon-class";
-  // } else {
-  //   onlineIcon.className = "offline-icon-class";
-  // }
-  // username.innerText = `${usersWithBadge.user}`;
-  // imageDiv.append(img);
-  // userDetails.appendChild(username);
-  // userDetails.appendChild(imageDiv);
-  // onlineUsers.appendChild(userDetails);
   let chatlessUsersNames = chatlessArray.map(a => a.user);
   if (!chatlessUsersNames.includes(data.GetLastUserFromDatabase.user)) {
+    chatlessArray.push(data.GetLastUserFromDatabase.user)
     chatlessUsersNames.push(data.GetLastUserFromDatabase.user)
     console.log("chatless users array", chatlessUsersNames);
     chatlessUsersNames.sort((a, b) => a.localeCompare(b));
@@ -862,39 +874,24 @@ function addNewRegUserDiv(data) {
     if (chatlessUsersNames.indexOf(data.GetLastUserFromDatabase.user) === 0) {
       let userAfterNewUser = chatlessUsersNames[1]
       const userAfterNewUserDiv = document.getElementById(userAfterNewUser)
-      let newUserDiv = document.createElement("div")
-      let username = document.createElement("div");
-      let imageDiv = document.createElement("div");
-      let img = document.createElement("img");
-      let onlineIcon = document.createElement("online-icon");
-      newUserDiv.className = "registered-user"
-      newUserDiv.classList.add("userWithoutChat")
-      img.src = `/css/img/${data.GetLastUserFromDatabase.team}.png`;
-      img.style.width = "2vw";
-      imageDiv.appendChild(onlineIcon);
-      newUserDiv.id = `${data.GetLastUserFromDatabase.user}`;
-      username.innerText = `${data.GetLastUserFromDatabase.user}`;
-      imageDiv.append(img);
-      newUserDiv.appendChild(username);
-      newUserDiv.appendChild(imageDiv);
-      // onlineUsers.appendChild(newUserDiv);
-      onlineUsers.insertBefore(newUserDiv, userAfterNewUserDiv)
-      newUserDiv.onclick = function () {
-        chatContainer.innerHTML = "";
-        chatRecipient.innerText = newUserDiv.id;
-        let requestChatData = {};
-        requestChatData["chatsender"] = loggedInUser;
-        requestChatData["chatrecipient"] = chatRecipient.innerText;
-        requestChatData["type"] = "requestChatHistory";
-        ws.send(JSON.stringify(requestChatData));
+      console.log("INSERT BEFORE =============>");
+      newUserDiv(data, userAfterNewUserDiv, "insertBefore")
+      persistentListener();
+    } else if (chatlessUsersNames.indexOf(data.GetLastUserFromDatabase.user === chatlessUsersNames.length - 1)) {
+      let userAfterNewUser = chatlessUsersNames[chatlessUsersNames.length - 2]
+      const userAfterNewUserDiv = document.getElementById(userAfterNewUser)
+      console.log("INSERT AFTER 1============>");
+      newUserDiv(data, userAfterNewUserDiv, "insertAfter")
+      persistentListener();
+    } else {
+      let userAfterNewUser = chatlessUsersNames[chatlessUsersNames.indexOf(data.GetLastUserFromDatabase.user) - 1]
+      const userAfterNewUserDiv = document.getElementById(userAfterNewUser)
+      newUserDiv(data, userAfterNewUserDiv, "insertAfter")
+      console.log("INSERT AFTER 2============>");
 
-        persistentListener();
-        chatModal.style.display = "block";
-      };
+      persistentListener();
     }
-    console.log("chatless users array with new user sorted", chatlessUsersNames);
-  } else {
-    console.log("NOT A NEW USER ==============>>>>>>");
+
   }
 }
 
@@ -1016,7 +1013,9 @@ function persistentListener() {
 
     if (data.tipo === "updatedOnlineUsers") {
       //deal with new users and add them to userrg
-      addNewRegUserDiv(data)
+      if (data.GetLastUserFromDatabase.user !== loggedInUser) {
+        addNewRegUserDiv(data)
+      }
       changeOnlineStatus(data);
     }
 
