@@ -357,8 +357,8 @@ const DisplayPosts = (data) => {
   postTitle.innerText = data.title;
   // postContent.innerText = data.postcontent;
   postTitle.style.borderBottom = "0.2vh solid black";
-    postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime}`;
-  
+  postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime}`;
+
 
   let badgesDiv = document.createElement("div");
   badgesDiv.style.marginLeft = "0.5vh";
@@ -503,6 +503,7 @@ const sortingUsersWithChat = (users) => {
           userDetails.id = `${usersWithBadge.user}`;
 
           userDetails.className = "registered-user";
+          userDetails.classList.add("userWithChat")
 
           if (onlineUsersFromGo.includes(usersWithBadge.user)) {
             onlineIcon.className = "online-icon-class";
@@ -521,8 +522,8 @@ const sortingUsersWithChat = (users) => {
 };
 
 
-const UpdateAllWithNewUser = (data)=>{
-  
+const UpdateAllWithNewUser = (data) => {
+
   userDetails = document.createElement("div");
   let username = document.createElement("div");
   imageDiv = document.createElement("div");
@@ -580,8 +581,6 @@ const sortingChatlessUsers = (users) => {
     // console.log("chatsender -> ", chatUser.chatsender);
     // console.log("chatrecipinet -> ", chatUser.chatrecipient);
     if (usersWithBadge.user != loggedInUser) {
-      console.log("usersWithBadge-----user-------", usersWithBadge.user);
-      console.log("usersWithBadge------team------", usersWithBadge.team);
 
       userDetails = document.createElement("div");
       let username = document.createElement("div");
@@ -595,6 +594,7 @@ const sortingChatlessUsers = (users) => {
       userDetails.id = `${usersWithBadge.user}`;
 
       userDetails.className = "registered-user";
+      userDetails.classList.add("userWithoutChat")
 
       if (onlineUsersFromGo.includes(usersWithBadge.user)) {
         onlineIcon.className = "online-icon-class";
@@ -689,7 +689,7 @@ function loadInitialTenMessages() {
   }
 }
 
-function Throttler(fn = () => {}, wait) {
+function Throttler(fn = () => { }, wait) {
   var time = Date.now();
   return function () {
     if (time + wait - Date.now() < 0) {
@@ -724,8 +724,8 @@ function displaySurplusMessages() {
 
           let newChatBubble = document.createElement("div");
           newChatBubble.innerText = surplusMessages[i].message;
-                let dateDiv =  document.createElement("div");
-        dateDiv.style.fontSize = "xx-small"
+          let dateDiv = document.createElement("div");
+          dateDiv.style.fontSize = "xx-small"
 
 
           if (surplusMessages[i].chatsender == loggedInUser) {
@@ -760,7 +760,7 @@ function displaySurplusMessages() {
         for (let j = surplusMessages.length - 1; j >= 0; j--) {
           let newChatBubble = document.createElement("div");
           newChatBubble.innerText = surplusMessages[j].message;
-          let dateDiv =  document.createElement("div");
+          let dateDiv = document.createElement("div");
           dateDiv.style.fontSize = "xx-small"
 
 
@@ -779,10 +779,10 @@ function displaySurplusMessages() {
             newChatBubble.id = "chat-message-recipient"
             newChatBubble.appendChild(dateDiv)
 
-            ;
+              ;
           }
           chatContainer.insertBefore(newChatBubble, chatContainer.children[0]);
-       
+
           console.log("Cheight  ----- > ", chatBody.scrollHeight);
           console.log(surplusMessages[j].message);
         }
@@ -824,6 +824,79 @@ const changeOnlineStatus = (data) => {
     }
   }
 };
+
+function addNewRegUserDiv(data) {
+  console.log("potential new user and chatless", data);
+
+  // let usersWithoutChatDivs = document.getElementsByClassName("userWithoutChat")
+  // userDetails = document.createElement("div");
+  // let username = document.createElement("div");
+  // imageDiv = document.createElement("div");
+  // img = document.createElement("img");
+  // let onlineIcon = document.createElement("online-icon");
+
+  // img.src = `/css/img/${usersWithBadge.team}.png`;
+  // img.style.width = "2vw";
+  // imageDiv.appendChild(onlineIcon);
+  // userDetails.id = `${usersWithBadge.user}`;
+
+  // userDetails.className = "registered-user";
+  // userDetails.classList.add("userWithoutChat")
+
+  // if (onlineUsersFromGo.includes(usersWithBadge.user)) {
+  //   onlineIcon.className = "online-icon-class";
+  // } else {
+  //   onlineIcon.className = "offline-icon-class";
+  // }
+  // username.innerText = `${usersWithBadge.user}`;
+  // imageDiv.append(img);
+  // userDetails.appendChild(username);
+  // userDetails.appendChild(imageDiv);
+  // onlineUsers.appendChild(userDetails);
+  let chatlessUsersNames = chatlessArray.map(a => a.user);
+  if (!chatlessUsersNames.includes(data.GetLastUserFromDatabase.user)) {
+    chatlessUsersNames.push(data.GetLastUserFromDatabase.user)
+    console.log("chatless users array", chatlessUsersNames);
+    chatlessUsersNames.sort((a, b) => a.localeCompare(b));
+
+    if (chatlessUsersNames.indexOf(data.GetLastUserFromDatabase.user) === 0) {
+      let userAfterNewUser = chatlessUsersNames[1]
+      const userAfterNewUserDiv = document.getElementById(userAfterNewUser)
+      let newUserDiv = document.createElement("div")
+      let username = document.createElement("div");
+      let imageDiv = document.createElement("div");
+      let img = document.createElement("img");
+      let onlineIcon = document.createElement("online-icon");
+      newUserDiv.className = "registered-user"
+      newUserDiv.classList.add("userWithoutChat")
+      img.src = `/css/img/${data.GetLastUserFromDatabase.team}.png`;
+      img.style.width = "2vw";
+      imageDiv.appendChild(onlineIcon);
+      newUserDiv.id = `${data.GetLastUserFromDatabase.user}`;
+      username.innerText = `${data.GetLastUserFromDatabase.user}`;
+      imageDiv.append(img);
+      newUserDiv.appendChild(username);
+      newUserDiv.appendChild(imageDiv);
+      // onlineUsers.appendChild(newUserDiv);
+      onlineUsers.insertBefore(newUserDiv, userAfterNewUserDiv)
+      newUserDiv.onclick = function () {
+        chatContainer.innerHTML = "";
+        chatRecipient.innerText = newUserDiv.id;
+        let requestChatData = {};
+        requestChatData["chatsender"] = loggedInUser;
+        requestChatData["chatrecipient"] = chatRecipient.innerText;
+        requestChatData["type"] = "requestChatHistory";
+        ws.send(JSON.stringify(requestChatData));
+
+        persistentListener();
+        chatModal.style.display = "block";
+      };
+    }
+    console.log("chatless users array with new user sorted", chatlessUsersNames);
+  } else {
+    console.log("NOT A NEW USER ==============>>>>>>");
+  }
+}
 
 function persistentListener() {
   // for (; ;) {
@@ -891,10 +964,10 @@ function persistentListener() {
 
       for (let i = loopfrom; i < data.chathistory.length; i++) {
         let newChatBubble = document.createElement("div");
-        let dateDiv =  document.createElement("div");
+        let dateDiv = document.createElement("div");
         dateDiv.style.fontSize = "xx-small"
         newChatBubble.innerText = data.chathistory[i].message;
-        
+
         if (data.chathistory[i].chatsender == loggedInUser) {
           dateDiv.innerHTML = `${data.chathistory[i].chatDate}, ${data.chathistory[i].chatsender}`
           newChatBubble.id = "chat-message-sender";
@@ -934,7 +1007,7 @@ function persistentListener() {
       );
     }
 
-    if (data.tipo === "onlineUsers" ) {
+    if (data.tipo === "onlineUsers") {
       console.log("DATA ON LOGIN------", data);
       onlineUsersFromGo = data.onlineUsers;
 
@@ -943,6 +1016,7 @@ function persistentListener() {
 
     if (data.tipo === "updatedOnlineUsers") {
       //deal with new users and add them to userrg
+      addNewRegUserDiv(data)
       changeOnlineStatus(data);
     }
 
@@ -973,8 +1047,8 @@ function persistentListener() {
       }
 
 
-          /*
-       The toDateString() method returns the date portion of a date object. ...
+      /*
+   The toDateString() method returns the date portion of a date object. ...
 The toLocaleTimeString() method returns the time portion of a date object.
 23 Aug 2020
 */
@@ -983,7 +1057,7 @@ The toLocaleTimeString() method returns the time portion of a date object.
 
       let newChatBubble = document.createElement("div");
       newChatBubble.innerText = data.message;
-      let dateDiv =  document.createElement("div");
+      let dateDiv = document.createElement("div");
       dateDiv.style.fontSize = "xx-small"
 
       console.log('SURPLUSDATA----------', data);
@@ -991,7 +1065,7 @@ The toLocaleTimeString() method returns the time portion of a date object.
       if (data.chatsender == loggedInUser) {
         // dateDiv.innerHTML = `${data.chatDate}, ${data.chatsender}`
 
-        dateDiv.innerHTML = `${new Date().toLocaleTimeString("en-GB", {hour:"numeric", minute:"numeric"}).replace(",", "")} ${new Date().toLocaleDateString().replace(",", "")} ${data.chatsender}`
+        dateDiv.innerHTML = `${new Date().toLocaleTimeString("en-GB", { hour: "numeric", minute: "numeric" }).replace(",", "")} ${new Date().toLocaleDateString().replace(",", "")} ${data.chatsender}`
 
 
         newChatBubble.id = "chat-message-sender";
@@ -1041,3 +1115,5 @@ function array_move(arr, old_index, new_index) {
 
 // returns [2, 1, 3]
 // console.log(array_move([1, 2, 3], 1, 0));
+
+
