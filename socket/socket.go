@@ -114,10 +114,13 @@ type deleteNotifications struct {
 }
 
 type updateOnlineUsers struct {
-	UpdatedOnlineUsers []string         `json:"UpdatedOnlineUsers"`
-	Tipo               string           `json:"tipo"`
-	AllUsers           []users.AllUsers `json:"updateAllUsers"`
+	UpdatedOnlineUsers      []string       `json:"UpdatedOnlineUsers"`
+	Tipo                    string         `json:"tipo"`
+	GetLastUserFromDatabase users.AllUsers `json:"GetLastUserFromDatabase"`
 }
+
+// getLastUser := users.GetAllUsers(db)[len(users.GetAllUsers(db))-1]
+// o.GetLastUserFromDatabase = getLastUser
 
 var (
 	loggedInUsers         = make(map[string]*websocket.Conn)
@@ -206,19 +209,23 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	var o updateOnlineUsers
 	for k := range loggedInUsers {
+		if k == currentUser {
 
-		online.UsersWithChat = chat.GetLatestChat(db, chat.GetChat(db, k))
-		online.PopUserCheck = currentUser
-		online.OnlineUsers = append(online.OnlineUsers, k)
-		online.AllUsers = users.GetAllUsers(db)
-		loggedInUsers[k].WriteJSON(online)
+			online.UsersWithChat = chat.GetLatestChat(db, chat.GetChat(db, k))
+			online.PopUserCheck = currentUser
+			online.OnlineUsers = append(online.OnlineUsers, k)
+			online.AllUsers = users.GetAllUsers(db)
+			loggedInUsers[k].WriteJSON(online)
+		}
 
 		o.UpdatedOnlineUsers = append(o.UpdatedOnlineUsers, k)
 	}
 
-	o.AllUsers = users.GetAllUsers(db)
-	o.Tipo = "updatedOnlineUsers"
+	// o.AllUsers = users.GetAllUsers(db)
 
+	o.Tipo = "updatedOnlineUsers"
+	getLastUser := users.GetAllUsers(db)[len(users.GetAllUsers(db))-1]
+	o.GetLastUserFromDatabase = getLastUser
 	broadcastOnlineUsers <- o
 
 	var f T
