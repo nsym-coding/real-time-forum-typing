@@ -877,7 +877,10 @@ function addNewRegUserDiv(data) {
       console.log("INSERT BEFORE =============>");
       newUserDiv(data, userAfterNewUserDiv, "insertBefore")
       persistentListener();
-    } else if (chatlessUsersNames.indexOf(data.GetLastUserFromDatabase.user === chatlessUsersNames.length - 1)) {
+    } else if (chatlessUsersNames.indexOf(data.GetLastUserFromDatabase.user) === (chatlessUsersNames.length - 1)) {
+      console.log("INDEX OF NEW USER**********************", chatlessUsersNames.indexOf(data.GetLastUserFromDatabase.user))
+      console.log("INDEX OF LAST USER**********************", (chatlessUsersNames.length - 1))
+
       let userAfterNewUser = chatlessUsersNames[chatlessUsersNames.length - 2]
       const userAfterNewUserDiv = document.getElementById(userAfterNewUser)
       console.log("INSERT AFTER 1============>");
@@ -885,6 +888,8 @@ function addNewRegUserDiv(data) {
       persistentListener();
     } else {
       let userAfterNewUser = chatlessUsersNames[chatlessUsersNames.indexOf(data.GetLastUserFromDatabase.user) - 1]
+      console.log("INDEX (2) OF NEW USER**********************", chatlessUsersNames[chatlessUsersNames.indexOf(data.GetLastUserFromDatabase.user) - 1])
+
       const userAfterNewUserDiv = document.getElementById(userAfterNewUser)
       newUserDiv(data, userAfterNewUserDiv, "insertAfter")
       console.log("INSERT AFTER 2============>");
