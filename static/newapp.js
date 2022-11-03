@@ -357,8 +357,7 @@ const DisplayPosts = (data) => {
   postTitle.innerText = data.title;
   // postContent.innerText = data.postcontent;
   postTitle.style.borderBottom = "0.2vh solid black";
-    postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime}`;
-  
+  postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime}`;
 
   let badgesDiv = document.createElement("div");
   badgesDiv.style.marginLeft = "0.5vh";
@@ -520,9 +519,7 @@ const sortingUsersWithChat = (users) => {
   }
 };
 
-
-const UpdateAllWithNewUser = (data)=>{
-  
+const UpdateAllWithNewUser = (data) => {
   userDetails = document.createElement("div");
   let username = document.createElement("div");
   imageDiv = document.createElement("div");
@@ -546,10 +543,9 @@ const UpdateAllWithNewUser = (data)=>{
   userDetails.appendChild(username);
   userDetails.appendChild(imageDiv);
   onlineUsers.appendChild(userDetails);
-}
+};
 
-let chatlessArray = []
-
+let chatlessArray = [];
 
 const sortingChatlessUsers = (users) => {
   console.log("pre---->", users);
@@ -568,13 +564,12 @@ const sortingChatlessUsers = (users) => {
     }
   }
 
-
   // const letters = ["d","a", "c", "z"]
   // console.log('letters--->', letters.sort())
   // console.log('letters--->', letters.sort().reverse())
 
   users.allUsers.sort((a, b) => a.user.localeCompare(b.user));
-  chatlessArray = users.allUsers
+  chatlessArray = users.allUsers;
 
   for (let usersWithBadge of users.allUsers) {
     // console.log("chatsender -> ", chatUser.chatsender);
@@ -719,29 +714,22 @@ function displaySurplusMessages() {
           i > surplusMessages.length - 10;
           i--
         ) {
-
-
-
           let newChatBubble = document.createElement("div");
           newChatBubble.innerText = surplusMessages[i].message;
-                let dateDiv =  document.createElement("div");
-        dateDiv.style.fontSize = "xx-small"
-
+          let dateDiv = document.createElement("div");
+          dateDiv.style.fontSize = "xx-small";
 
           if (surplusMessages[i].chatsender == loggedInUser) {
-            dateDiv.innerHTML = `${surplusMessages[i].chatDate}, ${surplusMessages[i].chatsender}`
+            dateDiv.innerHTML = `${surplusMessages[i].chatDate}, ${surplusMessages[i].chatsender}`;
 
             newChatBubble.id = "chat-message-sender";
 
-
-            newChatBubble.appendChild(dateDiv)
-
+            newChatBubble.appendChild(dateDiv);
           } else {
-            dateDiv.innerHTML = `${surplusMessages[i].chatDate},${surplusMessages[i].chatsender}`
+            dateDiv.innerHTML = `${surplusMessages[i].chatDate},${surplusMessages[i].chatsender}`;
 
             newChatBubble.id = "chat-message-recipient";
-            newChatBubble.appendChild(dateDiv)
-
+            newChatBubble.appendChild(dateDiv);
           }
           chatContainer.insertBefore(newChatBubble, chatContainer.children[0]);
 
@@ -760,29 +748,22 @@ function displaySurplusMessages() {
         for (let j = surplusMessages.length - 1; j >= 0; j--) {
           let newChatBubble = document.createElement("div");
           newChatBubble.innerText = surplusMessages[j].message;
-          let dateDiv =  document.createElement("div");
-          dateDiv.style.fontSize = "xx-small"
-
-
-
+          let dateDiv = document.createElement("div");
+          dateDiv.style.fontSize = "xx-small";
 
           if (surplusMessages[j].chatsender == loggedInUser) {
-            dateDiv.innerHTML = `${surplusMessages[j].chatDate}, ${surplusMessages[j].chatsender}`
+            dateDiv.innerHTML = `${surplusMessages[j].chatDate}, ${surplusMessages[j].chatsender}`;
 
             newChatBubble.id = "chat-message-sender";
-            newChatBubble.appendChild(dateDiv)
-
-
+            newChatBubble.appendChild(dateDiv);
           } else {
-            dateDiv.innerHTML = `${surplusMessages[j].chatDate},${surplusMessages[j].chatsender}`
+            dateDiv.innerHTML = `${surplusMessages[j].chatDate},${surplusMessages[j].chatsender}`;
 
-            newChatBubble.id = "chat-message-recipient"
-            newChatBubble.appendChild(dateDiv)
-
-            ;
+            newChatBubble.id = "chat-message-recipient";
+            newChatBubble.appendChild(dateDiv);
           }
           chatContainer.insertBefore(newChatBubble, chatContainer.children[0]);
-       
+
           console.log("Cheight  ----- > ", chatBody.scrollHeight);
           console.log(surplusMessages[j].message);
         }
@@ -794,7 +775,6 @@ function displaySurplusMessages() {
     }
   }
 }
-
 
 function addBadgesToPosts(data, div) {
   // split the string
@@ -825,6 +805,19 @@ const changeOnlineStatus = (data) => {
   }
 };
 
+chatTextArea.onfocus = function () {
+  let typingObject = {};
+  typingObject["typingrecipient"] = chatRecipient.innerText;
+  typingObject["typingsender"] = loggedInUser;
+  typingObject["type"] = "typingnotificationstart";
+
+  console.log("Typing area is focused!!");
+  ws.send(JSON.stringify(typingObject));
+  chatTextArea.onkeyup = function () {
+    console.log("Is typing");
+  };
+};
+
 function persistentListener() {
   // for (; ;) {
   ws.onmessage = (e) => {
@@ -832,7 +825,6 @@ function persistentListener() {
     let data = JSON.parse(e.data);
 
     if (data.tipo == "allComments") {
-
       console.log("ALL COMMENTS DISPLAYED");
       for (let i = 0; i < data.comments.length; i++) {
         let commentDiv = document.createElement("div");
@@ -891,20 +883,19 @@ function persistentListener() {
 
       for (let i = loopfrom; i < data.chathistory.length; i++) {
         let newChatBubble = document.createElement("div");
-        let dateDiv =  document.createElement("div");
-        dateDiv.style.fontSize = "xx-small"
+        let dateDiv = document.createElement("div");
+        dateDiv.style.fontSize = "xx-small";
         newChatBubble.innerText = data.chathistory[i].message;
-        
+
         if (data.chathistory[i].chatsender == loggedInUser) {
-          dateDiv.innerHTML = `${data.chathistory[i].chatDate}, ${data.chathistory[i].chatsender}`
+          dateDiv.innerHTML = `${data.chathistory[i].chatDate}, ${data.chathistory[i].chatsender}`;
           newChatBubble.id = "chat-message-sender";
-          newChatBubble.appendChild(dateDiv)
+          newChatBubble.appendChild(dateDiv);
         } else {
-          dateDiv.innerHTML = `${data.chathistory[i].chatDate},${data.chathistory[i].chatsender}`
+          dateDiv.innerHTML = `${data.chathistory[i].chatDate},${data.chathistory[i].chatsender}`;
 
           newChatBubble.id = "chat-message-recipient";
-          newChatBubble.appendChild(dateDiv)
-
+          newChatBubble.appendChild(dateDiv);
         }
         chatContainer.appendChild(newChatBubble);
 
@@ -934,7 +925,7 @@ function persistentListener() {
       );
     }
 
-    if (data.tipo === "onlineUsers" ) {
+    if (data.tipo === "onlineUsers") {
       console.log("DATA ON LOGIN------", data);
       onlineUsersFromGo = data.onlineUsers;
 
@@ -945,9 +936,6 @@ function persistentListener() {
       //deal with new users and add them to userrg
       changeOnlineStatus(data);
     }
-
-
-
 
     if (data.tipo === "loggedOutUser") {
       console.log("LOGGED OUT USER", data.onlineUsers);
@@ -972,36 +960,39 @@ function persistentListener() {
         );
       }
 
-
-          /*
+      /*
        The toDateString() method returns the date portion of a date object. ...
 The toLocaleTimeString() method returns the time portion of a date object.
 23 Aug 2020
 */
 
-
-
       let newChatBubble = document.createElement("div");
       newChatBubble.innerText = data.message;
-      let dateDiv =  document.createElement("div");
-      dateDiv.style.fontSize = "xx-small"
+      let dateDiv = document.createElement("div");
+      dateDiv.style.fontSize = "xx-small";
 
-      console.log('SURPLUSDATA----------', data);
+      console.log("SURPLUSDATA----------", data);
 
       if (data.chatsender == loggedInUser) {
         // dateDiv.innerHTML = `${data.chatDate}, ${data.chatsender}`
 
-        dateDiv.innerHTML = `${new Date().toLocaleTimeString("en-GB", {hour:"numeric", minute:"numeric"}).replace(",", "")} ${new Date().toLocaleDateString().replace(",", "")} ${data.chatsender}`
-
+        dateDiv.innerHTML = `${new Date()
+          .toLocaleTimeString("en-GB", { hour: "numeric", minute: "numeric" })
+          .replace(",", "")} ${new Date()
+          .toLocaleDateString()
+          .replace(",", "")} ${data.chatsender}`;
 
         newChatBubble.id = "chat-message-sender";
-        newChatBubble.appendChild(dateDiv)
+        newChatBubble.appendChild(dateDiv);
       } else {
-        dateDiv.innerHTML = `${data.chatDate}, ${data.chatsender}`
+        dateDiv.innerHTML = `${new Date()
+          .toLocaleTimeString("en-GB", { hour: "numeric", minute: "numeric" })
+          .replace(",", "")} ${new Date()
+          .toLocaleDateString()
+          .replace(",", "")} ${data.chatsender}`;
 
         newChatBubble.id = "chat-message-recipient";
-        newChatBubble.appendChild(dateDiv)
-
+        newChatBubble.appendChild(dateDiv);
       }
 
       chatContainer.appendChild(newChatBubble);
@@ -1024,6 +1015,10 @@ The toLocaleTimeString() method returns the time portion of a date object.
       } else {
         getOneNotification(data.livenotification);
       }
+    }
+
+    if (data.tipo === "typingNotification") {
+      console.log("This should be typing notification data ----> ", data);
     }
   };
 }
