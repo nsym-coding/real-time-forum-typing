@@ -818,6 +818,15 @@ chatTextArea.onfocus = function () {
   };
 };
 
+chatTextArea.onblur = function () {
+  console.log("object on blur !! ");
+  let typingFinished = {};
+  typingFinished["typingrecipient"] = chatRecipient.innerText;
+  typingFinished["typingsender"] = loggedInUser;
+  typingFinished["type"] = "typingnotificationend";
+  ws.send(JSON.stringify(typingFinished));
+};
+
 function persistentListener() {
   // for (; ;) {
   ws.onmessage = (e) => {
@@ -1019,6 +1028,25 @@ The toLocaleTimeString() method returns the time portion of a date object.
 
     if (data.tipo === "typingNotification") {
       console.log("This should be typing notification data ----> ", data);
+
+      if (
+        chatModal.style.display === "block" &&
+        chatRecipient.innerText === data.typingSender
+      ) {
+        typingNotificationRecipient = chatRecipient.innerText;
+        chatRecipient.style.color = "red";
+      }
+
+      // let userRg = document.getElementsByClassName("registered-user");
+      // for (const user of userRg) {
+      //   if (data.typingSender === user.id) {
+      //     user.innerHTML += " is now typing";
+      //   }
+      // }
+    }
+
+    if (data.tipo === "typingIsOver") {
+      chatRecipient.style.color = "black";
     }
   };
 }

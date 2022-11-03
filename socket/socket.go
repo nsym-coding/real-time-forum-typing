@@ -32,6 +32,7 @@ type T struct {
 	*whosNotifications
 	*deleteNotifications
 	*TypingNotification
+	*TypingNotificationEnd
 }
 
 type TypeChecker struct {
@@ -131,6 +132,17 @@ type SendTypingNotification struct {
 	Tipo            string `json:"tipo"`
 }
 
+type TypingNotificationEnd struct {
+	TypingEndRecipient string `json:"typingrecipient"`
+	TypingEndSender    string `json:"typingsender"`
+}
+
+type SendTypingNotificationEnd struct {
+	TypingEndRecipient string `json:"typingEndRecipient"`
+	TypingEndSender    string `json:"typingEndSender"`
+	Tipo               string `json:"tipo"`
+}
+
 var (
 	loggedInUsers         = make(map[string]*websocket.Conn)
 	broadcastChannelPosts = make(chan posts.Posts, 1)
@@ -185,6 +197,9 @@ func (t *T) UnmarshalForumData(data []byte) error {
 	case "typingnotificationstart":
 		t.TypingNotification = &TypingNotification{}
 		return json.Unmarshal(data, t.TypingNotification)
+	case "typingnotificationend":
+		t.TypingNotificationEnd = &TypingNotificationEnd{}
+		return json.Unmarshal(data, t.TypingNotificationEnd)
 	default:
 		return fmt.Errorf("unrecognized type value %q", t.Type)
 	}
@@ -382,6 +397,17 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 					conn.WriteJSON(t)
 				}
 			}
+		} else if f.Type == "typingnotificationend" {
+			var t SendTypingNotificationEnd
+			t.Tipo = "typingIsOver"
+			t.TypingEndRecipient = f.TypingEndRecipient
+			t.TypingEndSender = f.TypingEndSender
+			for user, conn := range loggedInUsers {
+				if user == f.TypingNotificationEnd.TypingEndRecipient {
+					conn.WriteJSON(t)
+				}
+			}
+
 		}
 
 		// log.Println("Checking what's in f ---> ", f.Chat)
