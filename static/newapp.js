@@ -997,7 +997,7 @@ The toLocaleTimeString() method returns the time portion of a date object.
         newChatBubble.id = "chat-message-sender";
         newChatBubble.appendChild(dateDiv)
       } else {
-        dateDiv.innerHTML = `${data.chatDate}, ${data.chatsender}`
+        dateDiv.innerHTML = `${new Date().toLocaleTimeString("en-GB", {hour:"numeric", minute:"numeric"}).replace(",", "")} ${new Date().toLocaleDateString().replace(",", "")} ${data.chatsender}`
 
         newChatBubble.id = "chat-message-recipient";
         newChatBubble.appendChild(dateDiv)
