@@ -54,6 +54,9 @@ let chatBody = document.getElementById("chat-box-body");
 let displayPostBody = document.getElementById("display-post-body");
 let chatRecipient = document.getElementById("chat-recipient");
 let sender = true;
+let typingAnimation = document.getElementById("typing-animation")
+
+let animationCirles = document.querySelectorAll(".circle.scaling")
 
 postButton.addEventListener("click", function () {
   createPostModal.style.display = "block";
@@ -806,6 +809,7 @@ const changeOnlineStatus = (data) => {
 };
 
 function sendTypingStatus(isTyping) {
+  if (keyPressed){
   let typingData = {};
   typingData["typingstatusrecipient"] = chatRecipient.innerText;
   typingData["typingstatussender"] = loggedInUser;
@@ -817,6 +821,7 @@ function sendTypingStatus(isTyping) {
   }
 
   ws.send(JSON.stringify(typingData));
+}
 }
 
 let compareValue = "";
@@ -833,6 +838,7 @@ function hasTextInputChanged() {
 }
 
 let typingInterval;
+let keyPressed = false
 
 chatTextArea.onfocus = function () {
   let typingObject = {};
@@ -842,7 +848,14 @@ chatTextArea.onfocus = function () {
 
   console.log("Typing area is focused!!");
   ws.send(JSON.stringify(typingObject));
-  typingInterval = setInterval(hasTextInputChanged, 1000);
+
+  chatTextArea.onkeydown = function (){
+    keyPressed = true
+    console.log("KEY PRESSSEDDDDD*****************")
+  }
+
+  typingInterval = setInterval(hasTextInputChanged, 500);
+
 };
 
 chatTextArea.onblur = function () {
@@ -1062,7 +1075,8 @@ The toLocaleTimeString() method returns the time portion of a date object.
         chatRecipient.innerText === data.typingSender
       ) {
         typingNotificationRecipient = chatRecipient.innerText;
-        chatRecipient.style.color = "red";
+        //chatRecipient.style.color = "red";
+        //typingAnimation.style.display = "block"
       }
 
       // let userRg = document.getElementsByClassName("registered-user");
@@ -1074,17 +1088,29 @@ The toLocaleTimeString() method returns the time portion of a date object.
     }
 
     if (data.tipo === "typingIsOver") {
-      chatRecipient.style.color = "black";
+      //chatRecipient.style.color = "black";
+      typingAnimation.style.display = "none"
+
     }
 
     if (data.tipo === "toAnimateOrNot") {
+      typingAnimation.style.display = "flex"
       console.log("animate or not", data);
       if (data.sendStatus === "true") {
         // animate
+        for(let circle of animationCirles) {
+          circle.style.animationPlayState = "running"
+        }
         console.log("=========ANIMATE==========");
+
       } else {
         // dont animate
+        for(let circle of animationCirles) {
+          circle.style.animationPlayState = "paused"
+        }
         console.log("========= DO NOT ANIMATE==========");
+        //typingAnimation.style.display = "none"
+
       }
     }
   };
