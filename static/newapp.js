@@ -827,6 +827,9 @@ chatTextArea.onblur = function () {
   ws.send(JSON.stringify(typingFinished));
 };
 
+let typingIcon = document.getElementById('typing-icon')
+
+
 function persistentListener() {
   // for (; ;) {
   ws.onmessage = (e) => {
@@ -980,6 +983,7 @@ The toLocaleTimeString() method returns the time portion of a date object.
       let dateDiv = document.createElement("div");
       dateDiv.style.fontSize = "xx-small";
 
+
       console.log("SURPLUSDATA----------", data);
 
       if (data.chatsender == loggedInUser) {
@@ -1035,6 +1039,7 @@ The toLocaleTimeString() method returns the time portion of a date object.
       ) {
         typingNotificationRecipient = chatRecipient.innerText;
         chatRecipient.style.color = "red";
+        typingIcon.style.display= 'block'
       }
 
       // let userRg = document.getElementsByClassName("registered-user");
@@ -1047,6 +1052,8 @@ The toLocaleTimeString() method returns the time portion of a date object.
 
     if (data.tipo === "typingIsOver") {
       chatRecipient.style.color = "black";
+      typingIcon.style.display= 'none'
+
     }
   };
 }
