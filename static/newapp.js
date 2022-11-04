@@ -684,7 +684,7 @@ function loadInitialTenMessages() {
   }
 }
 
-function Throttler(fn = () => { }, wait) {
+function Throttler(fn = () => {}, wait) {
   var time = Date.now();
   return function () {
     if (time + wait - Date.now() < 0) {
@@ -805,47 +805,44 @@ const changeOnlineStatus = (data) => {
   }
 };
 
-
 function sendTypingStatus(isTyping) {
-
-  let typingData = {}
-  typingData["typingrecipient"] = chatRecipient.innerText;
-  typingData["typingsender"] = loggedInUser;
+  let typingData = {};
+  typingData["typingstatusrecipient"] = chatRecipient.innerText;
+  typingData["typingstatussender"] = loggedInUser;
   typingData["type"] = "typingStatus";
   if (isTyping === true) {
-    typingData["status"] = "true"
+    typingData["status"] = "true";
   } else {
-    typingData["status"] = "false"
+    typingData["status"] = "false";
   }
 
-  ws.send(JSON.stringify(typingData))
+  ws.send(JSON.stringify(typingData));
 }
 
-let compareValue = ""
+let compareValue = "";
 
 function hasTextInputChanged() {
-  if (compareValue === chatTextArea.innerText) {
+  if (compareValue === chatTextArea.value) {
     // Send data to go. Person stopped typing
-    sendTypingStatus(false)
+
+    sendTypingStatus(false);
   } else {
-    compareValue = chatTextArea.innerText
-    sendTypingStatus(true)
+    sendTypingStatus(true);
+    compareValue = chatTextArea.value;
   }
 }
 
+let typingInterval;
 
-
-let typingInterval
 chatTextArea.onfocus = function () {
   let typingObject = {};
-  typingObject["typingrecipient"] = chatRecipient.innerText;
-  typingObject["typingsender"] = loggedInUser;
+  typingObject["typingStatusRecipient"] = chatRecipient.innerText;
+  typingObject["typingStatusSender"] = loggedInUser;
   typingObject["type"] = "typingnotificationstart";
 
   console.log("Typing area is focused!!");
   ws.send(JSON.stringify(typingObject));
-
-  typingInterval = setInterval(hasTextInputChanged(), 500)
+  typingInterval = setInterval(hasTextInputChanged, 1000);
 };
 
 chatTextArea.onblur = function () {
@@ -855,7 +852,7 @@ chatTextArea.onblur = function () {
   typingFinished["typingsender"] = loggedInUser;
   typingFinished["type"] = "typingnotificationend";
   ws.send(JSON.stringify(typingFinished));
-  clearInterval(typingInterval)
+  clearInterval(typingInterval);
 };
 
 function persistentListener() {
@@ -1019,8 +1016,8 @@ The toLocaleTimeString() method returns the time portion of a date object.
         dateDiv.innerHTML = `${new Date()
           .toLocaleTimeString("en-GB", { hour: "numeric", minute: "numeric" })
           .replace(",", "")} ${new Date()
-            .toLocaleDateString()
-            .replace(",", "")} ${data.chatsender}`;
+          .toLocaleDateString()
+          .replace(",", "")} ${data.chatsender}`;
 
         newChatBubble.id = "chat-message-sender";
         newChatBubble.appendChild(dateDiv);
@@ -1028,8 +1025,8 @@ The toLocaleTimeString() method returns the time portion of a date object.
         dateDiv.innerHTML = `${new Date()
           .toLocaleTimeString("en-GB", { hour: "numeric", minute: "numeric" })
           .replace(",", "")} ${new Date()
-            .toLocaleDateString()
-            .replace(",", "")} ${data.chatsender}`;
+          .toLocaleDateString()
+          .replace(",", "")} ${data.chatsender}`;
 
         newChatBubble.id = "chat-message-recipient";
         newChatBubble.appendChild(dateDiv);
@@ -1082,7 +1079,7 @@ The toLocaleTimeString() method returns the time portion of a date object.
 
     if (data.tipo === "toAnimateOrNot") {
       console.log("animate or not", data);
-      if (data.status === "true") {
+      if (data.sendStatus === "true") {
         // animate
         console.log("=========ANIMATE==========");
       } else {
@@ -1092,4 +1089,3 @@ The toLocaleTimeString() method returns the time portion of a date object.
     }
   };
 }
-

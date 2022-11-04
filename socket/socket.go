@@ -145,10 +145,16 @@ type SendTypingNotificationEnd struct {
 }
 
 type TypingStatus struct {
-	TypingStatusRecipient string `json:"typingStatusRecipient"`
-	TypingStatusSender    string `json:"typingStatusSender"`
+	TypingStatusRecipient string `json:"typingstatusrecipient"`
+	TypingStatusSender    string `json:"typingstatussender"`
 	Status                string `json:"status"`
-	Tipo                  string `json:"tipo"`
+}
+
+type SendTypingStatus struct {
+	SendTypingStatusRecipient string `json:"sendTypingStatusRecipient"`
+	SendTypingStatusSender    string `json:"sendTypingStatusSender"`
+	SendTypingStatus          string `json:"sendStatus"`
+	Tipo                      string `json:"tipo"`
 }
 
 var (
@@ -420,12 +426,16 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 			}
 
 		} else if f.Type == "typingStatus" {
+			fmt.Println("recip check ----> ", f.TypingStatusRecipient)
+			fmt.Println("sender check ----> ", f.TypingStatusSender)
+
 			// send data for animation
-			var t TypingStatus
-			t.TypingStatusRecipient = f.TypingStatusRecipient
-			t.TypingStatusSender = f.TypingStatusSender
-			t.Status = f.Status
+			var t SendTypingStatus
+			t.SendTypingStatusRecipient = f.TypingStatus.TypingStatusRecipient
+			t.SendTypingStatusSender = f.TypingStatus.TypingStatusSender
+			t.SendTypingStatus = f.Status
 			t.Tipo = "toAnimateOrNot"
+			fmt.Println("checking struct for t ----> ", t)
 			for user, conn := range loggedInUsers {
 				if user == f.TypingStatusRecipient {
 					conn.WriteJSON(t)
