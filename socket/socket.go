@@ -33,6 +33,7 @@ type T struct {
 	*deleteNotifications
 	*TypingNotification
 	*TypingNotificationEnd
+	*TypingStatus
 }
 
 type TypeChecker struct {
@@ -143,6 +144,13 @@ type SendTypingNotificationEnd struct {
 	Tipo               string `json:"tipo"`
 }
 
+type TypingStatus struct {
+	TypingStatusRecipient string `json:"typingStatusRecipient"`
+	TypingStatusSender    string `json:"typingStatusSender"`
+	Status                string `json:"status"`
+	Tipo                  string `json:"tipo"`
+}
+
 var (
 	loggedInUsers         = make(map[string]*websocket.Conn)
 	broadcastChannelPosts = make(chan posts.Posts, 1)
@@ -200,6 +208,9 @@ func (t *T) UnmarshalForumData(data []byte) error {
 	case "typingnotificationend":
 		t.TypingNotificationEnd = &TypingNotificationEnd{}
 		return json.Unmarshal(data, t.TypingNotificationEnd)
+	case "typingStatus":
+		t.TypingStatus = &TypingStatus{}
+		return json.Unmarshal(data, t.TypingStatus)
 	default:
 		return fmt.Errorf("unrecognized type value %q", t.Type)
 	}
@@ -408,6 +419,18 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
+		} else if f.Type == "typingStatus" {
+			// send data for animation
+			var t TypingStatus
+			t.TypingStatusRecipient = f.TypingStatusRecipient
+			t.TypingStatusSender = f.TypingStatusSender
+			t.Status = f.Status
+			t.Tipo = "toAnimateOrNot"
+			for user, conn := range loggedInUsers {
+				if user == f.TypingStatusRecipient {
+					conn.WriteJSON(t)
+				}
+			}
 		}
 
 		// log.Println("Checking what's in f ---> ", f.Chat)
