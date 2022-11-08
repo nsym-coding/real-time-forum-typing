@@ -55,6 +55,9 @@ let displayPostBody = document.getElementById("display-post-body");
 let chatRecipient = document.getElementById("chat-recipient");
 let sender = true;
 
+let typingAnimation = document.getElementById("typing-animation")
+let animationCirles = document.querySelectorAll(".circle.scaling")
+
 postButton.addEventListener("click", function () {
     createPostModal.style.display = "block";
 });
@@ -68,7 +71,7 @@ window.onclick = function (event) {
                 chatContainer.innerHTML = "";
                 chatBody.removeEventListener(
                     "scroll",
-                    Throttler(displaySurplusMessages, 200)
+                    Throttler(displaySurplusMessages, 2000)
                 );
             }
         }
@@ -692,7 +695,7 @@ function loadInitialTenMessages() {
                 chatContainer.innerHTML = "";
                 chatBody.removeEventListener(
                     "scroll",
-                    Throttler(displaySurplusMessages, 200)
+                    Throttler(displaySurplusMessages, 2000)
                 );
             }
         };
@@ -926,6 +929,58 @@ function addNewRegUserDiv(data) {
     }
 }
 
+
+
+function sendTypingStatus(isTyping) {
+  if (keyPressed){
+  let typingData = {};
+  typingData["typingstatusrecipient"] = chatRecipient.innerText;
+  typingData["typingstatussender"] = loggedInUser;
+  typingData["type"] = "typingStatus";
+  if (isTyping === true) {
+    typingData["status"] = "true";
+  } else {
+    typingData["status"] = "false";
+  }
+  ws.send(JSON.stringify(typingData));
+}
+}
+let compareValue = "";
+function hasTextInputChanged() {
+  if (compareValue === chatTextArea.value) {
+    // Send data to go. Person stopped typing
+    sendTypingStatus(false);
+  } else {
+    sendTypingStatus(true);
+    compareValue = chatTextArea.value;
+  }
+}
+let typingInterval;
+let keyPressed = false
+chatTextArea.onfocus = function () {
+  let typingObject = {};
+  typingObject["typingStatusRecipient"] = chatRecipient.innerText;
+  typingObject["typingStatusSender"] = loggedInUser;
+  typingObject["type"] = "typingnotificationstart";
+  console.log("Typing area is focused!!");
+  ws.send(JSON.stringify(typingObject));
+  chatTextArea.onkeydown = function (){
+    keyPressed = true
+    console.log("KEY PRESSSEDDDDD*****************")
+  }
+  typingInterval = setInterval(hasTextInputChanged, 500);
+};
+chatTextArea.onblur = function () {
+  console.log("object on blur !! ");
+  let typingFinished = {};
+  typingFinished["typingrecipient"] = chatRecipient.innerText;
+  typingFinished["typingsender"] = loggedInUser;
+  typingFinished["type"] = "typingnotificationend";
+  ws.send(JSON.stringify(typingFinished));
+  clearInterval(typingInterval);
+};
+
+
 function persistentListener() {
     // for (; ;) {
     ws.onmessage = (e) => {
@@ -983,7 +1038,7 @@ function persistentListener() {
                 loadedTenMessages = true;
                 chatBody.addEventListener(
                     "scroll",
-                    Throttler(displaySurplusMessages, 800)
+                    Throttler(displaySurplusMessages, 2000)
                 );
             } else {
                 loopfrom = 0;
@@ -1015,7 +1070,7 @@ function persistentListener() {
         ) {
             chatBody.removeEventListener(
                 "scroll",
-                Throttler(displaySurplSurplusMessages, 200)
+                Throttler(displaySurplSurplusMessages, 2000)
             );
             chatContainer.innerHTML = "";
             console.log("data check --> ", data);
@@ -1138,19 +1193,45 @@ The toLocaleTimeString() method returns the time portion of a date object.
                 getOneNotification(data.livenotification);
             }
         }
-    };
-}
-
-function array_move(arr, old_index, new_index) {
-    if (new_index >= arr.length) {
-        var k = new_index - arr.length + 1;
-        while (k--) {
-            arr.push(undefined);
+        if (data.tipo === "typingNotification") {
+          console.log("This should be typing notification data ----> ", data);
+          if (
+            chatModal.style.display === "block" &&
+            chatRecipient.innerText === data.typingSender
+          ) {
+            typingNotificationRecipient = chatRecipient.innerText;
+            //chatRecipient.style.color = "red";
+            //typingAnimation.style.display = "block"
+          }
+          // let userRg = document.getElementsByClassName("registered-user");
+          // for (const user of userRg) {
+          //   if (data.typingSender === user.id) {
+          //     user.innerHTML += " is now typing";
+          //   }
+          // }
         }
+        if (data.tipo === "typingIsOver") {
+          //chatRecipient.style.color = "black";
+          typingAnimation.style.display = "none"
+        }
+        if (data.tipo === "toAnimateOrNot") {
+          typingAnimation.style.display = "flex"
+          console.log("animate or not", data);
+          if (data.sendStatus === "true") {
+            // animate
+            for(let circle of animationCirles) {
+              circle.style.animationPlayState = "running"
+            }
+            console.log("=========ANIMATE==========");
+          } else {
+            // dont animate
+            for(let circle of animationCirles) {
+              circle.style.animationPlayState = "paused"
+            }
+            console.log("========= DO NOT ANIMATE==========");
+            //typingAnimation.style.display = "none"
+          }
+        }
+      };
     }
-    arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
-    return arr; // for testing
-}
-
-// returns [2, 1, 3]
-// console.log(array_move([1, 2, 3], 1, 0));
+    

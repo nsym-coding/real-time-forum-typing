@@ -31,7 +31,11 @@ type T struct {
 	*chat.Chat
 	*whosNotifications
 	*deleteNotifications
+	*TypingNotification
+	*TypingNotificationEnd
+	*TypingStatus
 }
+
 
 type TypeChecker struct {
 	Type string `json:"type"`
@@ -119,8 +123,37 @@ type updateOnlineUsers struct {
 	GetLastUserFromDatabase users.AllUsers `json:"GetLastUserFromDatabase"`
 }
 
-// getLastUser := users.GetAllUsers(db)[len(users.GetAllUsers(db))-1]
-// o.GetLastUserFromDatabase = getLastUser
+
+type TypingNotification struct {
+	TypingRecipient string `json:"typingrecipient"`
+	TypingSender    string `json:"typingsender"`
+}
+type SendTypingNotification struct {
+	TypingRecipient string `json:"typingRecipient"`
+	TypingSender    string `json:"typingSender"`
+	Tipo            string `json:"tipo"`
+}
+type TypingNotificationEnd struct {
+	TypingEndRecipient string `json:"typingrecipient"`
+	TypingEndSender    string `json:"typingsender"`
+}
+type SendTypingNotificationEnd struct {
+	TypingEndRecipient string `json:"typingEndRecipient"`
+	TypingEndSender    string `json:"typingEndSender"`
+	Tipo               string `json:"tipo"`
+}
+type TypingStatus struct {
+	TypingStatusRecipient string `json:"typingstatusrecipient"`
+	TypingStatusSender    string `json:"typingstatussender"`
+	Status                string `json:"status"`
+}
+type SendTypingStatus struct {
+	SendTypingStatusRecipient string `json:"sendTypingStatusRecipient"`
+	SendTypingStatusSender    string `json:"sendTypingStatusSender"`
+	SendTypingStatus          string `json:"sendStatus"`
+	Tipo                      string `json:"tipo"`
+}
+
 
 var (
 	loggedInUsers         = make(map[string]*websocket.Conn)
@@ -173,6 +206,15 @@ func (t *T) UnmarshalForumData(data []byte) error {
 	case "deletenotification":
 		t.deleteNotifications = &deleteNotifications{}
 		return json.Unmarshal(data, t.deleteNotifications)
+	case "typingnotificationstart":
+		t.TypingNotification = &TypingNotification{}
+		return json.Unmarshal(data, t.TypingNotification)
+	case "typingnotificationend":
+		t.TypingNotificationEnd = &TypingNotificationEnd{}
+		return json.Unmarshal(data, t.TypingNotificationEnd)
+	case "typingStatus":
+		t.TypingStatus = &TypingStatus{}
+		return json.Unmarshal(data, t.TypingStatus)
 	default:
 		return fmt.Errorf("unrecognized type value %q", t.Type)
 	}
@@ -363,6 +405,42 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 		} else if f.Type == "deletenotification" {
 			// fmt.Println("DELETE ALL NOTIFICATIONS")
 			notification.RemoveNotifications(db, f.deleteNotifications.NotificationSender, f.deleteNotifications.NotificationRecipient)
+		}		 else if f.Type == "typingnotificationstart" {
+			fmt.Println("Checking if typing notification is getting sent ---> ", f.TypingNotification)
+			var t SendTypingNotification
+			t.Tipo = "typingNotification"
+			t.TypingRecipient = f.TypingRecipient
+			t.TypingSender = f.TypingSender
+			for user, conn := range loggedInUsers {
+				if user == f.TypingNotification.TypingRecipient {
+					conn.WriteJSON(t)
+				}
+			}
+		} else if f.Type == "typingnotificationend" {
+			var t SendTypingNotificationEnd
+			t.Tipo = "typingIsOver"
+			t.TypingEndRecipient = f.TypingEndRecipient
+			t.TypingEndSender = f.TypingEndSender
+			for user, conn := range loggedInUsers {
+				if user == f.TypingNotificationEnd.TypingEndRecipient {
+					conn.WriteJSON(t)
+				}
+			}
+		} else if f.Type == "typingStatus" {
+			fmt.Println("recip check ----> ", f.TypingStatusRecipient)
+			fmt.Println("sender check ----> ", f.TypingStatusSender)
+			// send data for animation
+			var t SendTypingStatus
+			t.SendTypingStatusRecipient = f.TypingStatus.TypingStatusRecipient
+			t.SendTypingStatusSender = f.TypingStatus.TypingStatusSender
+			t.SendTypingStatus = f.Status
+			t.Tipo = "toAnimateOrNot"
+			fmt.Println("checking struct for t ----> ", t)
+			for user, conn := range loggedInUsers {
+				if user == f.TypingStatusRecipient {
+					conn.WriteJSON(t)
+				}
+			}
 		}
 
 		// log.Println("Checking what's in f ---> ", f.Chat)
