@@ -209,7 +209,7 @@ func WebSocketEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	var o updateOnlineUsers
 	for k := range loggedInUsers {
-		if k == currentUser {
+		if k == users.GetUserName(db, currentUser) {
 
 			online.UsersWithChat = chat.GetLatestChat(db, chat.GetChat(db, k))
 			online.PopUserCheck = currentUser
