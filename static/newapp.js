@@ -193,18 +193,8 @@ const loginValidation = (data) => {
                 DisplayPosts(data.dbposts[i]);
             }
 
-            //populateUsers(data.allUsers);
             console.log("connection established");
         };
-
-        // ws.onmessage = (e) => {
-        //     let data = JSON.parse(e.data)
-        //     if (data.tipo === "clientnotifications") {
-        //         console.log("NOTIFICATIONS ON LOGIN");
-        //         getNotifications(data.notification);
-        //     }
-        // }
-
         persistentListener();
     } else {
         loginError.style.display = "block";
@@ -219,7 +209,6 @@ submitPostButton.addEventListener("click", function (e) {
     objData["title"] = postTitle.value;
     objData["postcontent"] = postContent.value;
     objData["type"] = "post";
-    // objData["posttime"] = new Date().toISOString().slice(0, 10);
     objData["username"] = loggedInUser;
     objData["categories"] = getSelectedTeams();
     createPostModal.style.display = "none";
@@ -298,10 +287,8 @@ const registrationValidation = (data) => {
 };
 
 registerBtn.addEventListener("click", function (e) {
-    // e.preventDefault();
     registrationErrors.forEach(function (el) {
         el.style.display = "none";
-        // el.innerText = "";
     });
 
     let signupData = new FormData(signUpForm);
@@ -355,10 +342,8 @@ const DisplayPosts = (data) => {
     postFooter.className = "post-footer";
     postDivs.className = "post-class ";
 
-    // this will eventually hold the id given by go from the database (data.id)
     postDivs.id = data.postid;
     postTitle.innerText = data.title;
-    // postContent.innerText = data.postcontent;
     postTitle.style.borderBottom = "0.2vh solid black";
     postFooter.innerText = `Created by ${data.username},   Date: ${data.posttime}`;
 
@@ -431,44 +416,13 @@ let areUsersPopulated = false;
 
 const populateUsers = (users) => {
     console.log({ users });
-    // console.log("checking is users --->", users.notifications);
     onlineUsers.innerHTML = "";
-    console.log("USERS OBJECT--------------", users.userswithchat);
 
     sortingUsersWithChat(users);
     sortingChatlessUsers(users);
 
     console.log("online from Go", onlineUsersFromGo);
-    //   for (let usersWithBadge of users.allUsers) {
-    //     if (usersWithBadge.user != loggedInUser) {
-    //       console.log("usersWithBadge-----user-------", usersWithBadge.user);
-    //       console.log("usersWithBadge------team------", usersWithBadge.team);
-
-    //       userDetails = document.createElement("div");
-    //       let username = document.createElement("div");
-    //       imageDiv = document.createElement("div");
-    //       img = document.createElement("img");
-    //       let onlineIcon = document.createElement("div");
-
-    //       img.src = `/css/img/${usersWithBadge.team}.png`;
-    //       img.style.width = "2vw";
-    //       imageDiv.appendChild(onlineIcon);
-    //       userDetails.id = `${usersWithBadge.user}`;
-
-    //       userDetails.className = "registered-user";
-
-    //       if (onlineUsersFromGo.includes(usersWithBadge.user)) {
-    //         onlineIcon.className = "online-icon-class";
-    //       } else {
-    //         onlineIcon.className = "offline-icon-class";
-    //       }
-    //       username.innerText = `${usersWithBadge.user}`;
-    //       imageDiv.append(img);
-    //       userDetails.appendChild(username);
-    //       userDetails.appendChild(imageDiv);
-    //       onlineUsers.appendChild(userDetails);
-    //     }
-    //   }
+   
     let requestNotifications = {};
     requestNotifications.type = "requestNotifications";
     requestNotifications.username = loggedInUser;
@@ -578,16 +532,11 @@ const sortingChatlessUsers = (users) => {
         }
     }
 
-    // const letters = ["d","a", "c", "z"]
-    // console.log('letters--->', letters.sort())
-    // console.log('letters--->', letters.sort().reverse())
-
     users.allUsers.sort((a, b) => a.user.localeCompare(b.user));
     chatlessArray = users.allUsers;
 
     for (let usersWithBadge of users.allUsers) {
-        // console.log("chatsender -> ", chatUser.chatsender);
-        // console.log("chatrecipinet -> ", chatUser.chatrecipient);
+
         if (usersWithBadge.user != loggedInUser) {
             userDetails = document.createElement("div");
             let username = document.createElement("div");
@@ -619,9 +568,7 @@ const sortingChatlessUsers = (users) => {
 
 const getNotifications = (users) => {
     let userRg = document.getElementsByClassName("registered-user");
-    // console.log("checking u notifications inside func -- >", users.notifications);
-    // for (const member of users.notifications) {
-    //   console.log("member check --> ", member);
+
     console.log("userrg.length----", userRg.length);
     for (const member of userRg) {
         for (const user of users) {
@@ -634,7 +581,6 @@ const getNotifications = (users) => {
                 notificationDiv.id = user.notificationsender + "box";
 
                 notificationDiv.classList.add("notifications");
-                // console.log("checking user in func ==> ", member.id);
                 notificationDiv.innerHTML = user.notificationcount;
                 member.appendChild(notificationDiv);
             }
@@ -1200,15 +1146,9 @@ The toLocaleTimeString() method returns the time portion of a date object.
             chatRecipient.innerText === data.typingSender
           ) {
             typingNotificationRecipient = chatRecipient.innerText;
-            //chatRecipient.style.color = "red";
-            //typingAnimation.style.display = "block"
+
           }
-          // let userRg = document.getElementsByClassName("registered-user");
-          // for (const user of userRg) {
-          //   if (data.typingSender === user.id) {
-          //     user.innerHTML += " is now typing";
-          //   }
-          // }
+
         }
         if (data.tipo === "typingIsOver") {
           //chatRecipient.style.color = "black";
