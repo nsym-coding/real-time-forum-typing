@@ -5,3 +5,4 @@
 NEEDS TO BE FIXED
 ------------------
 - 2 logged in users, last comment not being passed through the channel. Will only be shown when post is clicked on again. 
+ bla bla
